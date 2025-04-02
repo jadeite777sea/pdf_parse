@@ -1,0 +1,891 @@
+{
+  "INTRODUCTION": {
+    "text": "Human attention is a limited resource, but it is stressed more than ever before in history [1][2]. Permanently refocusing attention and alternating between activities and tasks comes with a price, including severe accidents [3] and significant socio-economic costs [1][4]. Sequential multitasking [5] results in \"switch costs\", which are characterized by the time and effort needed to stop one and engage in another task. Additionally, external interruptions increase stress, frustration, and error rates while impeding overall performance [6][7][8]. Still, multitasking should not, and cannot, be eliminated. In the future, cooperating with machines/algorithms while engaging in other tasks will be common in various domains such as mobility, manufacturing, or health. Consequently, it was argued that \"managing user attention has emerged as a critical challenge\" [9]. The negative effects of multitasking and task switching have led to calls for \"Attentive User Interfaces\" (AUIs) or \"Attention Management Systems\" (AMSs). AMSs are systems that \"computationally seek to balance a user's need for minimal disruption and the application's need to efficiently deliver information\" [10][6] and try to manage user attention appropriately -for example, by precisely timing interruptions [11]. It is known that task interruptions are less detrimental when they happen at task boundaries (i.e., small breaks between subtasks) or when humans are relaxed [6][12], and the application of AUI concepts have shown to be beneficial in various settings from office work [6][13][14] to driving [15][16]. However, beyond conceptual works and theories, AMSs in real-world settings hardly exist. Various contributions so far have evaluated the psychological elements of task switching [17][18] or modeling of user behavior [19][20][21]. Still, despite the existing theories and concepts, it is unknown how to develop an algorithm or system that integrally cooperates with the user and helps them to multitask better. Many existing approaches hardly scale and suffer from problems such as (1) limited scope, (2) potentially inflexible or incomplete theories and heuristics, which in turn can lead to (3) highly complex architectures [10]. For example, existing concepts have dedicated components to detect potential breakpoints or subtask boundaries, where the underlying data was labeled either by experts [13] or by the users themselves [21]. This makes such solutions hard to develop and difficult to transfer to other settings. In a real-time context, data labeling could be infeasible, since heuristics are restricted to our understanding of what constitutes \"good\" task switching (which has shown to be quite diverse between people [22]). Cognitive architectures such as ACT-R in turn have issues in predicting \"how task interleaving behavior adapts to changes in uncertainty related to the task states\" [23]. This partly stems from the fact that the cognitive processes (i.e., the true costs of interruptions and users' adaptations) are hardly observable. We claim that reinforcement learning (RL) and computational rationality (CR) could have a high potential to overcome these limitations and help to build AMSs that benefit human multitasking for multiple reasons. First, AMSs must succeed in a probabilistic sequential decision problem: they need to continuously observe the process of humans operating on different tasks and derive a good strategy for interruptions (i.e., task switches). Thereby, rewards are sparse -the benefit of appropriate interruptions on users' performance are not immediately visible, while the negative effects of inappropriate switches accumulate over time. RL can build policies for sequences of actions to account for the issue of delayed rewards. Further, while approaches based on cognitive architectures require scripted policies that become highly complex due to the sheer number of behavioral strategies, the policy of RL agents is learned and only driven by rewards. Second, RL has shown to be a suitable approach for improving human attention, cognition, and behavior in the field of HCI. To provide some examples, existing works have shown that RL can explain human behavior in task switching [19], determine timings for intelligent suggestions [24], support human-AI cooperation in visual search tasks [25], optimize physical activities embedded in just-in-time interventions [26], or to provide adaptive time pressure feedback to improve user performance in arithmetic tasks [27]. Collectively, these studies show that RL can act as an enabler for intelligent interventions that fit in naturally with human activities. Third, RL in combination with computational rationality (CR) can help to better understand users and build better cooperative agents [28]. Consequently, we believe RL can be used to coordinate operator resources (i.e., properly schedule/assign tasks) in a way to optimize toward an objective function. This function could aim at increasing the overall performance of the user or optimize towards other parameters, for example, minimizing physiological stress markers. We hypothesize, that an RL-based AMS that schedules tasks for users has the potential to improve their performance in a multitasking setting, compared to a situation where the users themselves make the decision when to attend to a particular task. Given the focus on task performance, it is not unthinkable that the algorithm reveals suitable strategies for switching that are unknown or even seem counter-intuitive, ultimately becoming a \"superhuman\" extension for the user. In this paper, we present a prototypical implementation of this concept and demonstrate its beneficial effect on overall performance in a dual-task setting (see Figure 1). Our contributions are as follows: • We introduce the concept of RL-based attention management systems that observe the users' environment(s) and automatically switch between tasks so that a defined reward (in our prototypical case, human performance) increases. • The concept was investigated on hand of a fast-paced dualtask. Therefore, we implemented a simple game where the player has to balance two balls on two platforms, but only one platform can be controlled at a given time (see Figure 1). The game requires players to switch between tasks in a visualmotoric activity with high temporal demand, representing a real-time multitasking situation (similar to other skill-based tasks such as driving) that has not been extensively addressed by AMSs so far. The prototype is hosted on a public GitHub repository along with the code and all the utilized RL models and algorithms 1 . We call for using, extending, and improving the tool for researching and designing future AMSs. • Implementing this concept requires training of the algorithm either on humans (which would demand a lot of resources and could yield frustration due to the random actions of the RL agents during training) or models that closely replicate human behavior. We implemented two types of user models performing the balancing tasks to train the AMS. One model has unlimited access to perceiving the environment and acting instantly. The other model is built upon principles of \"computational rationality\" and uses \"cognitive constraints\" [28][23] to simulate imperfect perception and reaction times. • The resulting systems were evaluated in a quantitative lab experiment. We compared versions of the AMS that are trained with the two models (an unconstrained and a cognitive model) to users' self-chosen task switching strategy (no supervisor condition) as well as a version where task switches were just indicated by the AMS and confirmed by the users themselves (notification condition). The results, based on a set of performance (game scores) and behavioral measurements data (reaction times, average time on task, etc.), show that the AMS trained with cognitive constraints can significantly improve human performance in the dual-task setting, confirming the main hypothesis of this work. • We provide a detailed but critical outlook and call for researching the approach in other multitasking situations while experimenting with additional parameters, constraints, and reward functions.",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "Irresistible: The rise of addictive technology and the business of keeping us hooked",
+        "author": "Adam Alter",
+        "year": "2017"
+      },
+      {
+        "id": "[2]",
+        "text": "Permanently online, permanently connected: Living and communicating in a POPC world",
+        "author": "Peter Vorderer, Dorothée Hefner, Leonard Reinecke, Christoph Klimmt",
+        "year": "2017"
+      },
+      {
+        "id": "[3]",
+        "text": "Ablenkung durch moderne Informations-und Kommunikationstechniken und soziale Interaktion bei Autofahrern",
+        "author": "Joerg Kubitzki, Wolfgang Fastenmeier",
+        "year": "2016"
+      },
+      {
+        "id": "[4]",
+        "text": "How To Reclaim The Huge Losses That Multitasking Forces On Your Company",
+        "author": "C Steinhorst",
+        "year": "2020-08-22"
+      },
+      {
+        "id": "[5]",
+        "text": "Toward a unified theory of the multitasking continuum: from concurrent performance to task switching, interruption, and resumption",
+        "author": "Dario D Salvucci, Niels A Taatgen, Jelmer P Borst",
+        "year": "2009"
+      },
+      {
+        "id": "[6]",
+        "text": "On the need for attention-aware systems: Measuring effects of interruption on task performance, error rate, and affective state",
+        "author": "Brian P Bailey, Joseph A Konstan",
+        "year": "2006-07"
+      },
+      {
+        "id": "[7]",
+        "text": "Interrupt me: External interruptions are less disruptive than self-interruptions",
+        "author": "Ioanna Katidioti, P Jelmer, Borst, Niels A Marieke K Van Vugt, Taatgen",
+        "year": "2016"
+      },
+      {
+        "id": "[8]",
+        "text": "The cost of interrupted work: more speed and stress",
+        "author": "Gloria Mark, Daniela Gudith, Ulrich Klocke",
+        "year": "2008"
+      },
+      {
+        "id": "[9]",
+        "text": "Pervasive Attentive User Interfaces",
+        "author": "Andreas Bulling",
+        "year": "2016-01"
+      },
+      {
+        "id": "[10]",
+        "text": "A Survey of Attention Management Systems in Ubiquitous Computing Environments",
+        "author": "Christoph Anderson, Isabel Hübener, Ann-Kathrin Seipp, Sandra Ohly, Klaus David, Veljko Pejovic",
+        "year": "2018-07"
+      },
+      {
+        "id": "[11]",
+        "text": "Attentive user interfaces",
+        "author": "Roel Vertegaal",
+        "year": "2003"
+      },
+      {
+        "id": "[12]",
+        "text": "Effects of intelligent notification management on users and their tasks",
+        "author": "T Shamsi, Brian P Iqbal, Bailey",
+        "year": "2008"
+      },
+      {
+        "id": "[13]",
+        "text": "Oasis: A framework for linking notification delivery to the perceptual structure of goal-directed tasks",
+        "author": "T Shamsi, Brian P Iqbal, Bailey",
+        "year": "2010"
+      },
+      {
+        "id": "[14]",
+        "text": "Notifications and awareness: a field study of alert usage and preferences",
+        "author": "T Shamsi, Eric Iqbal, Horvitz",
+        "year": "2010"
+      },
+      {
+        "id": "[15]",
+        "text": "Let Me Finish before I Take Over: Towards Attention Aware Device Integration in Highly Automated Vehicles",
+        "author": "Philipp Wintersberger, Andreas Riener, Clemens Schartmüller, Anna-Katharina Frison, Klemens Weigl",
+        "year": "2018"
+      },
+      {
+        "id": "[16]",
+        "text": "Attentive user interfaces to improve multitasking and take-over performance in automated driving: the auto-net of things",
+        "author": "Philipp Wintersberger, Clemens Schartmüller, Andreas Riener",
+        "year": "2019"
+      },
+      {
+        "id": "[17]",
+        "text": "Integrating knowledge of multitasking and interruptions across different perspectives and research methods",
+        "author": "Christian P Janssen, J J Sandy, Gould, Y W Simon, Duncan P Li, Anna L Brumby, Cox",
+        "year": "2015"
+      },
+      {
+        "id": "[18]",
+        "text": "Task interruptions",
+        "author": "Trafton Gregory, Christopher A Monk",
+        "year": "2007"
+      },
+      {
+        "id": "[19]",
+        "text": "Hierarchical reinforcement learning as a model of human task interleaving",
+        "author": "Christoph Gebhardt, Antti Oulasvirta, Otmar Hilliges",
+        "year": "2020"
+      },
+      {
+        "id": "[20]",
+        "text": "Touchscreen Typing As Optimal Supervisory Control",
+        "author": "Jussi Jokinen, Aditya Acharya, Mohammad Uzair, Xinhui Jiang, Antti Oulasvirta",
+        "year": "2021"
+      },
+      {
+        "id": "[21]",
+        "text": "Optimizing for Happiness and Productivity: Modeling Opportune Moments for Transitions and Breaks at Work",
+        "author": "Harmanpreet Kaur, Alex C Williams, Daniel Mcduff, Mary Czerwinski, Jaime Teevan, Shamsi T Iqbal",
+        "year": "2020"
+      },
+      {
+        "id": "[22]",
+        "text": "Eliciting Spoken Interruptions to Inform Proactive Speech Agent Design",
+        "author": "Justin Edwards, Christian Janssen, Sandy Gould, Benjamin R Cowan",
+        "year": "2021"
+      },
+      {
+        "id": "[23]",
+        "text": "Multitasking in driving as optimal adaptation under uncertainty",
+        "author": "Tuomo Jussi Pp Jokinen, Antti Kujala, Oulasvirta",
+        "year": "2021"
+      },
+      {
+        "id": "[24]",
+        "text": "Optimizing the Timing of Intelligent Suggestion in Virtual Reality",
+        "author": "Difeng Yu, Ruta Desai, Ting Zhang, Hrvoje Benko, Tanya R Jonker, Aakar Gupta",
+        "year": "2022"
+      },
+      {
+        "id": "[25]",
+        "text": "Learning Cooperative Personalized Policies from Gaze Data",
+        "author": "Christoph Gebhardt, Brian Hecox, Daniel Bas Van Opheusden, James Wigdor, Otmar Hillis, Hrvoje Hilliges, Benko",
+        "year": "2019"
+      },
+      {
+        "id": "[26]",
+        "text": "Personalized heartsteps: A reinforcement learning algorithm for optimizing physical activity",
+        "author": "Peng Liao, Kristjan Greenewald, Predrag Klasnja, Susan Murphy",
+        "year": "2020"
+      },
+      {
+        "id": "[27]",
+        "text": "Augmenting Human Cognition with an AI-Mediated Intelligent Visual Feedback",
+        "author": "Songlin Xu, Xinyu Zhang",
+        "year": "2023"
+      },
+      {
+        "id": "[28]",
+        "text": "Towards machines that understand people",
+        "author": "Andrew Howes, Jussi Pp Jokinen, Antti Oulasvirta",
+        "year": "2023"
+      }
+    ],
+    "subsections": {}
+  },
+  "RELATED WORK 2.1 Multitasking Theory": {
+    "text": "Research on multitasking, i.e., \"performing two or more activities in a short period of time\" [1], has a long history. Salvucci et al. [2] presented the \"multitasking continuum\", arguing that sequential and concurrent multitasking represent two sides of a spectrum rather than being different processes. While in concurrent multitasking \"tasks are, in essence, performed at the same time\", task switching is characterized by longer phases dedicated attention towards activities [2], see Figure 2. Task switching and interruptions have been extensively addressed in past research [3][4][5][6][7][8][9][10]. Interruptions can be defined as \"introduction to a new task or tasks on top of the ongoing activity, often unexpectedly, resulting in conflicts and loss of attention on the current activity, failing to resume the work where it was interrupted\" [11][12], which requires humans to rehearse and clean the problem state. Consistently, studies have demonstrated that interruptions can disrupt cognitive processes, leading to performance decrease, as well as increased stress and error rates [13][14][15]. Interruption costs are influenced by factors such as task complexity, interruption frequency, duration, or the nature of the secondary task [5][6][7]. Resumption lags -the time taken to return to the before-interrupted task -also impact performance. The transitions require cognitive resources for task switching and reactivation of relevant information (recall, see Figure 2). Theories such as the Threaded Cognition Theory [16] try to offer insights into these interruption-related phenomena. According to this theory, cognitive processes are not isolated but interconnected threads that can operate in parallel [2]. Resources execute processes exclusively in service of one task thread at a time. Interruptions can disrupt these threads, resulting in conflicts for cognitive resources. The theory suggests that the cognitive system dynamically allocates resources to various threads, adapting to task demands and priorities [17]. When an interruption occurs, the cognitive system must shift resources from the primary to the secondary task thread. Resuming the primary task requires the reallocation of resources back to the original thread, which involves cognitive effort and potential delays. Longer interruption-and resumption lags can lead to interference between threads, resulting in performance decrements. The precise timing of interruptions, for example, between subtasks or in times of low mental workload [13], is a potential solution to mitigate the negative effects of interruption-and resumption lags. Multiple studies revealed that it is better to be interrupted between (sub)tasks than in the middle of a task [18][19][20][21]. One of the explanations comes from the memory-for-problem-states theory, suggesting that individuals are more likely to have an active problem-solving state during the middle of a task, but not between distinct tasks [5].",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "Processing resources and attention",
+        "author": "D Christopher, Wickens",
+        "year": "2020"
+      },
+      {
+        "id": "[2]",
+        "text": "Toward a unified theory of the multitasking continuum: from concurrent performance to task switching, interruption, and resumption",
+        "author": "Dario D Salvucci, Niels A Taatgen, Jelmer P Borst",
+        "year": "2009"
+      },
+      {
+        "id": "[3]",
+        "text": "The effects of time constraints on user behavior for deferrable interruptions",
+        "author": "Peter Bogunovich, Dario Salvucci",
+        "year": "2011"
+      },
+      {
+        "id": "[4]",
+        "text": "The problem state: a cognitive bottleneck in multitasking",
+        "author": "Niels A Jelmer P Borst, Hedderik Taatgen, Van Rijn",
+        "year": "2010"
+      },
+      {
+        "id": "[5]",
+        "text": "What Makes Interruptions Disruptive? A Process-Model Account of the Effects of the Problem State Bottleneck on Task Interruption and Resumption",
+        "author": "P Jelmer, Niels A Borst, Hedderik Taatgen, Van Rijn",
+        "year": "2015"
+      },
+      {
+        "id": "[6]",
+        "text": "Does the difficulty of an interruption affect our ability to resume?",
+        "author": "Deborah A David M Cades, Boehm, J Davis, Christopher A Gregory Trafton, Monk",
+        "year": "2007"
+      },
+      {
+        "id": "[7]",
+        "text": "Interruption of the Tower of London task: support for a goal-activation approach",
+        "author": "M Helen, Dylan M Hodgetts, Jones",
+        "year": "2006"
+      },
+      {
+        "id": "[8]",
+        "text": "Notification, disruption, and memory: Effects of messaging interruptions on memory and performance",
+        "author": "Ecmce Horvitz",
+        "year": "2001"
+      },
+      {
+        "id": "[9]",
+        "text": "The cost of interrupted work: more speed and stress",
+        "author": "Gloria Mark, Daniela Gudith, Ulrich Klocke",
+        "year": "2008"
+      },
+      {
+        "id": "[10]",
+        "text": "Attention aware systems: Theories, applications, and research agenda",
+        "author": "Claudia Roda, Julie Thomas",
+        "year": "2006"
+      },
+      {
+        "id": "[11]",
+        "text": "A Survey of Attention Management Systems in Ubiquitous Computing Environments",
+        "author": "Christoph Anderson, Isabel Hübener, Ann-Kathrin Seipp, Sandra Ohly, Klaus David, Veljko Pejovic",
+        "year": "2018-07"
+      },
+      {
+        "id": "[12]",
+        "text": "Reducing users' perceived mental effort due to interruptive notifications in multi-device mobile environments",
+        "author": "Tadashi Okoshi, Julian Ramos, Hiroki Nozaki, Jin Nakazawa, Anind K Dey, Hideyuki Tokuda",
+        "year": "2015"
+      },
+      {
+        "id": "[13]",
+        "text": "On the need for attention-aware systems: Measuring effects of interruption on task performance, error rate, and affective state",
+        "author": "Brian P Bailey, Joseph A Konstan",
+        "year": "2006-07"
+      },
+      {
+        "id": "[14]",
+        "text": "The influence of task interruption on individual decision making: An information overload perspective",
+        "author": "Cheri Speier, Joseph S Valacich, Iris Vessey",
+        "year": "1999"
+      },
+      {
+        "id": "[15]",
+        "text": "Task switching and the measurement of \"switch costs",
+        "author": "Glenn Wylie, Alan Allport",
+        "year": "2000"
+      },
+      {
+        "id": "[16]",
+        "text": "The costs of multitasking in threaded cognition",
+        "author": "J P Borst, N A Taatgen",
+        "year": "2007"
+      },
+      {
+        "id": "[17]",
+        "text": "Threaded cognition: an integrated theory of concurrent multitasking",
+        "author": "D Dario, Niels A Salvucci, Taatgen",
+        "year": "2008"
+      },
+      {
+        "id": "[18]",
+        "text": "If Not Now, when?: The Effects of Interruption at Different Moments Within Task Execution",
+        "author": "Piotr D Adamczyk, Brian P Bailey",
+        "year": "2004"
+      },
+      {
+        "id": "[19]",
+        "text": "Investigating the Effectiveness of Mental Workload As a Predictor of Opportune Moments for Interruption",
+        "author": "T Shamsi, Brian P Iqbal, Bailey",
+        "year": "2005"
+      },
+      {
+        "id": "[20]",
+        "text": "Multitasking and monotasking: the effects of mental workload on deferred task interruptions",
+        "author": "Dario D Salvucci, Peter Bogunovich",
+        "year": "2010"
+      },
+      {
+        "id": "[21]",
+        "text": "Attentive user interfaces to improve multitasking and take-over performance in automated driving: the auto-net of things",
+        "author": "Philipp Wintersberger, Clemens Schartmüller, Andreas Riener",
+        "year": "2019"
+      }
+    ],
+    "subsections": {
+      "Attention Management Systems": {
+        "text": "A core idea of AMSs is to strategically time notifications to minimize interruption costs, enhance overall task performance, and provide users with a less stressful environment [1][2]. Calls for AMSs range back to the early days of ubiquitous computing [1][3]. Horvitz [4] suggested to \"consider the status of a user's attention in the timing of services [..] while considering costs and benefits of deferring actions\", and also recent guidelines for human-AI interaction argue to \"time services based on context\" [5]. Regarding potential features, researchers have proposed to (1) find better timings for interruptions based on interruptibility and (2) adapt user interfaces in a way to ease task resumption. A large body of work has looked into gauging user interruptibility [6] and detecting opportune moments for notification delivery [7][8][9] by using sensors and machine-learning models. Subsequent mitigation strategies include not only interruption timing but also an indication of availability status [10] or the use of aids to help users resume their tasks more effectively after an interruption occurs [11]. Considering task switching support, it has been shown that properly organized interfaces can also ease task resumption [12] by providing cues. Task resumption cues can be designed in an explicit (providing specific information about the task) or implicit (guiding users' attention, for example, their gaze) way, and they can be communicated before, during, and after interruptions using different modalities [13]. However, sophisticated real-time AMSs hardly exists. So far, proposed concepts build upon computational models or perform a datadriven approach [1]. Systems using computational models conduct decisions by predicting the behavior of users. Therefore, Brumby et al. [14] distinguish between cognitive architectures (such as ACT-R), constraint modeling, and uncertainty modeling. A problem with systems that build upon computational multitasking models is that they \"focus on a different grain size of behavior and/or different tradeoffs of aggregate behavior vs. individual behavior\" and are not always flexible enough to cover the uncertainties and individual differences in human behavior. In contrast, most existing data-driven approaches require data labeled by experts. In both cases, systems quickly become highly complex. For example, Okoshi et al. [15] proposed a system with multiple hierarchies of classifiers that detect breakpoints in activities based on previously detected postures or movements [1][15]. Finally, existing AMSs manage interruptions quite simply, i.e., by delivering them whenever task boundaries are detected or choosing between multiple interruption modalities (such as visual, auditory, or haptic) [1].",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "A Survey of Attention Management Systems in Ubiquitous Computing Environments",
+            "author": "Christoph Anderson, Isabel Hübener, Ann-Kathrin Seipp, Sandra Ohly, Klaus David, Veljko Pejovic",
+            "year": "2018-07"
+          },
+          {
+            "id": "[2]",
+            "text": "On the need for attention-aware systems: Measuring effects of interruption on task performance, error rate, and affective state",
+            "author": "Brian P Bailey, Joseph A Konstan",
+            "year": "2006-07"
+          },
+          {
+            "id": "[3]",
+            "text": "The Computer for the 21 st Century",
+            "author": "Mark Weiser",
+            "year": "1991"
+          },
+          {
+            "id": "[4]",
+            "text": "Principles of Mixed-initiative User Interfaces",
+            "author": "Eric Horvitz",
+            "year": "1999"
+          },
+          {
+            "id": "[5]",
+            "text": "Guidelines for Human-AI Interaction",
+            "author": "Saleema Amershi, Dan Weld, Mihaela Vorvoreanu, Adam Fourney, Besmira Nushi, Penny Collisson, Jina Suh, Shamsi Iqbal, Paul N Bennett, Kori Inkpen, Jaime Teevan, Ruth Kikin-Gil, Eric Horvitz",
+            "year": "2019"
+          },
+          {
+            "id": "[6]",
+            "text": "Sensing Interruptibility in the Office: A Field Study on the Use of Biometric and Computer Interaction Sensors",
+            "author": "Manuela Züger, Sebastian C Müller, André N Meyer, Thomas Fritz",
+            "year": "2018"
+          },
+          {
+            "id": "[7]",
+            "text": "Investigating Episodes of Mobile Phone Activity as Indicators of Opportune Moments to Deliver Notifications",
+            "author": "Joel E Fischer, Chris Greenhalgh, Steve Benford",
+            "year": "2011"
+          },
+          {
+            "id": "[8]",
+            "text": "Notifications and awareness: a field study of alert usage and preferences",
+            "author": "T Shamsi, Eric Iqbal, Horvitz",
+            "year": "2010"
+          },
+          {
+            "id": "[9]",
+            "text": "Sensor-Based Identification of Opportune Moments for Triggering Notifications",
+            "author": "Benjamin Poppinga, Wilko Heuten, Susanne Boll",
+            "year": "2014"
+          },
+          {
+            "id": "[10]",
+            "text": "Reducing Interruptions at Work: A Large-Scale Field Study of FlowLight",
+            "author": "Manuela Züger, Christopher Corley, André N Meyer, Boyang Li, Thomas Fritz, David Shepherd, Vinay Augustine, Patrick Francis, Nicholas Kraft, Will Snipes",
+            "year": "2017"
+          },
+          {
+            "id": "[11]",
+            "text": "Mitigating the Effects of Reading Interruptions by Providing Reviews and Previews",
+            "author": "Namrata Srivastava, Rajiv Jain, Jennifer Healey, Zoya Bylinskii, Tilman Dingler",
+            "year": "2021"
+          },
+          {
+            "id": "[12]",
+            "text": "Surviving task interruptions: Investigating the implications of long-term working memory theory",
+            "author": "Antti Oulasvirta, Pertti Saariluoma",
+            "year": "2006-10"
+          },
+          {
+            "id": "[13]",
+            "text": "Designing Task Resumption Cues for Interruptions in Mobile Learning Scenarios",
+            "author": "Christina Schneegass, Fiona Draxler, Evangelos Niforatos, Tilman Dingler",
+            "year": "2021"
+          },
+          {
+            "id": "[14]",
+            "text": "Computational Models of User Multitasking",
+            "author": "Duncan P Brumby, Christian P Janssen, Tuomo Kujala, Dario D Salvucci",
+            "year": "2018"
+          },
+          {
+            "id": "[15]",
+            "text": "Reducing users' perceived mental effort due to interruptive notifications in multi-device mobile environments",
+            "author": "Tadashi Okoshi, Julian Ramos, Hiroki Nozaki, Jin Nakazawa, Anind K Dey, Hideyuki Tokuda",
+            "year": "2015"
+          }
+        ],
+        "subsections": {}
+      },
+      "Computational Rationality": {
+        "text": "A theoretical concept that may be able to more precisely model human multitasking behavior while accounting for various uncertainties and individual differences is computational rationality [1]. In contrast to classical RL (where agents are typically trained to achieve superhuman performance, for example, to play computer games [2]), CR introduces constraints that incorporate human limitations to make agents behave similarly to humans. To provide an example related to this paper, while a classical RL agent would always see the true environment and react instantly to a task switch, a CR agent can incorporate constraints related to human visual perception to provoke a reaction time. This can be achieved by distinguishing between an internal (i.e., the agents' \"mind\") and an external environment in which it operates. The CR agent (i.e., the modeled user) interacts with the internal environment via observations and actions and with the external environment via stimuli and responses. The transition from the internal to the external environment involves the mentioned constraints. To build upon the example above, an external stimulus (such as a task switch making the agent focus on another platform) could lead to inaccurate observations due to limitations in human vision. The subsequent action is performed based on the inaccurate internal state formed by the observation. The response to the external environment can again be subject to constraints (for example, limited by delays that mimic the human locomotor system). The internal environment can include psychological constructs such as memory (and their intrinsic limitations), signal noise, uncertainty, emotion, or stress and is updated based on the partially observable external environment. The internal representation can be modeled as a probability distribution over the possible states. With the help of a partially observable Markov decision process (POMDP) [3] (see 3.2) it can be described that the environment is only partially observable and the agent acts based on a belief state rather than the real state of the environment. The theory is called \"Computational Rationality\" because the control policy used for the action selection is the \"rational\" (or optimal) policy taking into account the limits of the cognition, and the theory assumes that real humans would indeed perform optimally given their limitations. The great advantage of CR is its ability to simulate not only general but also individual behavior. Since the included constraints can be parametrized, the user model can be configured to perform stronger or weaker. Both an appropriate definition and parametrization of these constraints are necessary to find a suitable model for individual humans. CR was already applied to different kind of tasks like visual search [4], multitasking [5], typing [6], pointing [7], menu selection [8], decision making [9] or drawing [10]. Further, Gebhardt et al. [11] used RL to model human task interleaving behavior, suggesting that RL could become \"a plausible model of supervisory control\".",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Computational Rationality as a Theory of Interaction",
+            "author": "Antti Oulasvirta, P P Jussi, Andrew Jokinen, Howes",
+            "year": "2022"
+          },
+          {
+            "id": "[2]",
+            "text": "Playing Atari with Deep Reinforcement Learning",
+            "author": "Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis Antonoglou, Daan Wierstra, Martin Riedmiller",
+            "year": "2013"
+          },
+          {
+            "id": "[3]",
+            "text": "Intrinsically motivated learning of hierarchical collections of skills",
+            "author": "Satinder Andrew G Barto, Nuttapong Singh, Chentanez",
+            "year": "2004"
+          },
+          {
+            "id": "[4]",
+            "text": "A Cognitive Model of How People Make Decisions Through Interaction with Visual Displays",
+            "author": "Xiuli Chen, Sandra Dorothee Starke, Chris Baber, Andrew Howes",
+            "year": "2017"
+          },
+          {
+            "id": "[5]",
+            "text": "Modelling Drivers' Adaptation to Assistance Systems",
+            "author": "P P Jussi, Tuomo Jokinen, Kujala",
+            "year": "2021"
+          },
+          {
+            "id": "[6]",
+            "text": "Touchscreen Typing As Optimal Supervisory Control",
+            "author": "Jussi Jokinen, Aditya Acharya, Mohammad Uzair, Xinhui Jiang, Antti Oulasvirta",
+            "year": "2021"
+          },
+          {
+            "id": "[7]",
+            "text": "The effect of time-based cost of error in target-directed pointing tasks",
+            "author": "Nikola Banovic, Tovi Grossman, George Fitzmaurice",
+            "year": "2013"
+          },
+          {
+            "id": "[8]",
+            "text": "The Emergence of Interactive Behavior: A Model of Rational Menu Search",
+            "author": "Xiuli Chen, Gilles Bailly, Duncan P Brumby, Antti Oulasvirta, Andrew Howes",
+            "year": "2015"
+          },
+          {
+            "id": "[9]",
+            "text": "Probabilistic Formulation of the Take The Best Heuristic",
+            "author": "Tomi Peltola, Jussi Jokinen, Samuel Kaski",
+            "year": "2019"
+          },
+          {
+            "id": "[10]",
+            "text": "Children adapt drawing actions to their own motor variability and to the motivational context of action",
+            "author": "Siti Rohkmah, Mohd Shukri, Andrew Howes",
+            "year": "2019"
+          },
+          {
+            "id": "[11]",
+            "text": "Hierarchical reinforcement learning as a model of human task interleaving",
+            "author": "Christoph Gebhardt, Antti Oulasvirta, Otmar Hilliges",
+            "year": "2020"
+          }
+        ],
+        "subsections": {}
+      },
+      "Summary": {
+        "text": "We have discussed the theoretical aspects of task switching and how existing AMSs have been designed so far. As argued, human multitasking is a highly complex process, where both theory-and data-driven AMSs quickly become highly complex and suffer various weaknesses such as inflexibility or difficulty in accounting for user differences. In contrast, computational rationality may be able to provide sophisticated models of human multitasking behavior that could be exploited by future AMSs.",
+        "citations": [],
+        "subsections": {}
+      }
+    }
+  },
+  "TASK SWITCHING SUPPORT WITH REINFORCEMENT LEARNING": {
+    "text": "This work aims to evaluate the potential of an RL agent to develop an AMS that manages interruptions and controls human attention. We hypothesize, that an RL agent can learn a policy that automatically detects moments for interruptions and coordinates operator resources (i.e., automatically and properly assigns tasks) in a way to improve overall performance.",
+    "citations": [],
+    "subsections": {
+      "The Balancing Game as Example of an AMS-Supported Dual-Task": {
+        "text": "Existing experiments on multitasking have used a multitude of natural (i.e., texting/chatting, data entry, driving, reading comprehension, object identification, etc.) and standardized tasks (tracking, Figure 3: The architecture consists of the RL AMS agent that has unlimited access to the (virtual) environment and decides when to operate on one of the two platforms. To simulate a user playing the game, we implemented balancing agents with cognitive constraints for training the algorithm (left). In the subsequent evaluation phase (right), the AMS agent used the learned policy to switch between platforms when humans were playing the game. n-back, VCR task, pursuit, etc.) [1][2][3] with varying perceptual, cognitive, and physical demands that require skill-, rule-, and knowledge-based performance [4]. To evaluate our concept we have set up a novel continuous, motoric, fast-paced dual-task. Users control a computer game where they have to balance two balls on two dedicated platforms using the left stick on a gamepad (see Figures 1 and3). Only one platform can be controlled at each moment in time to simulate a situation where users have to switch between the two platforms (i.e., tasks) sequentially. Considering the multitasking continuum, this task shows aspects of both, sequential and concurrent multitasking (i.e., players can see both platforms all the time but can only operate on one platform, see Figure 2). We argue that the continuous real-time nature of the task involves visual-cognitive demands, requires both skill-based and strategic components, and can act as a proxy for similar tasks (for example, the lane-keeping task in driving research [5]). Further, performance in the task can easily be assessed concerning the game score (i.e., the duration the balls are successfully balanced on the platforms), which allows the formulation of a simple reward. Finally, in its monotask version, the balancing task has a comparably small state space and allows for fast training. In our dual-task version of the game, users can either switch between the platforms themselves (using the shoulder buttons of the gamepad) or are assisted by the developed AMS. The difficulty level steadily increases by reducing the drag value of the balls over time. This value defines the decay rate of the ball's linear velocity. Therefore this value is used to simulate drag, air resistance, or friction. The starting value is 0.8 and is reduced every 5 seconds by a value of 0.025, where negative drag values are allowed so that the ball would get faster over time. If the ball moves slowly, a force towards its current direction is applied to prevent them from lying still which would mean that no further adjustment of the rotation of the platforms would be necessary. When a ball falls off the platform, the game ends. This design allows a clear measurement of performance (i.e., the longer the game time, the higher the score), which is relevant for training the RL agents and quantifying users' performance in the subsequent evaluation. We implemented the game in Unity and utilized the ml-agents library [6]. Every episode starts with a 5 seconds lasting countdown. The balls fall down from a random position inside the inner third of the platforms. An episode ends in case one of the balls falls off the corresponding platform. When assisted by the AMS, a switch is announced by a short audio signal as well as by coloring the target platform white. This announcement is performed 0.3 seconds before the actual switch. After a switch, the source platform moves towards its horizontal rotation with a speed of 10 degrees per second. We designed an algorithm that supports users by automatically switching between the platforms at appropriate moments. Strictly speaking a \"moment\" is nothing else than a particular configuration of the environment, with time being a series of subsequent environment states. Configurations that are suitable for a task switch, in turn, can be considered as moments. Thereby, the AMS agent is supplied with a comprehensive representation of the problem space, including the environments of the involved tasks (see Figure 3). Based on this state space, the agent acts by either waiting (letting the user continue the task in the foreground) or switching to a particular task that demands attention. The agent is rewarded by interrupting and assigning the user properly (i.e., increasing the game score, see Section 3.3 for implementation details). To be able to train the AMS agent, we designed a computationally rational balancing agent with cognitive constraints using RL to simulate a human playing the game (balancing agents, see Figure 3, left). The CR agent does not observe the true but an internal environment [7], where various aspects (i.e., ball positions and speeds) are included in a belief state. The AMS agent on top activates either the left or right balancing agent via task switches. For example, when a balancing agent is deactivated by the AMS agent (i.e., switching to the other platform), the balancing agent is cut off from the real environment and gradually \"forgets\" the true position/velocity of the ball, leading to a deviation of the true state and the belief state. This is illustrated on the right (blue) platform in Figure 3. Here, the white ball represents the believed position and velocity of the ball, which is different from the true ball in the background. When the AMS agent switches to a platform, the corresponding balancing agent is activated, and the belief state is gradually updated again, simulating a regain of attention and reaction time of a human. After some (reaction) time the true and believed ball position match closely again (Figure 3, left). By using the constraint balancing agents, the AMS agent is forced to train a task switching policy adjusted for humans. The CR balancing agent is adapted based on different parameters to describe to what extend a certain constraint is present (for more details see 3.5). Consequently, diverse parameter assignments represent CR models that engage in the balancing game tailored for different individuals. After training, the policy learned by the AMS agent can be used for automated task switching when real humans play the game. This means, that the CR model for the balancing agents are cut off from the system as the balancing task is solely performed by the human (see Figure 3, right). Additional technical details about the ml-agents training process in combination with Unity can be found in the supplementary materials.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "What Makes Interruptions Disruptive? A Process-Model Account of the Effects of the Problem State Bottleneck on Task Interruption and Resumption",
+            "author": "P Jelmer, Niels A Borst, Hedderik Taatgen, Van Rijn",
+            "year": "2015"
+          },
+          {
+            "id": "[2]",
+            "text": "Does the difficulty of an interruption affect our ability to resume?",
+            "author": "Deborah A David M Cades, Boehm, J Davis, Christopher A Gregory Trafton, Monk",
+            "year": "2007"
+          },
+          {
+            "id": "[3]",
+            "text": "The effect of interruption duration and demand on resuming suspended goals",
+            "author": "J Christopher A Monk, Deborah A Gregory Trafton, Boehm-Davis",
+            "year": "2008"
+          },
+          {
+            "id": "[4]",
+            "text": "Skills, rules, and knowledge; signals, signs, and symbols, and other distinctions in human performance models",
+            "author": "Jens Rasmussen",
+            "year": "1983"
+          },
+          {
+            "id": "[5]",
+            "text": "Driving and multitasking: the good, the bad, and the dangerous",
+            "author": "Menno Nijboer, P Jelmer, Hedderik Borst, Niels A Van Rijn, Taatgen",
+            "year": "2016"
+          },
+          {
+            "id": "[6]",
+            "text": "Unity: A general platform for intelligent agents",
+            "author": "Arthur Juliani, Vincent-Pierre Berges, Ervin Teng, Andrew Cohen, Jonathan Harper, Chris Elion, Chris Goy, Yuan Gao, Hunter Henry, Marwan Mattar",
+            "year": "2018"
+          },
+          {
+            "id": "[7]",
+            "text": "Towards machines that understand people",
+            "author": "Andrew Howes, Jussi Pp Jokinen, Antti Oulasvirta",
+            "year": "2023"
+          }
+        ],
+        "subsections": {}
+      },
+      "Markov Decision Process": {
+        "text": "In RL, an agent performs an action 𝑎 in a state 𝑠 of an environment at time step 𝑡 , which results in a change to the successor state 𝑠 ′ with a probability of 𝑝 to reach a certain predefined goal by maximizing a reward signal 𝑟 . This work includes two different agents which can be distinguished by the observability of the state space. The AMS agent can access the true state space describing the current conditions of the platforms. This completely observable RL problem can be defined based on a Markov decision process 𝑀𝐷𝑃 (𝑆, 𝐴, 𝑃, 𝑅, 𝛾 ; ) where the upper case letters describe the sets of the former mentioned corresponding elements. 𝛾 describes a discount factor where 0 ≤ 𝛾 ≤ 1 and is used to weight recent rewards more strongly than rewards from the past. Usually, RL algorithms estimate so-called value functions which indicate the expected return an agent gets in a certain state. Value functions are defined based on the behavior of an agent, called policy 𝜋 . The goal of RL is to learn a policy 𝜋 to maximize the value function and, therefore, the expected reward. The policy is defined as a mapping of states 𝑠 to the probabilities of the selection of certain actions 𝑎 in this state, such that Finally, based on this information, the state-value function can be defined [1]: (1) Therefore, to calculate 𝑣 𝜋 (𝑠 ), the rewards 𝑟 of the different possible successor states 𝑠 ′ must be summed with their corresponding expected rewards 𝑣 (𝑠 ′ ) resulting in a recursive calculation. The values of 𝑣 (𝑠 ) for all 𝑠 ∈ 𝑆 can be learned in an iterative way and saved in a table starting with initial values of 0. This work has a continuous state space that prevents tabular methods from working. Therefore, it uses approximation techniques like neural nets to generalize this continuous state space. The former definition assumes that the agent is aware of its current state but there are scenarios where this assumption does not hold due to the only partial observability of the environment. This is the case for the cognitive balancing agent which can only observe its state if the platform is currently active otherwise the uncertainty over the state space grows over time leading to imprecise actions. Those problems are defined as a partially observable Markov decision process 𝑃𝑂𝑀 𝐷 𝑃 (𝑆, 𝐴, 𝑃 , 𝑅, 𝛾 ; 𝐻 , Ω, 𝑂 ) where 𝑆 , 𝐴, 𝑃 and 𝑅 are equal to the definition of the 𝑀𝐷𝑃 . Ω is a finite set of observations 𝑜 ∈ Ω the agent can perceive. 𝑂 denotes the observation function. 𝑂 (𝑠 ′ , 𝑜, 𝑎) describes the probability that an agent gets in state 𝑠 ′ making observation 𝑜 after performing action 𝑎. Since the agent does not know the true state, it must aggregate a belief state 𝑏 (𝑠 ) based on the previous experience. The belief state is updated via the following equation: Here, 𝑝 (𝑠 ′ |𝑎, 𝑠) denotes the transition probability to state 𝑠 ′ after performing action 𝑎 in state 𝑠. In the context of this work, 𝑂 (𝑠 ′ , 𝑜, 𝑎) is calculated based on a fixed parameter 𝑜 𝑝 like in Formula 5. A belief state 𝑏 is a probability distribution over 𝑆 , such that  𝑠 ∈𝑆 𝑏 (𝑠 ) = 1 and 0 ≤ 𝑏 (𝑠 ) ≤ 1. This probability distribution is updated during the execution of the environment. The policy uses 𝑏 (𝑠 ) instead of 𝑠 since 𝑠 is not known to the agent.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Reinforcement learning: An introduction",
+            "author": "S Richard, Andrew G Sutton, Barto",
+            "year": "2018"
+          }
+        ],
+        "subsections": {}
+      },
+      "AMS Agent": {
+        "text": "This agent perceives the environments of the involved tasks (as states) and can either stay on the current platform or switch to the other (via actions). By training, it determines a policy so that switches occur in a way that maximizes the game score (reward, see Figure 3). The problem environment of the task switching challenge can be defined as a Markov decision process 𝑀𝐷𝑃 (𝑆, 𝐴, 𝑃, 𝑅). The state 𝑠 ∈ 𝑆 of the environment is defined by the coordinates of the balls, the angles of the surfaces, and the movement direction, or velocity, of the ball. The action 𝑎 ∈ 𝐴 is defined by either switching to a new platform or staying at the current one. This decision is requested every 200 ms. 𝑝 (𝑠 ′ |𝑠, 𝑎) ∈ 𝑃 describes the probability that the player moves the surface in a certain direction resulting in the successor state 𝑠 ′ . Therefore, only the sub-environments of the problem are stochastic. However, the selection of the instance by action 𝑎 directly causes the switch to the respective instance. Therefore, this selection process is deterministic, with 𝑝 (𝑠 ′ |𝑠, 𝑎) = 1. The reward 𝑟 ∈ 𝑅 is defined by the following function: where Δ𝑡 𝑠 describes the elapsed time since the last switch. Based on this function, fast switches result in a smaller value than those that are performed after one second leading to less often performed switches. This adjustment was made to avoid unnecessary switching observed in situations where both balls were near the center of the platform (i.e., where switching would not result in any change in the reward signal). Consequently, we utilized a logistic function so that the agent avoids unnecessary switches within one second.",
+        "citations": [],
+        "subsections": {}
+      },
+      "Balancing Agents": {
+        "text": "Through the application of the principle of computational rationality [1], we were able to train the AMS without the need for human involvement. Therefore, we built and refined two distinct models: an unconstrained one and a model incorporating human cognition (cognitive model).",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Towards machines that understand people",
+            "author": "Andrew Howes, Jussi Pp Jokinen, Antti Oulasvirta",
+            "year": "2023"
+          }
+        ],
+        "subsections": {
+          "Unconstrained": {
+            "text": "Model. This model defines a ball balancing agent without any human constraints that can, therefore, achieve superhuman performance. This agent is used as a baseline to examine if any of the human cognition adaptions affect its capabilities to find the opportune moment for a task switch when used as input for the training of the AMS agent. It uses a sensor vector with a space size of 8 and the same observations as the AMS agent except that it only collects the information from its own platform. The action vector is continuous, has a size of 2, and defines how much the platform should be rotated on the x-and z-axis per action. It ignores the y-axis. The reward signal 𝑟 at time 𝑡 is defined by the following formula: Here 𝐷 𝑡 is the distance of the ball to the center of the platform at time 𝑡 and 𝑟 𝑎𝑑𝑖𝑢𝑠 is the radius of the platform. The imprecise position, for instance, can be explained by the perception being more challenging due to the camera position (camera angle to the platform). The adaption of Point 1. depends on the difference between the states of the platforms, s.t. the modification of the internal representation towards the true state is fast if both states are similar (similar ball velocity and position per platform) or slow if they are significantly different. Furthermore, not only their similarities are relevant. It could be the case that a human remembers the approximate state since the last task switch. Therefore, the uncertainty of the state of the currently inactive platform grows over time. This noise could cause a non-ideal or delayed action by humans. These restrictions and the underlying internal representation can be defined by a partially observable Markov decision process 𝑃𝑂 𝑀𝐷𝑃 (𝑆, 𝐴, 𝑃, 𝑅, Ω, 𝑂 ). The state space of the balancing agent is continuous, s.t. the belief state 𝑏 (𝑠 ) could be either described with a density function or based on a discretization into bins. To reduce the computational complexity, this work uses a discretization of the ball position and velocity to model the belief state 𝑏 (𝑠). The transaction probabilities 𝑝 in Equation 2 are calculated based on a normal distribution of the ball velocity with a fixed parameter for the standard deviation 𝜎 𝑃 and a mean value of a random value of an additional normal distribution. This random value is determined based on a fixed parameter for the standard deviation 𝜎 𝑚𝑒𝑎𝑛 and the mean value of the estimated velocity. The estimated velocity equals the true velocity if the platform is active. Otherwise, in the first step, the estimated velocity equals the random value of the additional normal distribution. The second step uses a new random value from the additional normal distribution with the received random value from the first step as its mean value. Therefore, the estimated velocity gets more imprecise with every further update step due to the use of a random value from the additional normal distribution as the mean for the original distribution. Accordingly, the determination of a random value as the mean for the original distribution is used to generate a further deviation from the last observed velocity. 𝜎 𝑚𝑒𝑎𝑛 is reduced every update step by a division of 2 according to the fixed update cycle of Unity. Consequently, the deviation from the actual velocity is determined shortly after the task switch and the trajectory of the belief state remains constant after an initial uncertainty. The observation probability 𝑂 in Equation 2 is calculated based on a fixed observation probability parameter 𝑜 𝑝 : not the new state and platform active 1 if the platform is not active (5) Here, 0 ≤ 𝑜 𝑝 ≤ 1 applies. This definition of the observation probability leads to a fast update of the belief state to the true state if the platform is active and 𝑜 𝑝 is not small. If the platform is not active, no observation is made, and therefore, 𝑂 (𝑠 ′ , 𝑜 |𝑠, 𝑎) = 1 for all 𝑠 ′ ∈ 𝑆 . Figure 4 illustrates the change of the belief ball position over time. The update of the belief state (see formula 2) is performed during the execution of the environment in a predefined interval 𝑢 . This is a new approach since older work calculated the transitions of the probability distributions in advance [1]. The update of the probability distribution is calculated in parallel with the help of the Unity C# Job System in combination with the Burst Compiler [2]. The platform is discretized into 1000 bins. The new probability that the ball is inside one of these bins can be calculated independently by taking samples describing possible velocities from the normal distribution. A visitor bin 𝑗 can be determined by subtracting this sample velocity from the current position of a certain bin 𝑖 s.t. 𝑝𝑜𝑠𝑖𝑡𝑖𝑜𝑛 𝑗 ← 𝑝𝑜𝑠𝑖𝑡𝑖𝑜𝑛 𝑖 -𝑣𝑒𝑙𝑜𝑐𝑖𝑡𝑦. Iteratively all possible visitors are calculated and their current probabilities are used to determine the updated probability of bin 𝑖 by New where New describes a vector with the updated probabilities, Current the current probabilities and 𝑛 𝑠 the number of samples. The resulting probability that the ball is inside bin 𝑖 is multiplied by the observation probability described in formula 5. Furthermore, the distribution of the previously active platform is considered for a certain time after a switch (described by 𝑑 𝑡 ), to model the slow adaption of humans to a fast-changing environment. Therefore, the agent performs actions based on the belief state of the previously active platform on the currently active platform for 𝑑 𝑡 seconds after a switch. This approach is based on the assumption that a human player remembers the state of the previously active platform and its increasing inaccuracy over time but it does not model the chance that a human performs an action that was intended for the old platform after a fast task switch. This can be modeled by the introduction of a further parameter 𝑡 𝑜𝑑 describing the duration an agent performs an action based on the belief state of the former active platform.",
+            "citations": [
+              {
+                "id": "[1]",
+                "text": "Touchscreen Typing As Optimal Supervisory Control",
+                "author": "Jussi Jokinen, Aditya Acharya, Mohammad Uzair, Xinhui Jiang, Antti Oulasvirta",
+                "year": "2021"
+              },
+              {
+                "id": "[2]",
+                "text": "Get Started with the Unity* Entity Component System (ECS), C# Job System, and Burst Compiler",
+                "author": "C Ferreira, M Geig",
+                "year": "2018"
+              }
+            ],
+            "subsections": {}
+          }
+        }
+      },
+      "Training and Parameter Inference": {
+        "text": "The AMS agent was trained based on a cognitive model defined by its parameters. They were determined by an inverse modeling approach, which describes the process of inferring parameters from behavioral data [1]. Therefore, the behavioral data of a single participant with average gaming skills (value of 4 on a scale from 1 to 7, where 1 is \"I Don't play at all\" and 7 is \"Professional Level\") was collected by playing the game for 500000 actions with a \"random\" AMS (i.e., random switching interval with a minimum of 0.2s) and a constant difficulty level (fixed ball drag value of 0.8). 2000 different parameter assignments were evaluated and compared to the human behavior via a distance function. The parameterization of the model most similar to the human behavior was used for training and evaluation of the AMSs (Standard Deviation 𝜎 𝑃 = .01; Standard Deviation 𝜎 𝑚𝑒𝑎𝑛 = .2; Update Period 𝑢 = .4; Observation Probability 𝑜 𝑝 = .4; Old Distribution Persistence Time 𝑑 𝑡 = .1). The balancing agent was trained for 10 million steps in combination with the AMS agent which was trained for 5 million steps. A step is defined by a single decision. The training of both agents converges after the corresponding steps. More technical details about parameter inference and the training process can be found in the supplementary materials.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Amortized Inference with User Simulations",
+            "author": "Hee-Seung Moon, Antti Oulasvirta, Byungjoo Lee",
+            "year": "2023"
+          }
+        ],
+        "subsections": {}
+      }
+    }
+  },
+  "USER STUDY 4.1 Experiment Design": {
+    "text": "We evaluated the AMS prototypes in a lab experiment. Our main hypothesis addresses the question of whether participants supported by the AMS achieve higher performance than when they decide which tasks to attend at each moment. Further, we aimed to investigate if the AMS would work better when being trained on the user model with cognitive constraints, compared to the unconstrained model. Finally, we wanted to know how the AMS would perform when task switches are not automatically performed but indicated to the user via notifications. This yielded the following four conditions, which were tested in a quasi-randomized within-subjects experimental design: • Cognitive Model: In this condition, participants played the game with the AMS trained on the user model with cognitive constraints. The AMS automatically switched between the platforms based on the learned policy (see Section 3.4.2). • Unconstrained: In this condition, participants played the game with the AMS trained on the unconstrained user model. Again, the AMS switched between the platforms based on the learned policy automatically (see Section 3.4.1). • Notification: We wanted to know if the AMS would also benefit users when only notifying them. In this condition, the AMS used the policy trained using the cognitive model. However, task switches were not enforced automatically but had to be confirmed by the user by pressing a button. To allow for suitable comparisons, we decided to automatically switch to the target platform in case the user does not confirm within one second. • No Supervisor: In this condition, no AMS was present and the task of switching between the platforms was solely performed by the participants. This condition acts as the baseline control condition for investigating the main hypothesis. Strictly speaking, the evaluation procedure did not include the balancing models used for training the AMSs. For the sake of simplicity, we still call the corresponding conditions based on the names of the underlying user models, i.e., condition cognitive model refers to the AMS trained on the cognitive model, while the condition uconstrained refers to the AMS trained using the unconstrained model.",
+    "citations": [],
+    "subsections": {
+      "Participants": {
+        "text": "In total, N=43 participants (30 male, 12 female, one preferred not to say, 𝑀 = 27.73, 𝑆𝐷 = 4.21 years; mainly students and university staff) completed the experiment. Participants self-rated computer/video game skills were close to the theoretical mean on the Likert scale from 1 to 7 (𝑀 = 3.83, 𝑆𝐷 = 1.88, 𝑀𝑒𝑑𝑖𝑎𝑛 = 4, 𝐼 𝑄𝑅 = 3). Regarding the amount of playing hours, the median answer was <1 hour per week. Participants' tendency to actively engage in or avoid intensive technology interaction measured by Affinity for Technology Interaction (ATI) scale [1] showed above neutral result (𝑀 = 5.25, 𝑆𝐷 = 0.98).",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "A personal resource for technology interaction: development and validation of the affinity for technology interaction (ATI) scale",
+            "author": "Thomas Franke, Christiane Attig, Daniel Wessel",
+            "year": "2019"
+          }
+        ],
+        "subsections": {}
+      },
+      "Procedure": {
+        "text": "The experiment was performed directly in the Unity Editor. Participants used a DualShock 5 gamepad, specifically its joystick, to control the angles of platforms and the shoulder buttons to switch between the platforms in the notification or no supervisor conditions. The research was carried out within a laboratory setting, where we provided guidance to the participants throughout the study. Upon arrival, participants were briefed about the study and were asked for demographic data. Next, they completed a short training in each condition in quasi-randomized order (to account for order effects, one minute per condition). This was followed by the four experimental conditions, again in quasi-randomized order (following an experiment plan where 4 conditions result in 4!=24 different arrangements, i.e., every 24 participant, all combinations of conditions appeared exactly once, and participants were assigned in the order they appeared). In each condition, we collected the results of five episodes that lasted longer than 5 seconds (i.e., we removed shorter episodes since sometimes the random ball positions at the start of the episode were disadvantaging the player; the 5s were determined experimentally when configuring the difficulty of the task before running the experiment). Participants were told that the experiment would end automatically once enough data was collected. After each condition, participants completed a short post-condition survey. At the end of the study, the data collection was supplemented with a post-experiment survey and a short semistructured interview. Overall, the experiment lasted for about one hour per participant.",
+        "citations": [],
+        "subsections": {}
+      },
+      "Measurements": {
+        "text": "To evaluate the discussed AMS and the baseline condition, we collected performance-and behavior-related data as well as subjective ratings as follows: • Performance was assessed using participants' final game score (i.e., time until the game was over) after each episode. Since the difficulty of the game steadily increases, the score represents a valid measure of participants' capability to balance the ball on both platforms. Another indicator of performance is the ball's average distance to the platform center during an episode. Assuming that a good player would balance the ball close to the platform center, low values indicate high-performance and high values indicate low one. We calculated the geometric means for players' repeated performance in the respective conditions to be more robust against potential outliers [1][2]. • Task Switching Behavior was assessed with multiple parameters. We collected the average time spent on a platform between the task switches (average time on task) and participants' reaction time. The reaction time was defined as the time between a task switch and the subsequent first joystick action, i.e., the threshold of the Euclidean distance between a zero vector and the averaged performed joystick input (a threshold of 0.19, similar to reaction time measurements in automated vehicles [3]). Further, we specified a set of values describing the state of the balancing game at the moment of a task switch. The source platform rotation describes the state of the currently active platform before the task switch (in degrees, deg °). The ball distances (in Unity units, u) and velocities (in Unity units per second, u/s) are other indicators of the task-switching behavior. Lower angle, distance, and velocity values on the source platform would mean that the situation was \"cleared\" before a task switch, while higher distance and velocity values at the target platform indicate a need for more urgent reactions. • Subjective Scales were included to assess participants' workload and overall experience. After each condition, the workload was measured with the short version of the NASA-TLX questionnaire [4]. Further, participants rated their subjective experience after each condition on a single 7-point Likert scale item (\"Please rate your overall experience of playing under this condition, from don't like at all to like it very much\").",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "How Not to Lie with Statistics: The Correct Way to Summarize Benchmark Results",
+            "author": "Philip J Fleming, John J Wallace",
+            "year": "1986-03"
+          },
+          {
+            "id": "[2]",
+            "text": "A practical guide to measuring usability",
+            "author": "Jeff Sauro",
+            "year": "2010"
+          },
+          {
+            "id": "[3]",
+            "text": "Human Factors Definitions for Automated Driving and Related Research Topics",
+            "author": "",
+            "year": "2016"
+          },
+          {
+            "id": "[4]",
+            "text": "Development of NASA-TLX (Task Load Index): Results of Empirical and Theoretical Research",
+            "author": "Sandra G Hart, Lowell E Staveland, Peter A Hancock, Najmedin Meshkati",
+            "year": "1988"
+          }
+        ],
+        "subsections": {}
+      }
+    }
+  },
+  "RESULTS": {
+    "text": "To evaluate the results between the four conditions, we used IBM SPSS V.24 to conduct Friedman tests with subsequent pairwise Bonferroni-corrected Wilcoxon tests or repeated measures ANOVA  with post-hoc tests (depending on the data being normally distributed or satisfying the central limit theorem). Additionally, we utilized JASP [1] to generate Raincloud diagrams for our data and we confirmed our results with Bayesian repeated measures ANOVA. Finally, we conducted some exploratory comparisons between our highest-performing AMS agent (based on the cognitive model) and participants' self-chosen task switching strategy (no supervisor).",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "",
+        "author": "",
+        "year": "2023"
+      }
+    ],
+    "subsections": {
+      "Performance": {
+        "text": "Descriptive statistics and data plots of participants' absolute and normalized game scores in the individual conditions can be seen in Table 1 and Figure 5. In contrast to the monotask version of the game (where 12 players could balance the ball on a single platform and without task switches for 𝑀 = 103.24 𝑆𝐷 = 56.25 seconds, see supplementary materials for details), participants of this study performed, depending on the conditions, three to four times worse in the dual-task versions. Regarding participants' performance when playing in the four different conditions (the unconstrained and the cognitive models as well as the notification and no supervisor conditions), an ANOVA indicated a significant effect (Greenhouse-Geisser; 𝐹 (1.69, 70.82) = 11.534, 𝑝 < .001, 𝜂 2 𝑝 = .215). Pairwise comparisons with Bonferroni correction reveal that participants performed significantly better with the cognitive model compared to the unconstrained (𝑝 < .001), the notification (𝑝 = .004), and the no supervisor (𝑝 = .042) conditions. In contrast, in the no supervisor mode players performed better than the AMS agent trained with the unconstrained model (𝑝 = .043). This result was confirmed with a Bayesian ANOVA (𝐵𝐹 𝑖𝑛𝑐𝑙 = 15579.798), with the cognitive model showing higher performance than the unconstrained model (𝐵𝐹 10,𝑈 = 179. [1]), the notification mode (𝐵𝐹 10,𝑈 = 40.18), and the no supervisor (𝐵𝐹 10,𝑈 = 5.36) mode. Another potential indicator of performance is the distance of the balls to the platform centers (averaged over an episode). In other words, high performance would mean that the balls are quite close to the platform centers, while lower performance would be indicated by larger distances. Although the ANOVA suggests a significant effect (Assumption for sphericity met; 𝐹 (3, 126) = 3.974, 𝑝 = .01, 𝜂 2 𝑝 = .086), none of the Bonferroni-corrected pairwise comparisons was significant (see Table 1 for the quite similar means in the respective conditions). Further, we investigated how participants' individual performance influenced the results. While 32 participants showed the highest performance when playing with the AMS agent trained on the cognitive model, 11 showed their best results in the no supervisor condition. 8 of these players reside in the upper half when performing a median split on their performance (in the no supervisor condition), compared to 3 in the lower half -in other words, the AMS worked better for low-performing than for highly-skilled players. Finally, we evaluated the order of conditions, in particular, whether a learning effect occurred that made participants perform better over time. However, a repeated measures ANOVA indicated no significant effect, and directly comparing the first (𝑀 = 23.4, 𝑆𝐷 = 29.0) and the last try (𝑀 = 23.0, 𝑆𝐷 = 18.1) independent of the experimental condition yielded no significant difference.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "A Cognitive Model of How People Make Decisions Through Interaction with Visual Displays",
+            "author": "Xiuli Chen, Sandra Dorothee Starke, Chris Baber, Andrew Howes",
+            "year": "2017"
+          }
+        ],
+        "subsections": {}
+      },
+      "Task Switching Behavior": {
+        "text": "Regarding participants' reaction times after switching the platform, we did not find any statistically significant differences between the experimental conditions (see Table 1). Further, we hypothesized that the reaction time could depend on how urgent a reaction is needed. For that, we calculated the set of task switching behavior measures as described in section 4.4. We hypothesized that the reaction times are partly depending on the difficulty of the upcoming task, i.e., a fast-moving ball with a high distance to the center is more difficult to resolve and needs a faster reaction than a slow ball placed in the center of the target. For both the balls' velocity and distance to the center, we observed a significant but weak negative correlation with reaction times (velocity: 𝑅 = -.16, 𝑝 < .001; distance: 𝑅 = -.083, 𝑝 < .001). Additionally, we investigated if the task switching behavior of our best-performing AMS agent (the one trained using the cognitive model) differs from the participants' self-chosen interruption strategy (no supervisor condition) using Wilcoxon signed rank tests, see Figure 6. Participants stayed significantly longer on a platform when playing without an AMS (𝑀 = 4.46𝑠, 𝑆𝐷 = 1.61𝑠 ) compared to the cognitive model (𝑀 = 2.66𝑠, 𝑆𝐷 = .52𝑠 ; 𝑍 = -5.458, 𝑝 < .001, 𝐵𝐹 10 = 9654.518). The rotation of the source platform (cognitive model: 𝑀 = 9.36°, 𝑆 𝐷 = 4.47°; no supervisor: 𝑀 = 10.04°, 𝑆𝐷 = 4.02°; 𝐵𝐹 10 = .292) and the ball distance at the target platform (cognitive model: 𝑀 = 2.95𝑢, 𝑆𝐷 = .25𝑢; no supervisor: 𝑀 = 2.97𝑢, 𝑆 𝐷 = .39𝑢; 𝐵𝐹 10 = .177) did not differ. The cognitive model (𝑀 = 2.85𝑢, 𝑆𝐷 = .25𝑢) switched at significantly larger deviations of the ball on the source platform than the participants themselves (no supervisor: 𝑀 = 2.66𝑢, 𝑆𝐷 = .39𝑢; 𝑍 = -3.770, 𝑝 < .001, 𝐵𝐹 10 = 173.515). Further, participants tended to slow down the ball on the source platform to a significantly lower speed (𝑀 = 1.12𝑢/𝑠, 𝑆 𝐷 = .30𝑢 /𝑠 ) before switching than the cognitive model (velocity at source, 𝑀 = 1.28𝑢 /𝑠, 𝑆𝐷 = .37𝑢/𝑠 ; 𝑍 = -2.570, 𝑝 = .01, 𝐵𝐹 10 = 12.902), while the cognitive model tended to switch at significantly higher ball speeds on the target platform (𝑀 = 1.17𝑢/𝑠, 𝑆 𝐷 = .34𝑢 /𝑠 ) than the participants in the no supervisor condition (𝑀 = 1.03𝑢/𝑠, 𝑆𝐷 = .28𝑢 /𝑠 ; 𝑍 = -2.795, 𝑝 = .005, 𝐵𝐹 10 = 14.912). Overall, the results suggest that participants switched more cautiously between the platforms themselves (no supervisor condition) than when using the best-performing AMS (cognitive model). They spent more time on the platforms and acted more carefully regarding a stable situation on the source platform before switching. Further, they switched at lower speeds of the ball on the target platform than the cognitive model. Finally, we evaluated if the playing styles of less-skilled and higher-skilled players differ in the no supervisor condition using Mann-Whitney U tests (see Figure 7). Similar to the cognitive model, higher-skilled players switched more frequently and spent less time on a platform (higher-skilled: 𝑀 = 3.87𝑠, 𝑆 𝐷 = 1.15𝑠; lower-skilled: 𝑀 = 5.06𝑠, 𝑆𝐷 = 1.80𝑠; 𝑈 = 122, 𝑝 = .013, 𝐵𝐹 10 = 2.875). They also \"cleared\" the source platform closer to the neutral position before switching (higher-skilled: 𝑀 = 8.33°, 𝑆𝐷 = .2.66°; lower-skilled: 𝑀 = 11.75°, 𝑆𝐷 = .4.47°; 𝑈 = 115, 𝑝 = .008, 𝐵𝐹 10 = 2.557). Also regarding the other parameters of the source platform, skilled players slowed down the ball more (higher-skilled: 𝑀 = .94𝑢 /𝑠, 𝑆𝐷 = .18𝑢/𝑠; lowerskilled: 𝑀 = 1.29𝑢/𝑠, 𝑆𝐷 = .30𝑢 /𝑠 ; 𝑈 = 70, 𝑝 < .001, 𝐵𝐹 10 = 113.238) and kept it closer to the center before switching (higher-skilled: 𝑀 = 2.46𝑢, 𝑆 𝐷 = .23𝑢; lower-skilled: 𝑀 = 2.87𝑢, 𝑆𝐷 = .41𝑢; 𝑈 = 755, 𝑝 < .001, 𝐵𝐹 10 = 34.361).",
+        "citations": [],
+        "subsections": {}
+      },
+      "Subjective Workload and Experience": {
+        "text": "Considering the subjective workload as assessed by NASA-TLX, Friedman tests indicated significant effects for all sub-dimensions (Mental Demand: 𝜒 2 = 33.85, 𝑝 < .001, Physical Demand 𝜒 2 = 14.01, 𝑝 < .01, Temporal Demand 𝜒 2 = 19.59, 𝑝 < .001, Effort 𝜒 2 = 20.99, 𝑝 < .001, Frustration 𝜒 2 = 25.02, 𝑝 < .001, Subjective Performance 𝜒 2 = 19.37, 𝑝 < .001). Pairwise Wilcoxon test (with Bonferroni-Holm correction) showed that playing with the AMSs trained on the cognitive (𝑝 < .001) and the unconstrained (𝑝 < .01) models has significantly lower mental demand, compared to the notification and the no supervisor conditions. Similar results were obtained for the physical demand. Also here, the cognitive and unconstrained models were rated significantly less physically demanding than no supervisor and notification (𝑝 < .05). Regarding pace rush, both the no supervisor and the cognitive model conditions were rated significantly less temporally demanding than the notification condition (𝑝 < .001). The no supervisor and notification conditions further received significantly higher scores for Effort than the two AMSs trained on the unconstrained and cognitive models (𝑝 < .05). Participants felt significantly more frustrated with the unconstrained and the notification conditions than in the cognitive and the no The results indicate that the AMS prompted participants to switch faster and resolve more difficult situations, while they acted more cautiously when playing without the system. Higher values for platform rotation (degrees), ball distance (Unity units), and ball velocity (Unity units/s.) indicate more difficult situations. supervisor conditions (𝑝 < .01 and 𝑝 < .05). Considering subjective performance, the notification condition had significantly lower ratings than the other conditions (𝑝 < .05). Additionally, the cognitive model had significantly higher ratings than the unconstrained one (𝑝 < .05). Finally, we assessed participants' overall preference with a single Likert-scale item (𝜒 2 = 22.05, 𝑝 < .001). Thereby, both the  AMS trained with the cognitive model as well as the no supervisor condition received significantly higher scores than the other two conditions (𝑝 < .001). Experienced Game Players prefer full under-human control mode. The Pearson correlation matrix revealed a significantly higher preference towards the no supervisor mode by respondents with good computer/video game skills (they also tend to assess the subjective overall experience of no supervisor mode higher). This was accompanied by a significantly lower preference for the RL models (see Figure 8 for details). Multiple Linear Model of predicting overall experience explains almost 60% of its variability by physical demand, amount of hard work, level of stress or annoyance, and subjective success in accomplishing the task. Multiple linear regression was used to test if variables of NASA-TLX significantly predicted the overall experience regardless of the mode. For this, we combined the answers in all modes together. Akaike Information Criterion (AIC) was applied to find the best model fit. The overall regression was statistically significant (R2 adjusted = 0.584, F(6, 153) = 38.08, p < .001). We found that physical demand (𝛽 = -0.14, 𝑝 = .012), effort (𝛽 = 0.17, 𝑝 = .006), frustration level (𝛽 = -0.39, 𝑝 < .001) and subjective performance (𝛽 = 0.58, 𝑝 < .001) with intercept 2.85 (𝑝 < .001) significantly predicted the overall experience. The final model explains 58.4% of overall experience variability.",
+        "citations": [],
+        "subsections": {}
+      }
+    }
+  },
+  "DISCUSSION": {
+    "text": "The results of the experiment confirm our main hypothesis that an RL-based AMS that automatically switches between tasks can significantly improve human performance in a multitasking scenario. Consequently, we claim that this work has genuine implications for the design of future attention management systems, which we discuss as follows.",
+    "citations": [],
+    "subsections": {
+      "RL-Based Attention Management Demands Cognitive Models of User Behavior": {
+        "text": "The proposed concept achieved comparably high performance only with the AMS trained on the cognitive model, compared to the unconstrained model. This result was expected. The unconstrained model would, for example, be able to constantly switch back and forth within milliseconds as there are no interruption or resumption lags. The results demonstrate that a user model with simulated human constraints is essential to achieve the desired result. On average, participants yielded 1.5 times higher scores using the AMS trained with the cognitive model compared to their self-determined interruption strategy in the no supervisor condition. Still, the AMS helped less skilled players more than highly skilled players. One explanation could be that the concept itself is not robust enough to improve the performance of all high-performing humans. However, there are multiple possibilities to further improve the performance. First, while our study used a cognitive model based on a single person, greater improvements are plausible when participants use a cognitive model fitting their individual style of playing. We plan to use approximate Bayesian computation to directly infer parameter values of participants in future studies [1][2]. Presumably, choosing the right model might help to improve all players' performance with the AMS. Second, we could try to improve our reward function for the AMS. Third, we did not excessively use computational resources when training our agents, and longer training with improved hyperparameters could yield a better result. Fourth, we plan to improve the cognitive model itself. For example, our architecture was based on the assumption that a player would only focus on the active platform. To better account for the concurrent multitasking aspect of the game (i.e., players could always see both platforms), the cognitive model can be improved by an additional agent sharing the visual attention even to the currently inactive task.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Inferring Cognitive Models from Data using Approximate Bayesian Computation",
+            "author": "Antti Kangasrääsiö, Kumaripaba Athukorala, Andrew Howes, Jukka Corander, Samuel Kaski, Antti Oulasvirta",
+            "year": "2017"
+          },
+          {
+            "id": "[2]",
+            "text": "Amortized Inference with User Simulations",
+            "author": "Hee-Seung Moon, Antti Oulasvirta, Byungjoo Lee",
+            "year": "2023"
+          }
+        ],
+        "subsections": {}
+      },
+      "The AMS Provoked Fast-paced Playing without Influencing Subjective Workload": {
+        "text": "The task switching behavior induced by the AMS was quite different compared to the participants' self-determined strategy. Participants spent more time on the platforms and aimed at a more stable situation before switching. This finding is in line with previous research, which suggested that humans tend to monotask until the workload in the primary task is reduced [1]. At the same time, they tended to switch to less urgent situations on the target platform than the AMS. These results can be interpreted in a way that the participants behaved more cautiously while the AMS fostered fastpaced and intensive playing. Previous research has suggested that more frequent interruptions can be beneficial over less frequent switches [2] and that faster switching may benefit rehearsal and recovery [3]. Another explanation could be that participants' load was better configured for the task [4]. One could interpret particular configurations of the source platform (small angle, little speed, and deviation of the ball) as being better suitable for task switching since such configurations are closer to \"natural breakpoints\" or times of \"low mental load\". Interestingly, participants tended to switch during such configurations, while the AMS switched at higher angles, deviations, and speeds. This would contrast with the idea that task switching always works best in such situations. Interestingly, the higher pace and the more critical situations with the AMS were not reflected in participants' subjective perception of workload. The AMS based on the cognitive model yielded significantly lower effort as well as mental and physical demand compared to the no supervisor condition. This could result from the fact that automated switching without the need for monitoring leads to less overall workload. Another explanation could be that the game was very stressful, which in turn could have provoked players to act more cautiously without support. Furthermore, it could be observed that participants with higher skills behaved more similarly to the AMS in terms of their average duration on a platform.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "A processmodel account of task interruption and resumption: When does encoding of the problem state occur?",
+            "author": "Dario D Salvucci, Christopher A Monk, J Gregory Trafton",
+            "year": "2009"
+          },
+          {
+            "id": "[2]",
+            "text": "The effect of frequent versus infrequent interruptions on primary task resumption",
+            "author": "A Christopher, Monk",
+            "year": "2004"
+          },
+          {
+            "id": "[3]",
+            "text": "Memory for goals: An activationbased model",
+            "author": "M Erik, J Altmann, Gregory Trafton",
+            "year": "2002"
+          },
+          {
+            "id": "[4]",
+            "text": "Attention and automation: New perspectives on mental underload and performance",
+            "author": "S Mark, Neville A Young, Stanton",
+            "year": "2002"
+          }
+        ],
+        "subsections": {}
+      },
+      "Automated Switching is Better than Interruptions in Fast-Paced Environments": {
+        "text": "Interestingly, participants performed worst in the notification mode, where they had to confirm task switches using a button when being interrupted, despite the suggestions originated from our best performing AMS, the cognitive model. Past research has suggested that self-interruptions are more disruptive than external interruptions [1]. Thus, it would be reasonable to assume that it could be easier for participants to be receptive to an interruption than to monitor both platforms and self-interrupt. However, the notification condition received the worst performance overall and was also subjectively rated worst in terms of the NASA-TLX scores and users' preferences. Presumably, the continuous demand of the balancing task combined with the need to confirm an upcoming interruption before acting has created an additional mental load. Another explanation could be users' tendency to defer interruptions to times of low workload or subtask boundaries even in fast-paced settings like driving [2]. Maybe participants unintentionally wanted to clean up the primary task before switching, despite this negatively influencing their performance. Research on AMSs in automated vehicles has proposed to prevent users from self-negotiating their receptivity to driving-related interruptions [3]. The results of the presented experiment confirm that automated switching has advantages over user freedom in the context of fast-paced scenarios. Still, we believe that this finding is strongly task-dependent and may differ in other, particularly less time-critical environments.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Interrupt me: External interruptions are less disruptive than self-interruptions",
+            "author": "Ioanna Katidioti, P Jelmer, Borst, Niels A Marieke K Van Vugt, Taatgen",
+            "year": "2016"
+          },
+          {
+            "id": "[2]",
+            "text": "Interruption management in the context of take-over-requests in conditional driving automation",
+            "author": "Avinoam Borowsky, Noa Zangi, Tal Oron-Gilad",
+            "year": "2022"
+          },
+          {
+            "id": "[3]",
+            "text": "Let Me Finish before I Take Over: Towards Attention Aware Device Integration in Highly Automated Vehicles",
+            "author": "Philipp Wintersberger, Andreas Riener, Clemens Schartmüller, Anna-Katharina Frison, Klemens Weigl",
+            "year": "2018"
+          }
+        ],
+        "subsections": {}
+      },
+      "Adaptability to other Multitasking Scenarios": {
+        "text": "Multitasking can be categorized among various dimensions, such as the time spent on a task [1], task complexity, relation to the primary task, continuous vs. discrete tasks, and of course, the tasks' demand on perceptual, cognitive, and physical resources [2]. In this work, we have demonstrated the potential of an RL-supported AMS in a dual-task balancing game. We believe that our concept can be generalized to fast-paced, visual-motoric, and continuous multitasking situations that demand urgent reactions (i.e., driving or remote control of multiple vehicles/drones, etc.). We observed a benefit already when operating on two instances of the same task. We argue that the AMS would show an even higher performance gain with a higher number of platforms since it would be much more difficult for users to monitor all of them simultaneously. Also, our scenario allowed users to monitor both platforms concurrently. Real-life situations where this is not possible (for example, a driver focusing either on the outside environment or an in-vehicle display [3]) might even more benefit from an AMS that can utilize information outside of the users' field of view. Similarly, some multitasking situations require not only a refocus of attention and cognitive engagement but also a physical reaction (such as putting the smartphone in a safe place). Another important aspect is to investigate different tasks. In our example, we simulated a situation with two identical versions of a \"primary task\". We argue that the scenario did include interruption and resumption lags, as participants had to quickly accommodate another platform with a different configuration (i.e., ball speed, direction, position, etc.). Nevertheless, the effects of task switching on cognitive processes are higher when alternating between activities with differing (perceptual, cognitive, and physical) demands and task structures [4][5]. It will be interesting to see how the AMS is able to perform in such settings. Finally, the balancing game represents continuous tasks that progress independently from the user, where the AMS can learn that particular configurations require attention. In contrast, discrete tasks such as writing a text do not change their state while the user is engaged in another task [6]. This may require less focus of the AMS on the task environment (beyond the currently active task) and more inclusion of the users' psychophysiological states. In the future, we will (1) integrate physiological measurements to assess constructs such as stress, cognitive load, or monitoring, (2) extend our reward functions (i.e., minimizing stress levels while maximizing performance), and (3) implement a wide range of different tasks with varying demands on skill-, rule-, and knowledge-based performance (such as lane keeping in a vehicle [7], an airport control tower simulation [8], and standardized tasks like n-back [9], PASAT [10], etc.). We further call for downloading and extending our software, implementing additional tasks, or playing around with the cognitive models and algorithms to further improve performance and research of cooperative AMSs.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Multitasking and monotasking: the effects of mental workload on deferred task interruptions",
+            "author": "Dario D Salvucci, Peter Bogunovich",
+            "year": "2010"
+          },
+          {
+            "id": "[2]",
+            "text": "What Makes Interruptions Disruptive? A Process-Model Account of the Effects of the Problem State Bottleneck on Task Interruption and Resumption",
+            "author": "P Jelmer, Niels A Borst, Hedderik Taatgen, Van Rijn",
+            "year": "2015"
+          },
+          {
+            "id": "[3]",
+            "text": "Multitasking in driving as optimal adaptation under uncertainty",
+            "author": "Tuomo Jussi Pp Jokinen, Antti Kujala, Oulasvirta",
+            "year": "2021"
+          },
+          {
+            "id": "[4]",
+            "text": "Instant messaging: Effects of relevance and timing",
+            "author": "Mary Czerwinski, Edward Cutrell, Eric Horvitz",
+            "year": "2000"
+          },
+          {
+            "id": "[5]",
+            "text": "What does it mean for an interruption to be relevant? An investigation of relevance as a memory effect",
+            "author": "J J Sandy, Duncan P Gould, Anna L Brumby, Cox",
+            "year": "2013"
+          },
+          {
+            "id": "[6]",
+            "text": "Designing for Continuous Interaction with Artificial Intelligence Systems",
+            "author": "Philipp Wintersberger, Niels Van Berkel, Nadia Fereydooni, Benjamin Tag, Elena L Glassman, Daniel Buschek, Ann Blandford, Florian Michahelles",
+            "year": "2022"
+          },
+          {
+            "id": "[7]",
+            "text": "Driving and multitasking: the good, the bad, and the dangerous",
+            "author": "Menno Nijboer, P Jelmer, Hedderik Borst, Niels A Van Rijn, Taatgen",
+            "year": "2016"
+          },
+          {
+            "id": "[8]",
+            "text": "Effect of multitasking on simulator sickness and performance in 3D aerodrome control training",
+            "author": "Yörük Birsen, Uğur Açıkel, Yavuz Turhan, Akbulut",
+            "year": "2018"
+          },
+          {
+            "id": "[9]",
+            "text": "Individual differences in media multitasking and performance on the n-back",
+            "author": "C W Brandon, Daniel Ralph, Smilek",
+            "year": "2017"
+          },
+          {
+            "id": "[10]",
+            "text": "A comprehensive review of the paced auditory serial addition test (PASAT)",
+            "author": "Tom N Tombaugh",
+            "year": "2006"
+          }
+        ],
+        "subsections": {}
+      },
+      "Towards General Attention Management Systems": {
+        "text": "One major downside of existing AMSs is that they are not taskindependent. Most existing concepts are based on theories or operate data-driven. Theoretical assumptions require expert knowledge of the involved tasks, and data-driven approaches require large, labeled datasets [1]. In contrast, a general and task-independent AMS would be transferable to any task without specific adaptations. Computational rationality requires modeling constraints and utilities for the RL agents to reproduce human-like behavior [2]. Also our system relies on task-relevant data. We argue that given sufficient training, the AMS agent itself would not necessarily require such data as long as a suitable reward can be extracted (similar to computer games that perceive pixel streams [3]). However, the cognitive model is constrained by assumptions regarding the perception of the environment (i.e., ball positions and velocities). Potentially, there exists a set of constraints to model interruption and resumption behavior of humans independent of particular tasks, or at least with a small set of task characteristics (such as the expected physical, perceptual, or cognitive load needed to manage clean-up and resumption). Assuming optimal human performance when fully attending a task, such model could be used to train a task-independent, general AMS that minimizes interruption and resumption costs.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "A Survey of Attention Management Systems in Ubiquitous Computing Environments",
+            "author": "Christoph Anderson, Isabel Hübener, Ann-Kathrin Seipp, Sandra Ohly, Klaus David, Veljko Pejovic",
+            "year": "2018-07"
+          },
+          {
+            "id": "[2]",
+            "text": "Towards machines that understand people",
+            "author": "Andrew Howes, Jussi Pp Jokinen, Antti Oulasvirta",
+            "year": "2023"
+          },
+          {
+            "id": "[3]",
+            "text": "Playing Atari with Deep Reinforcement Learning",
+            "author": "Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis Antonoglou, Daan Wierstra, Martin Riedmiller",
+            "year": "2013"
+          }
+        ],
+        "subsections": {}
+      },
+      "General Human Factors Considerations": {
+        "text": "Participants' subjective experiences were strongly driven by their self-rated gaming skills. Skilled players preferred the no supervisor condition of the AMSs. Nevertheless, the AMS based on the cognitive model was rated similarly in terms of the overall experience than the no supervisor condition. Additionally, overall subjective experience in a multitasking context depends on such characterises as effort to play, frustration level, physical demand, and subjective performance. Consequently, the development process should not solely focus on task performance but also on other important requirements such as users' well-being. We will experiment with stress measurements as an additional factor for our reward function in the future, with the aim of fostering both performance and relaxation. Additionally, this project focuses on human-AI cooperation in a multitasking setting while not touching upon the general question how tasks should be distributed among AI systems and humans at all (i.e., \"levels of automation\" [1]). Given the simplicity of the implemented task, one can argue that the best-performing system in our case would be one solely controlled by AI and without a human in the loop. We argue that such considerations require researching carefully human preferences. For example, it is known that substituting humans with technology comes with the risk of loosing meaningful activities and interactions, while a proper distribution of activities can maintain user agency and the feeling of being in control [2][3]. While answering this question is beyond the scope of the current work, we believe that RL agents operating on user models have the potential to also provide a more fine-grained and dynamic distribution of tasks in the future.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "A model for types and levels of human interaction with automation",
+            "author": "Raja Parasuraman, Thomas B Sheridan, Christopher D Wickens",
+            "year": "2000"
+          },
+          {
+            "id": "[2]",
+            "text": "Driving Hotzenplotz: A Hybrid Interface for Vehicle Control Aiming to Maximize Pleasure in Highway Driving",
+            "author": "Anna-Katharina Frison, Philipp Wintersberger, Andreas Riener, Clemens Schartmüller",
+            "year": "2017"
+          },
+          {
+            "id": "[3]",
+            "text": "Hotzenplotz: Reconciling Automation with Experience",
+            "author": "Holger Klapperich, Marc Hassenzahl",
+            "year": "2016"
+          }
+        ],
+        "subsections": {}
+      },
+      "Limitations": {
+        "text": "Besides the issues discussed above, the following limitations must be considered. Most importantly, the scenario at hand does not represent a real-life task (beyond gaming). Both tasks (i.e., left and right platforms) are the same and have an equal state space and equal conceptual criteria like the goal state and condition-action rules. This makes it easier for humans to adapt to new situations as they change tasks compared to situations where the tasks are not equal. Therefore future work should investigate if the results of this work can also be observed for different tasks. Further, The AMS agent was trained based on a single cognitive model describing only the behavior of one participant. It can be assumed that the constraints of humans cover a wide range so a single cognitive model cannot be applied for all participants. For instance, this could be the explanation why there was no significant performance increase for some highly skilled players. For a simple task such as the one presented, a single model might have been appropriate. However, in situations where users can behave much more flexibly and have even greater variability in skills of different types (i.e., perceptual, cognitive, motor skills, etc.), personal adaptation will be essential. We also cannot rule out that participants adjusted their playing behavior based on the condition. Most likely, they sometimes also focused on the inactive platform, which was not represented in our cognitive user models. Finally, the system solely aims at productivity, which has ethical implications in a real-life context. To build successful AMSs, one also must take well-being and varying participant needs into account.",
+        "citations": [],
+        "subsections": {}
+      }
+    }
+  },
+  "CONCLUSION": {
+    "text": "AMSs aim for better multitasking support for humans. Due to the complexity of human behavior and the involved environments, sophisticated AMSs hardly exist. In this work, we proposed to develop future systems with RL agents that utilize computational rationality. To demonstrate the capabilities of this idea, we implemented a fastpaced visual-motoric balancing game where users had to switch between two tasks to balance balls on two platforms. Our aim was to design an AMS agent that finds opportune moments for interruptions and automatically switches between the platforms. Therefore, we used concepts of computational rationality to develop a model with cognitive constraints, which is used to train the AMS agent. The cognitive model is defined by its constraints and their extent, which are determined by means of parameters. We evaluated the approach in a user study with N=43 participants, who experienced four different conditions. We compared an AMS trained on the cognitive model with other AMS agents using an unconstrained model, as well as a notification mode where users had to confirm task switches. These conditions were compared to a baseline where participants themselves had to switch between the tasks. Thereby, we assessed performance (game scores), player/model behavior, and subjective ratings for workload. Our results show that the AMS agent trained on the cognitive model could significantly improve participants' performance, in contrast to their self-determined interruption strategies as well as the other conditions. Computational rationality was a key concept for our results as the unconstrained user model could not benefit human performance. Further, the best performing AMS using the cognitive model made participants switch between the platforms at a higher pace, while participants themselves acted more cautiously. Finally, cooperation with the AMS was rated best in terms of subjective workload according to multiple dimensions of the NASA-TLX. With this work, we have confirmed our hypothesis that RL and CR can be used to improve human multitasking performance and build more sophisticated attention management systems in the future. We will extend our system to include additional tasks with different user demands and re-evaluate our results. Additionally, we hope that the community uses our developed tool to research and evaluate AMSs for various purposes. Given the large amount of technology surrounding us, the time for attention management is now!",
+    "citations": [],
+    "subsections": {}
+  },
+  "ACKNOWLEDGMENTS": {
+    "text": "This project is supported by the Austrian Science Fund (FWF) under grant Nr.P35976-N (AITentive) and the Research Council of Finland under grant Nrs. 328400, 341763, and 328813.",
+    "citations": [],
+    "subsections": {}
+  }
+}

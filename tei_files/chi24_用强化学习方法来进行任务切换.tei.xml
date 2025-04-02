@@ -1,0 +1,2647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Supporting Task Switching with Reinforcement Learning</title>
+				<funder ref="#_KVY6CrB">
+					<orgName type="full">Austrian Science Fund (FWF)</orgName>
+				</funder>
+				<funder ref="#_zxMj8NT #_6JxT3qH">
+					<orgName type="full">unknown</orgName>
+				</funder>
+				<funder ref="#_F9jVYRH">
+					<orgName type="full">Research Council of Finland</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Alexander</forename><surname>Lingler</surname></persName>
+							<email>alexander.lingler@fh-hagenberg.atdinara.talypova@fh-hagenberg.at</email>
+						</author>
+						<author>
+							<persName><forename type="first">Dinara</forename><surname>Talypova</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Jussi</forename><forename type="middle">P P</forename><surname>Jokinen</surname></persName>
+							<email>jussi.p.p.jokinen@jyu.fi</email>
+						</author>
+						<author>
+							<persName><forename type="first">Philipp</forename><surname>Wintersberger</surname></persName>
+							<email>philipp.wintersberger@fh-hagenberg.at</email>
+							<idno type="ORCID">0000-0002-2498-7837</idno>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">of Applied Sciences</orgName>
+								<orgName type="laboratory">Digital Media Lab Digital Media Lab Cognitive Science</orgName>
+								<orgName type="institution" key="instit1">University</orgName>
+								<orgName type="institution" key="instit2">University of Applied Sciences</orgName>
+								<orgName type="institution" key="instit3">University of Jyväskylä Upper</orgName>
+								<address>
+									<country key="AT">Austria</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">Upper Austria Jyväskylä</orgName>
+								<address>
+									<country key="FI">Finland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">Department of Information and Digital Media Lab Communications Engineering</orgName>
+								<orgName type="institution">Hagenberg</orgName>
+								<address>
+									<settlement>Hagenberg</settlement>
+									<country key="AT">Austria</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff3">
+								<orgName type="department">of Applied Sciences</orgName>
+								<orgName type="institution" key="instit1">University</orgName>
+								<orgName type="institution" key="instit2">Aalto University Upper Austria Helsinki</orgName>
+								<address>
+									<settlement>Hagenberg</settlement>
+									<country>Finland Austria</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff4">
+								<orgName type="institution">TU Wien</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Supporting Task Switching with Reinforcement Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">8FDB9C94EAD3C3C0846B73EB66CA1858</idno>
+					<idno type="DOI">10.1145/3613904.3642063</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-04-01T12:10+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Human-centered computing → HCI theory, concepts and models</term>
+					<term>Interactive systems and tools</term>
+					<term>Ubiquitous computing</term>
+					<term>User interface management systems</term>
+					<term>Empirical studies in HCI Interruption, Notification, Task Switching, Machine Learning, Artifact or System, Lab Study, Quantitative Methods</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Figure <ref type="figure">1</ref>: We devised a balancing game to study AI-based assistance that helps users in task switching. The game consists of two platforms where only one can be actively controlled at a time. The goal is to balance the balls as long as possible on top of their platforms. To support users, we implemented a reinforcement learning (RL) based attention management system (AMS) that automatically switches between the platforms (indicated by a sound and a change of the active platform's color). The AMS agent has full access to the states of the subtasks and learns a policy to switch in a way that humans' game scores increase.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Human attention is a limited resource, but it is stressed more than ever before in history <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b80">81]</ref>. Permanently refocusing attention and alternating between activities and tasks comes with a price, including severe accidents <ref type="bibr" target="#b49">[50]</ref> and significant socio-economic costs <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b75">76]</ref>. Sequential multitasking <ref type="bibr" target="#b69">[70]</ref> results in "switch costs", which are characterized by the time and effort needed to stop one and engage in another task. Additionally, external interruptions increase stress, frustration, and error rates while impeding overall performance <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b46">47,</ref><ref type="bibr" target="#b51">52]</ref>. Still, multitasking should not, and cannot, be eliminated. In the future, cooperating with machines/algorithms while engaging in other tasks will be common in various domains such as mobility, manufacturing, or health. Consequently, it was argued that "managing user attention has emerged as a critical challenge" <ref type="bibr" target="#b14">[15]</ref>.</p><p>The negative effects of multitasking and task switching have led to calls for "Attentive User Interfaces" (AUIs) or "Attention Management Systems" (AMSs). AMSs are systems that "computationally seek to balance a user's need for minimal disruption and the application's need to efficiently deliver information" <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref> and try to manage user attention appropriately -for example, by precisely timing interruptions <ref type="bibr" target="#b79">[80]</ref>. It is known that task interruptions are less detrimental when they happen at task boundaries (i.e., small breaks between subtasks) or when humans are relaxed <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b36">37]</ref>, and the application of AUI concepts have shown to be beneficial in various settings from office work <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b37">38,</ref><ref type="bibr" target="#b38">39]</ref> to driving <ref type="bibr" target="#b83">[84,</ref><ref type="bibr" target="#b84">85]</ref>. However, beyond conceptual works and theories, AMSs in real-world settings hardly exist. Various contributions so far have evaluated the psychological elements of task switching <ref type="bibr" target="#b39">[40,</ref><ref type="bibr" target="#b78">79]</ref> or modeling of user behavior <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b41">42,</ref><ref type="bibr" target="#b47">48]</ref>. Still, despite the existing theories and concepts, it is unknown how to develop an algorithm or system that integrally cooperates with the user and helps them to multitask better. Many existing approaches hardly scale and suffer from problems such as (1) limited scope, (2) potentially inflexible or incomplete theories and heuristics, which in turn can lead to (3) highly complex architectures <ref type="bibr" target="#b4">[5]</ref>.</p><p>For example, existing concepts have dedicated components to detect potential breakpoints or subtask boundaries, where the underlying data was labeled either by experts <ref type="bibr" target="#b37">[38]</ref> or by the users themselves <ref type="bibr" target="#b47">[48]</ref>. This makes such solutions hard to develop and difficult to transfer to other settings. In a real-time context, data labeling could be infeasible, since heuristics are restricted to our understanding of what constitutes "good" task switching (which has shown to be quite diverse between people <ref type="bibr" target="#b21">[22]</ref>). Cognitive architectures such as ACT-R in turn have issues in predicting "how task interleaving behavior adapts to changes in uncertainty related to the task states" <ref type="bibr" target="#b42">[43]</ref>. This partly stems from the fact that the cognitive processes (i.e., the true costs of interruptions and users' adaptations) are hardly observable.</p><p>We claim that reinforcement learning (RL) and computational rationality (CR) could have a high potential to overcome these limitations and help to build AMSs that benefit human multitasking for multiple reasons. First, AMSs must succeed in a probabilistic sequential decision problem: they need to continuously observe the process of humans operating on different tasks and derive a good strategy for interruptions (i.e., task switches). Thereby, rewards are sparse -the benefit of appropriate interruptions on users' performance are not immediately visible, while the negative effects of inappropriate switches accumulate over time. RL can build policies for sequences of actions to account for the issue of delayed rewards. Further, while approaches based on cognitive architectures require scripted policies that become highly complex due to the sheer number of behavioral strategies, the policy of RL agents is learned and only driven by rewards. Second, RL has shown to be a suitable approach for improving human attention, cognition, and behavior in the field of HCI. To provide some examples, existing works have shown that RL can explain human behavior in task switching <ref type="bibr" target="#b28">[29]</ref>, determine timings for intelligent suggestions <ref type="bibr" target="#b90">[91]</ref>, support human-AI cooperation in visual search tasks <ref type="bibr" target="#b27">[28]</ref>, optimize physical activities embedded in just-in-time interventions <ref type="bibr" target="#b50">[51]</ref>, or to provide adaptive time pressure feedback to improve user performance in arithmetic tasks <ref type="bibr" target="#b87">[88]</ref>. Collectively, these studies show that RL can act as an enabler for intelligent interventions that fit in naturally with human activities. Third, RL in combination with computational rationality (CR) can help to better understand users and build better cooperative agents <ref type="bibr" target="#b34">[35]</ref>. Consequently, we believe RL can be used to coordinate operator resources (i.e., properly schedule/assign tasks) in a way to optimize toward an objective function. This function could aim at increasing the overall performance of the user or optimize towards other parameters, for example, minimizing physiological stress markers.</p><p>We hypothesize, that an RL-based AMS that schedules tasks for users has the potential to improve their performance in a multitasking setting, compared to a situation where the users themselves make the decision when to attend to a particular task.</p><p>Given the focus on task performance, it is not unthinkable that the algorithm reveals suitable strategies for switching that are unknown or even seem counter-intuitive, ultimately becoming a "superhuman" extension for the user. In this paper, we present a prototypical implementation of this concept and demonstrate its beneficial effect on overall performance in a dual-task setting (see Figure <ref type="figure">1</ref>). Our contributions are as follows:</p><p>• We introduce the concept of RL-based attention management systems that observe the users' environment(s) and automatically switch between tasks so that a defined reward (in our prototypical case, human performance) increases. • The concept was investigated on hand of a fast-paced dualtask. Therefore, we implemented a simple game where the player has to balance two balls on two platforms, but only one platform can be controlled at a given time (see Figure <ref type="figure">1</ref>). The game requires players to switch between tasks in a visualmotoric activity with high temporal demand, representing a real-time multitasking situation (similar to other skill-based tasks such as driving) that has not been extensively addressed by AMSs so far. The prototype is hosted on a public GitHub repository along with the code and all the utilized RL models and algorithms <ref type="foot" target="#foot_0">1</ref> . We call for using, extending, and improving the tool for researching and designing future AMSs. • Implementing this concept requires training of the algorithm either on humans (which would demand a lot of resources and could yield frustration due to the random actions of the RL agents during training) or models that closely replicate human behavior. We implemented two types of user models performing the balancing tasks to train the AMS.</p><p>One model has unlimited access to perceiving the environment and acting instantly. The other model is built upon principles of "computational rationality" and uses "cognitive constraints" <ref type="bibr" target="#b34">[35,</ref><ref type="bibr" target="#b42">43]</ref> to simulate imperfect perception and reaction times. • The resulting systems were evaluated in a quantitative lab experiment. We compared versions of the AMS that are trained with the two models (an unconstrained and a cognitive model) to users' self-chosen task switching strategy (no supervisor condition) as well as a version where task switches were just indicated by the AMS and confirmed by the users themselves (notification condition). The results, based on a set of performance (game scores) and behavioral measurements data (reaction times, average time on task, etc.), show that the AMS trained with cognitive constraints can significantly improve human performance in the dual-task setting, confirming the main hypothesis of this work. • We provide a detailed but critical outlook and call for researching the approach in other multitasking situations while experimenting with additional parameters, constraints, and reward functions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED WORK 2.1 Multitasking Theory</head><p>Research on multitasking, i.e., "performing two or more activities in a short period of time" <ref type="bibr" target="#b82">[83]</ref>, has a long history. Salvucci et al. <ref type="bibr" target="#b69">[70]</ref> presented the "multitasking continuum", arguing that sequential and concurrent multitasking represent two sides of a spectrum rather than being different processes. While in concurrent multitasking "tasks are, in essence, performed at the same time", task switching is characterized by longer phases dedicated attention towards activities <ref type="bibr" target="#b69">[70]</ref>, see Figure <ref type="figure" target="#fig_0">2</ref>. Task switching and interruptions have been extensively addressed in past research <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b31">32,</ref><ref type="bibr" target="#b33">34,</ref><ref type="bibr" target="#b51">52,</ref><ref type="bibr" target="#b65">66]</ref>. Interruptions can be defined as "introduction to a new task or tasks on top of the ongoing activity, often unexpectedly, resulting in conflicts and loss of attention on the current activity, failing to resume the work where it was interrupted" <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b57">58]</ref>, which requires humans to rehearse and clean the problem state. Consistently, studies have demonstrated that interruptions can disrupt cognitive processes, leading to performance decrease, as well as increased stress and error rates <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b73">74,</ref><ref type="bibr" target="#b86">87]</ref>. Interruption costs are influenced by factors such as task complexity, interruption frequency, duration, or the nature of the secondary task <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b31">32]</ref>. Resumption lags -the time taken to return to the before-interrupted task -also impact performance.</p><p>The transitions require cognitive resources for task switching and reactivation of relevant information (recall, see Figure <ref type="figure" target="#fig_0">2</ref>). Theories such as the Threaded Cognition Theory <ref type="bibr" target="#b10">[11]</ref> try to offer insights into these interruption-related phenomena. According to this theory, cognitive processes are not isolated but interconnected threads that can operate in parallel <ref type="bibr" target="#b69">[70]</ref>. Resources execute processes exclusively in service of one task thread at a time. Interruptions can disrupt these threads, resulting in conflicts for cognitive resources. The theory suggests that the cognitive system dynamically allocates resources to various threads, adapting to task demands and priorities <ref type="bibr" target="#b68">[69]</ref>. When an interruption occurs, the cognitive system must shift resources from the primary to the secondary task thread. Resuming the primary task requires the reallocation of resources back to the original thread, which involves cognitive effort and potential delays. Longer interruption-and resumption lags can lead to interference between threads, resulting in performance decrements. The precise timing of interruptions, for example, between subtasks or in times of low mental workload <ref type="bibr" target="#b5">[6]</ref>, is a potential solution to mitigate the negative effects of interruption-and resumption lags. Multiple studies revealed that it is better to be interrupted between (sub)tasks than in the middle of a task <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b66">67,</ref><ref type="bibr" target="#b84">85]</ref>. One of the explanations comes from the memory-for-problem-states theory, suggesting that individuals are more likely to have an active problem-solving state during the middle of a task, but not between distinct tasks <ref type="bibr" target="#b12">[13]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Attention Management Systems</head><p>A core idea of AMSs is to strategically time notifications to minimize interruption costs, enhance overall task performance, and provide users with a less stressful environment <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref>. Calls for AMSs range back to the early days of ubiquitous computing <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b81">82]</ref>. Horvitz <ref type="bibr" target="#b32">[33]</ref> suggested to "consider the status of a user's attention in the timing of services [..] while considering costs and benefits of deferring actions", and also recent guidelines for human-AI interaction argue to "time services based on context" <ref type="bibr" target="#b3">[4]</ref>. Regarding potential features, researchers have proposed to (1) find better timings for interruptions based on interruptibility and (2) adapt user interfaces in a way to ease task resumption. A large body of work has looked into gauging user interruptibility <ref type="bibr" target="#b92">[93]</ref> and detecting opportune moments for notification delivery <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b62">63]</ref> by using sensors and machine-learning models. Subsequent mitigation strategies include not only interruption timing but also an indication of availability status <ref type="bibr" target="#b91">[92]</ref> or the use of aids to help users resume their tasks more effectively after an interruption occurs <ref type="bibr" target="#b74">[75]</ref>. Considering task switching support, it has been shown that properly organized interfaces can also ease task resumption <ref type="bibr" target="#b59">[60]</ref> by providing cues. Task resumption cues can be designed in an explicit (providing specific information about the task) or implicit (guiding users' attention, for example, their gaze) way, and they can be communicated before, during, and after interruptions using different modalities <ref type="bibr" target="#b71">[72]</ref>.</p><p>However, sophisticated real-time AMSs hardly exists. So far, proposed concepts build upon computational models or perform a datadriven approach <ref type="bibr" target="#b4">[5]</ref>. Systems using computational models conduct decisions by predicting the behavior of users. Therefore, Brumby et al. <ref type="bibr" target="#b13">[14]</ref> distinguish between cognitive architectures (such as ACT-R), constraint modeling, and uncertainty modeling. A problem with systems that build upon computational multitasking models is that they "focus on a different grain size of behavior and/or different tradeoffs of aggregate behavior vs. individual behavior" and are not always flexible enough to cover the uncertainties and individual differences in human behavior. In contrast, most existing data-driven approaches require data labeled by experts. In both cases, systems quickly become highly complex. For example, Okoshi et al. <ref type="bibr" target="#b57">[58]</ref> proposed a system with multiple hierarchies of classifiers that detect breakpoints in activities based on previously detected postures or movements <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b57">58]</ref>. Finally, existing AMSs manage interruptions quite simply, i.e., by delivering them whenever task boundaries are detected or choosing between multiple interruption modalities (such as visual, auditory, or haptic) <ref type="bibr" target="#b4">[5]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Computational Rationality</head><p>A theoretical concept that may be able to more precisely model human multitasking behavior while accounting for various uncertainties and individual differences is computational rationality <ref type="bibr" target="#b58">[59]</ref>. In contrast to classical RL (where agents are typically trained to achieve superhuman performance, for example, to play computer games <ref type="bibr" target="#b52">[53]</ref>), CR introduces constraints that incorporate human limitations to make agents behave similarly to humans. To provide an example related to this paper, while a classical RL agent would always see the true environment and react instantly to a task switch, a CR agent can incorporate constraints related to human visual perception to provoke a reaction time. This can be achieved by distinguishing between an internal (i.e., the agents' "mind") and an external environment in which it operates. The CR agent (i.e., the modeled user) interacts with the internal environment via observations and actions and with the external environment via stimuli and responses. The transition from the internal to the external environment involves the mentioned constraints. To build upon the example above, an external stimulus (such as a task switch making the agent focus on another platform) could lead to inaccurate observations due to limitations in human vision. The subsequent action is performed based on the inaccurate internal state formed by the observation. The response to the external environment can again be subject to constraints (for example, limited by delays that mimic the human locomotor system). The internal environment can include psychological constructs such as memory (and their intrinsic limitations), signal noise, uncertainty, emotion, or stress and is updated based on the partially observable external environment. The internal representation can be modeled as a probability distribution over the possible states. With the help of a partially observable Markov decision process (POMDP) <ref type="bibr" target="#b7">[8]</ref> (see 3.2) it can be described that the environment is only partially observable and the agent acts based on a belief state rather than the real state of the environment. The theory is called "Computational Rationality" because the control policy used for the action selection is the "rational" (or optimal) policy taking into account the limits of the cognition, and the theory assumes that real humans would indeed perform optimally given their limitations. The great advantage of CR is its ability to simulate not only general but also individual behavior. Since the included constraints can be parametrized, the user model can be configured to perform stronger or weaker. Both an appropriate definition and parametrization of these constraints are necessary to find a suitable model for individual humans. CR was already applied to different kind of tasks like visual search <ref type="bibr" target="#b18">[19]</ref>, multitasking <ref type="bibr" target="#b43">[44]</ref>, typing <ref type="bibr" target="#b41">[42]</ref>, pointing <ref type="bibr" target="#b6">[7]</ref>, menu selection <ref type="bibr" target="#b17">[18]</ref>, decision making <ref type="bibr" target="#b61">[62]</ref> or drawing <ref type="bibr" target="#b72">[73]</ref>. Further, Gebhardt et al. <ref type="bibr" target="#b28">[29]</ref> used RL to model human task interleaving behavior, suggesting that RL could become "a plausible model of supervisory control".</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Summary</head><p>We have discussed the theoretical aspects of task switching and how existing AMSs have been designed so far. As argued, human multitasking is a highly complex process, where both theory-and data-driven AMSs quickly become highly complex and suffer various weaknesses such as inflexibility or difficulty in accounting for user differences. In contrast, computational rationality may be able to provide sophisticated models of human multitasking behavior that could be exploited by future AMSs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">TASK SWITCHING SUPPORT WITH REINFORCEMENT LEARNING</head><p>This work aims to evaluate the potential of an RL agent to develop an AMS that manages interruptions and controls human attention. We hypothesize, that an RL agent can learn a policy that automatically detects moments for interruptions and coordinates operator resources (i.e., automatically and properly assigns tasks) in a way to improve overall performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">The Balancing Game as Example of an AMS-Supported Dual-Task</head><p>Existing experiments on multitasking have used a multitude of natural (i.e., texting/chatting, data entry, driving, reading comprehension, object identification, etc.) and standardized tasks (tracking, Figure <ref type="figure">3</ref>: The architecture consists of the RL AMS agent that has unlimited access to the (virtual) environment and decides when to operate on one of the two platforms. To simulate a user playing the game, we implemented balancing agents with cognitive constraints for training the algorithm (left). In the subsequent evaluation phase (right), the AMS agent used the learned policy to switch between platforms when humans were playing the game.</p><p>n-back, VCR task, pursuit, etc.) <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b54">55]</ref> with varying perceptual, cognitive, and physical demands that require skill-, rule-, and knowledge-based performance <ref type="bibr" target="#b64">[65]</ref>. To evaluate our concept we have set up a novel continuous, motoric, fast-paced dual-task. Users control a computer game where they have to balance two balls on two dedicated platforms using the left stick on a gamepad (see Figures <ref type="table" target="#tab_0">1</ref> and<ref type="table">3</ref>). Only one platform can be controlled at each moment in time to simulate a situation where users have to switch between the two platforms (i.e., tasks) sequentially.</p><p>Considering the multitasking continuum, this task shows aspects of both, sequential and concurrent multitasking (i.e., players can see both platforms all the time but can only operate on one platform, see Figure <ref type="figure" target="#fig_0">2</ref>). We argue that the continuous real-time nature of the task involves visual-cognitive demands, requires both skill-based and strategic components, and can act as a proxy for similar tasks (for example, the lane-keeping task in driving research <ref type="bibr" target="#b56">[57]</ref>). Further, performance in the task can easily be assessed concerning the game score (i.e., the duration the balls are successfully balanced on the platforms), which allows the formulation of a simple reward. Finally, in its monotask version, the balancing task has a comparably small state space and allows for fast training.</p><p>In our dual-task version of the game, users can either switch between the platforms themselves (using the shoulder buttons of the gamepad) or are assisted by the developed AMS. The difficulty level steadily increases by reducing the drag value of the balls over time. This value defines the decay rate of the ball's linear velocity. Therefore this value is used to simulate drag, air resistance, or friction. The starting value is 0.8 and is reduced every 5 seconds by a value of 0.025, where negative drag values are allowed so that the ball would get faster over time. If the ball moves slowly, a force towards its current direction is applied to prevent them from lying still which would mean that no further adjustment of the rotation of the platforms would be necessary. When a ball falls off the platform, the game ends. This design allows a clear measurement of performance (i.e., the longer the game time, the higher the score), which is relevant for training the RL agents and quantifying users' performance in the subsequent evaluation. We implemented the game in Unity and utilized the ml-agents library <ref type="bibr" target="#b44">[45]</ref>. Every episode starts with a 5 seconds lasting countdown. The balls fall down from a random position inside the inner third of the platforms. An episode ends in case one of the balls falls off the corresponding platform. When assisted by the AMS, a switch is announced by a short audio signal as well as by coloring the target platform white. This announcement is performed 0.3 seconds before the actual switch. After a switch, the source platform moves towards its horizontal rotation with a speed of 10 degrees per second.</p><p>We designed an algorithm that supports users by automatically switching between the platforms at appropriate moments. Strictly speaking a "moment" is nothing else than a particular configuration of the environment, with time being a series of subsequent environment states. Configurations that are suitable for a task switch, in turn, can be considered as moments. Thereby, the AMS agent is supplied with a comprehensive representation of the problem space, including the environments of the involved tasks (see Figure <ref type="figure">3</ref>). Based on this state space, the agent acts by either waiting (letting the user continue the task in the foreground) or switching to a particular task that demands attention. The agent is rewarded by interrupting and assigning the user properly (i.e., increasing the game score, see Section 3.3 for implementation details).</p><p>To be able to train the AMS agent, we designed a computationally rational balancing agent with cognitive constraints using RL to simulate a human playing the game (balancing agents, see Figure <ref type="figure">3</ref>, left). The CR agent does not observe the true but an internal environment <ref type="bibr" target="#b34">[35]</ref>, where various aspects (i.e., ball positions and speeds) are included in a belief state. The AMS agent on top activates either the left or right balancing agent via task switches. For example, when a balancing agent is deactivated by the AMS agent (i.e., switching to the other platform), the balancing agent is cut off from the real environment and gradually "forgets" the true position/velocity of the ball, leading to a deviation of the true state and the belief state. This is illustrated on the right (blue) platform in Figure <ref type="figure">3</ref>. Here, the white ball represents the believed position and velocity of the ball, which is different from the true ball in the background. When the AMS agent switches to a platform, the corresponding balancing agent is activated, and the belief state is gradually updated again, simulating a regain of attention and reaction time of a human. After some (reaction) time the true and believed ball position match closely again (Figure <ref type="figure">3</ref>, left). By using the constraint balancing agents, the AMS agent is forced to train a task switching policy adjusted for humans. The CR balancing agent is adapted based on different parameters to describe to what extend a certain constraint is present (for more details see 3.5). Consequently, diverse parameter assignments represent CR models that engage in the balancing game tailored for different individuals.</p><p>After training, the policy learned by the AMS agent can be used for automated task switching when real humans play the game. This means, that the CR model for the balancing agents are cut off from the system as the balancing task is solely performed by the human (see Figure <ref type="figure">3</ref>, right). Additional technical details about the ml-agents training process in combination with Unity can be found in the supplementary materials.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Markov Decision Process</head><p>In RL, an agent performs an action 𝑎 in a state 𝑠 of an environment at time step 𝑡 , which results in a change to the successor state 𝑠 ′ with a probability of 𝑝 to reach a certain predefined goal by maximizing a reward signal 𝑟 . This work includes two different agents which can be distinguished by the observability of the state space. The AMS agent can access the true state space describing the current conditions of the platforms. This completely observable RL problem can be defined based on a Markov decision process 𝑀𝐷𝑃 (𝑆, 𝐴, 𝑃, 𝑅, 𝛾 ; ) where the upper case letters describe the sets of the former mentioned corresponding elements. 𝛾 describes a discount factor where 0 ≤ 𝛾 ≤ 1 and is used to weight recent rewards more strongly than rewards from the past. Usually, RL algorithms estimate so-called value functions which indicate the expected return an agent gets in a certain state. Value functions are defined based on the behavior of an agent, called policy 𝜋 . The goal of RL is to learn a policy 𝜋 to maximize the value function and, therefore, the expected reward. The policy is defined as a mapping of states 𝑠 to the probabilities of the selection of certain actions 𝑎 in this state, such that</p><formula xml:id="formula_0"> 𝑎 ∈𝐴 𝜋 (𝑎 |𝑠 ) = 1.</formula><p>Finally, based on this information, the state-value function can be defined <ref type="bibr" target="#b76">[77]</ref>:</p><formula xml:id="formula_1">𝑣 𝜋 (𝑠) = ∑︁ 𝑎 ∈𝐴 𝜋 (𝑎 |𝑠) ∑︁ 𝑠 ′ ∈𝑆 ∑︁ 𝑟 ∈𝑅 𝑝 (𝑠 ′ , 𝑟 |𝑠, 𝑎) [𝑟 + 𝛾 𝑣 𝜋 (𝑠 ′ )] for all 𝑠 ∈ 𝑆</formula><p>(1) Therefore, to calculate 𝑣 𝜋 (𝑠 ), the rewards 𝑟 of the different possible successor states 𝑠 ′ must be summed with their corresponding expected rewards 𝑣 (𝑠 ′ ) resulting in a recursive calculation. The values of 𝑣 (𝑠 ) for all 𝑠 ∈ 𝑆 can be learned in an iterative way and saved in a table starting with initial values of 0. This work has a continuous state space that prevents tabular methods from working. Therefore, it uses approximation techniques like neural nets to generalize this continuous state space.</p><p>The former definition assumes that the agent is aware of its current state but there are scenarios where this assumption does not hold due to the only partial observability of the environment. This is the case for the cognitive balancing agent which can only observe its state if the platform is currently active otherwise the uncertainty over the state space grows over time leading to imprecise actions. Those problems are defined as a partially observable Markov decision process 𝑃𝑂𝑀 𝐷 𝑃 (𝑆, 𝐴, 𝑃 , 𝑅, 𝛾 ; 𝐻 , Ω, 𝑂 ) where 𝑆 , 𝐴, 𝑃 and 𝑅 are equal to the definition of the 𝑀𝐷𝑃 . Ω is a finite set of observations 𝑜 ∈ Ω the agent can perceive. 𝑂 denotes the observation function. 𝑂 (𝑠 ′ , 𝑜, 𝑎) describes the probability that an agent gets in state 𝑠 ′ making observation 𝑜 after performing action 𝑎. Since the agent does not know the true state, it must aggregate a belief state 𝑏 (𝑠 ) based on the previous experience. The belief state is updated via the following equation:</p><formula xml:id="formula_2">𝑏 ′ (𝑠 ′ ) ∝ 𝑂 (𝑠 ′ , 𝑜 |𝑠, 𝑎) ∑︁ 𝑠 ∈𝑆 𝑝 (𝑠 ′ |𝑎, 𝑠 )𝑏 (𝑠 )<label>(2)</label></formula><p>Here, 𝑝 (𝑠 ′ |𝑎, 𝑠) denotes the transition probability to state 𝑠 ′ after performing action 𝑎 in state 𝑠. In the context of this work, 𝑂 (𝑠 ′ , 𝑜, 𝑎) is calculated based on a fixed parameter 𝑜 𝑝 like in Formula 5. A belief state 𝑏 is a probability distribution over 𝑆 , such that  𝑠 ∈𝑆 𝑏 (𝑠 ) = 1 and 0 ≤ 𝑏 (𝑠 ) ≤ 1. This probability distribution is updated during the execution of the environment. The policy uses 𝑏 (𝑠 ) instead of 𝑠 since 𝑠 is not known to the agent.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">AMS Agent</head><p>This agent perceives the environments of the involved tasks (as states) and can either stay on the current platform or switch to the other (via actions). By training, it determines a policy so that switches occur in a way that maximizes the game score (reward, see Figure <ref type="figure">3</ref>). The problem environment of the task switching challenge can be defined as a Markov decision process 𝑀𝐷𝑃 (𝑆, 𝐴, 𝑃, 𝑅). The state 𝑠 ∈ 𝑆 of the environment is defined by the coordinates of the balls, the angles of the surfaces, and the movement direction, or velocity, of the ball. The action 𝑎 ∈ 𝐴 is defined by either switching to a new platform or staying at the current one. This decision is requested every 200 ms. 𝑝 (𝑠 ′ |𝑠, 𝑎) ∈ 𝑃 describes the probability that the player moves the surface in a certain direction resulting in the successor state 𝑠 ′ . Therefore, only the sub-environments of the problem are stochastic. However, the selection of the instance by action 𝑎 directly causes the switch to the respective instance. Therefore, this selection process is deterministic, with 𝑝 (𝑠 ′ |𝑠, 𝑎) = 1. The reward 𝑟 ∈ 𝑅 is defined by the following function:</p><formula xml:id="formula_3">𝑟 𝑡 = 1 1 + 𝑒 -𝑒 2 (Δ𝑡 𝑠 -0.5)<label>(3)</label></formula><p>where Δ𝑡 𝑠 describes the elapsed time since the last switch. Based on this function, fast switches result in a smaller value than those that are performed after one second leading to less often performed switches. This adjustment was made to avoid unnecessary switching observed in situations where both balls were near the center of the platform (i.e., where switching would not result in any change in the reward signal). Consequently, we utilized a logistic function so that the agent avoids unnecessary switches within one second.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Balancing Agents</head><p>Through the application of the principle of computational rationality <ref type="bibr" target="#b34">[35]</ref>, we were able to train the AMS without the need for human involvement. Therefore, we built and refined two distinct models: an unconstrained one and a model incorporating human cognition (cognitive model).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.1">Unconstrained</head><p>Model. This model defines a ball balancing agent without any human constraints that can, therefore, achieve superhuman performance. This agent is used as a baseline to examine if any of the human cognition adaptions affect its capabilities to find the opportune moment for a task switch when used as input for the training of the AMS agent. It uses a sensor vector with a space size of 8 and the same observations as the AMS agent except that it only collects the information from its own platform. The action vector is continuous, has a size of 2, and defines how much the platform should be rotated on the x-and z-axis per action. It ignores the y-axis. The reward signal 𝑟 at time 𝑡 is defined by the following formula:</p><formula xml:id="formula_4">𝑟 𝑡 = 1 - 𝐷 𝑡 𝑟 𝑎𝑑𝑖𝑢𝑠 (4)</formula><p>Here 𝐷 𝑡 is the distance of the ball to the center of the platform at time 𝑡 and 𝑟 𝑎𝑑𝑖𝑢𝑠 is the radius of the platform. The imprecise position, for instance, can be explained by the perception being more challenging due to the camera position (camera angle to the platform). The adaption of Point 1. depends on the difference between the states of the platforms, s.t. the modification of the internal representation towards the true state is fast if both states are similar (similar ball velocity and position per platform) or slow if they are significantly different. Furthermore, not only their similarities are relevant. It could be the case that a human remembers the approximate state since the last task switch. Therefore, the uncertainty of the state of the currently inactive platform grows over time. This noise could cause a non-ideal or delayed action by humans. These restrictions and the underlying internal representation can be defined by a partially observable Markov decision process 𝑃𝑂 𝑀𝐷𝑃 (𝑆, 𝐴, 𝑃, 𝑅, Ω, 𝑂 ). The state space of the balancing agent is continuous, s.t. the belief state 𝑏 (𝑠 ) could be either described with a density function or based on a discretization into bins. To reduce the computational complexity, this work uses a discretization of the ball position and velocity to model the belief state 𝑏 (𝑠). The transaction probabilities 𝑝 in Equation 2 are calculated based on a normal distribution of the ball velocity with a fixed parameter for the standard deviation 𝜎 𝑃 and a mean value of a random value of an additional normal distribution. This random value is determined based on a fixed parameter for the standard deviation 𝜎 𝑚𝑒𝑎𝑛 and the mean value of the estimated velocity. The estimated velocity equals the true velocity if the platform is active. Otherwise, in the first step, the estimated velocity equals the random value of the additional normal distribution. The second step uses a new random value from the additional normal distribution with the received random value from the first step as its mean value. Therefore, the estimated velocity gets more imprecise with every further update step due to the use of a random value from the additional normal distribution as the mean for the original distribution. Accordingly, the determination of a random value as the mean for the original distribution is used to generate a further deviation from the last observed velocity. 𝜎 𝑚𝑒𝑎𝑛 is reduced every update step by a division of 2 according to the fixed update cycle of Unity. Consequently, the deviation from the actual velocity is determined shortly after the task switch and the trajectory of the belief state remains constant after an initial uncertainty. The observation probability 𝑂 in Equation 2 is calculated based on a fixed observation probability parameter 𝑜 𝑝 :</p><formula xml:id="formula_5">𝑂 (𝑠 ′ , 𝑜 |𝑠, 𝑎) =          𝑜 𝑝 if 𝑠 ′ is the true new state and platform active 1-𝑜 𝑝 #𝑠 -1 if 𝑠 ′ is</formula><p>not the new state and platform active 1 if the platform is not active (5) Here, 0 ≤ 𝑜 𝑝 ≤ 1 applies. This definition of the observation probability leads to a fast update of the belief state to the true state if the platform is active and 𝑜 𝑝 is not small. If the platform is not active, no observation is made, and therefore, 𝑂 (𝑠 ′ , 𝑜 |𝑠, 𝑎) = 1 for all 𝑠 ′ ∈ 𝑆 . Figure <ref type="figure" target="#fig_2">4</ref> illustrates the change of the belief ball position over time. The update of the belief state (see formula 2) is performed during the execution of the environment in a predefined interval 𝑢 . This is a new approach since older work calculated the transitions of the probability distributions in advance <ref type="bibr" target="#b41">[42]</ref>. The update of the probability distribution is calculated in parallel with the help of the Unity C# Job System in combination with the Burst Compiler <ref type="bibr" target="#b22">[23]</ref>. The platform is discretized into 1000 bins. The new probability that the ball is inside one of these bins can be calculated independently by taking samples describing possible velocities from the normal distribution. A visitor bin 𝑗 can be determined by subtracting this sample velocity from the current position of a certain bin 𝑖 s.t. 𝑝𝑜𝑠𝑖𝑡𝑖𝑜𝑛 𝑗 ← 𝑝𝑜𝑠𝑖𝑡𝑖𝑜𝑛 𝑖 -𝑣𝑒𝑙𝑜𝑐𝑖𝑡𝑦. Iteratively all possible visitors are calculated and their current probabilities are used to determine the updated probability of bin 𝑖 by New</p><formula xml:id="formula_6">[𝑖 ] ← New[𝑖 ] + Current[ 𝑗 ] 𝑛 𝑠</formula><p>where New describes a vector with the updated probabilities, Current the current probabilities and 𝑛 𝑠 the number of samples. The resulting probability that the ball is inside bin 𝑖 is multiplied by the observation probability described in formula 5. Furthermore, the distribution of the previously active platform is considered for a certain time after a switch (described by 𝑑 𝑡 ), to model the slow adaption of humans to a fast-changing environment. Therefore, the agent performs actions based on the belief state of the previously active platform on the currently active platform for 𝑑 𝑡 seconds after a switch. This approach is based on the assumption that a human player remembers the state of the previously active platform and its increasing inaccuracy over time but it does not model the chance that a human performs an action that was intended for the old platform after a fast task switch. This can be modeled by the introduction of a further parameter 𝑡 𝑜𝑑 describing the duration an agent performs an action based on the belief state of the former active platform.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5">Training and Parameter Inference</head><p>The AMS agent was trained based on a cognitive model defined by its parameters. They were determined by an inverse modeling approach, which describes the process of inferring parameters from behavioral data <ref type="bibr" target="#b55">[56]</ref>. Therefore, the behavioral data of a single participant with average gaming skills (value of 4 on a scale from 1 to 7, where 1 is "I Don't play at all" and 7 is "Professional Level") was collected by playing the game for 500000 actions with a "random" AMS (i.e., random switching interval with a minimum of 0.2s) and a constant difficulty level (fixed ball drag value of 0.8). 2000 different parameter assignments were evaluated and compared to the human behavior via a distance function. The parameterization of the model most similar to the human behavior was used for training and evaluation of the AMSs (Standard Deviation 𝜎 𝑃 = .01; Standard Deviation 𝜎 𝑚𝑒𝑎𝑛 = .2; Update Period 𝑢 = .4; Observation Probability 𝑜 𝑝 = .4; Old Distribution Persistence Time 𝑑 𝑡 = .1). The balancing agent was trained for 10 million steps in combination with the AMS agent which was trained for 5 million steps. A step is defined by a single decision. The training of both agents converges after the corresponding steps. More technical details about parameter inference and the training process can be found in the supplementary materials.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">USER STUDY 4.1 Experiment Design</head><p>We evaluated the AMS prototypes in a lab experiment. Our main hypothesis addresses the question of whether participants supported by the AMS achieve higher performance than when they decide which tasks to attend at each moment. Further, we aimed to investigate if the AMS would work better when being trained on the user model with cognitive constraints, compared to the unconstrained model. Finally, we wanted to know how the AMS would perform when task switches are not automatically performed but indicated to the user via notifications. This yielded the following four conditions, which were tested in a quasi-randomized within-subjects experimental design:</p><p>• Cognitive Model: In this condition, participants played the game with the AMS trained on the user model with cognitive constraints. The AMS automatically switched between the platforms based on the learned policy (see Section 3.4.2).</p><p>• Unconstrained: In this condition, participants played the game with the AMS trained on the unconstrained user model. Again, the AMS switched between the platforms based on the learned policy automatically (see Section 3.4.1). • Notification: We wanted to know if the AMS would also benefit users when only notifying them. In this condition, the AMS used the policy trained using the cognitive model. However, task switches were not enforced automatically but had to be confirmed by the user by pressing a button. To allow for suitable comparisons, we decided to automatically switch to the target platform in case the user does not confirm within one second. • No Supervisor: In this condition, no AMS was present and the task of switching between the platforms was solely performed by the participants. This condition acts as the baseline control condition for investigating the main hypothesis.</p><p>Strictly speaking, the evaluation procedure did not include the balancing models used for training the AMSs. For the sake of simplicity, we still call the corresponding conditions based on the names of the underlying user models, i.e., condition cognitive model refers to the AMS trained on the cognitive model, while the condition uconstrained refers to the AMS trained using the unconstrained model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Participants</head><p>In total, N=43 participants (30 male, 12 female, one preferred not to say, 𝑀 = 27.73, 𝑆𝐷 = 4.21 years; mainly students and university staff) completed the experiment. Participants self-rated computer/video game skills were close to the theoretical mean on the Likert scale from 1 to 7 (𝑀 = 3.83, 𝑆𝐷 = 1.88, 𝑀𝑒𝑑𝑖𝑎𝑛 = 4, 𝐼 𝑄𝑅 = 3). Regarding the amount of playing hours, the median answer was &lt;1 hour per week. Participants' tendency to actively engage in or avoid intensive technology interaction measured by Affinity for Technology Interaction (ATI) scale <ref type="bibr" target="#b25">[26]</ref> showed above neutral result (𝑀 = 5.25, 𝑆𝐷 = 0.98).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Procedure</head><p>The experiment was performed directly in the Unity Editor. Participants used a DualShock 5 gamepad, specifically its joystick, to control the angles of platforms and the shoulder buttons to switch between the platforms in the notification or no supervisor conditions. The research was carried out within a laboratory setting, where we provided guidance to the participants throughout the study. Upon arrival, participants were briefed about the study and were asked for demographic data. Next, they completed a short training in each condition in quasi-randomized order (to account for order effects, one minute per condition). This was followed by the four experimental conditions, again in quasi-randomized order (following an experiment plan where 4 conditions result in 4!=24 different arrangements, i.e., every 24 participant, all combinations of conditions appeared exactly once, and participants were assigned in the order they appeared). In each condition, we collected the results of five episodes that lasted longer than 5 seconds (i.e., we removed shorter episodes since sometimes the random ball positions at the start of the episode were disadvantaging the player; the 5s were determined experimentally when configuring the difficulty of the task before running the experiment). Participants were told that the experiment would end automatically once enough data was collected. After each condition, participants completed a short post-condition survey. At the end of the study, the data collection was supplemented with a post-experiment survey and a short semistructured interview. Overall, the experiment lasted for about one hour per participant.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Measurements</head><p>To evaluate the discussed AMS and the baseline condition, we collected performance-and behavior-related data as well as subjective ratings as follows:</p><p>• Performance was assessed using participants' final game score (i.e., time until the game was over) after each episode.</p><p>Since the difficulty of the game steadily increases, the score represents a valid measure of participants' capability to balance the ball on both platforms. Another indicator of performance is the ball's average distance to the platform center during an episode. Assuming that a good player would balance the ball close to the platform center, low values indicate high-performance and high values indicate low one. We calculated the geometric means for players' repeated performance in the respective conditions to be more robust against potential outliers <ref type="bibr" target="#b24">[25,</ref><ref type="bibr" target="#b70">71]</ref>. • Task Switching Behavior was assessed with multiple parameters. We collected the average time spent on a platform between the task switches (average time on task) and participants' reaction time. The reaction time was defined as the time between a task switch and the subsequent first joystick action, i.e., the threshold of the Euclidean distance between a zero vector and the averaged performed joystick input (a threshold of 0.19, similar to reaction time measurements in automated vehicles <ref type="bibr" target="#b19">[20]</ref>). Further, we specified a set of values describing the state of the balancing game at the moment of a task switch. The source platform rotation describes the state of the currently active platform before the task switch (in degrees, deg °). The ball distances (in Unity units, u) and velocities (in Unity units per second, u/s) are other indicators of the task-switching behavior. Lower angle, distance, and velocity values on the source platform would mean that the situation was "cleared" before a task switch, while higher distance and velocity values at the target platform indicate a need for more urgent reactions. • Subjective Scales were included to assess participants' workload and overall experience. After each condition, the workload was measured with the short version of the NASA-TLX questionnaire <ref type="bibr" target="#b30">[31]</ref>. Further, participants rated their subjective experience after each condition on a single 7-point Likert scale item ("Please rate your overall experience of playing under this condition, from don't like at all to like it very much").</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">RESULTS</head><p>To evaluate the results between the four conditions, we used IBM SPSS V.24 to conduct Friedman tests with subsequent pairwise Bonferroni-corrected Wilcoxon tests or repeated measures ANOVA  with post-hoc tests (depending on the data being normally distributed or satisfying the central limit theorem). Additionally, we utilized JASP <ref type="bibr" target="#b40">[41]</ref> to generate Raincloud diagrams for our data and we confirmed our results with Bayesian repeated measures ANOVA. Finally, we conducted some exploratory comparisons between our highest-performing AMS agent (based on the cognitive model) and participants' self-chosen task switching strategy (no supervisor).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Performance</head><p>Descriptive statistics and data plots of participants' absolute and normalized game scores in the individual conditions can be seen in Table <ref type="table" target="#tab_0">1</ref> and Figure <ref type="figure" target="#fig_3">5</ref>. In contrast to the monotask version of the game (where 12 players could balance the ball on a single platform and without task switches for 𝑀 = 103.24 𝑆𝐷 = 56.25 seconds, see supplementary materials for details), participants of this study performed, depending on the conditions, three to four times worse in the dual-task versions.</p><p>Regarding participants' performance when playing in the four different conditions (the unconstrained and the cognitive models as well as the notification and no supervisor conditions), an ANOVA indicated a significant effect (Greenhouse-Geisser; 𝐹 (1.69, 70.82) = 11.534, 𝑝 &lt; .001, 𝜂 2 𝑝 = .215). Pairwise comparisons with Bonferroni correction reveal that participants performed significantly better with the cognitive model compared to the unconstrained (𝑝 &lt; .001), the notification (𝑝 = .004), and the no supervisor (𝑝 = .042) conditions. In contrast, in the no supervisor mode players performed better than the AMS agent trained with the unconstrained model (𝑝 = .043). This result was confirmed with a Bayesian ANOVA (𝐵𝐹 𝑖𝑛𝑐𝑙 = 15579.798), with the cognitive model showing higher performance than the unconstrained model (𝐵𝐹 10,𝑈 = 179. <ref type="bibr" target="#b18">19</ref>), the notification mode (𝐵𝐹 10,𝑈 = 40.18), and the no supervisor (𝐵𝐹 10,𝑈 = 5.36) mode.</p><p>Another potential indicator of performance is the distance of the balls to the platform centers (averaged over an episode). In other words, high performance would mean that the balls are quite close to the platform centers, while lower performance would be indicated by larger distances. Although the ANOVA suggests a significant effect (Assumption for sphericity met; 𝐹 (3, 126) = 3.974, 𝑝 = .01, 𝜂 2 𝑝 = .086), none of the Bonferroni-corrected pairwise comparisons was significant (see Table <ref type="table" target="#tab_0">1</ref> for the quite similar means in the respective conditions).</p><p>Further, we investigated how participants' individual performance influenced the results. While 32 participants showed the highest performance when playing with the AMS agent trained on the cognitive model, 11 showed their best results in the no supervisor condition. 8 of these players reside in the upper half when performing a median split on their performance (in the no supervisor condition), compared to 3 in the lower half -in other words, the AMS worked better for low-performing than for highly-skilled players. Finally, we evaluated the order of conditions, in particular, whether a learning effect occurred that made participants perform better over time. However, a repeated measures ANOVA indicated no significant effect, and directly comparing the first (𝑀 = 23.4, 𝑆𝐷 = 29.0) and the last try (𝑀 = 23.0, 𝑆𝐷 = 18.1) independent of the experimental condition yielded no significant difference.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Task Switching Behavior</head><p>Regarding participants' reaction times after switching the platform, we did not find any statistically significant differences between the experimental conditions (see Table <ref type="table" target="#tab_0">1</ref>). Further, we hypothesized that the reaction time could depend on how urgent a reaction is needed. For that, we calculated the set of task switching behavior measures as described in section 4.4. We hypothesized that the reaction times are partly depending on the difficulty of the upcoming task, i.e., a fast-moving ball with a high distance to the center is more difficult to resolve and needs a faster reaction than a slow ball placed in the center of the target. For both the balls' velocity and distance to the center, we observed a significant but weak negative correlation with reaction times (velocity: 𝑅 = -.16, 𝑝 &lt; .001; distance: 𝑅 = -.083, 𝑝 &lt; .001).</p><p>Additionally, we investigated if the task switching behavior of our best-performing AMS agent (the one trained using the cognitive model) differs from the participants' self-chosen interruption strategy (no supervisor condition) using Wilcoxon signed rank tests, see Figure <ref type="figure" target="#fig_4">6</ref>. Participants stayed significantly longer on a platform when playing without an AMS (𝑀 = 4.46𝑠, 𝑆𝐷 = 1.61𝑠 ) compared to the cognitive model (𝑀 = 2.66𝑠, 𝑆𝐷 = .52𝑠 ; 𝑍 = -5.458, 𝑝 &lt; .001, 𝐵𝐹 10 = 9654.518). The rotation of the source platform (cognitive model: 𝑀 = 9.36°, 𝑆 𝐷 = 4.47°; no supervisor: 𝑀 = 10.04°, 𝑆𝐷 = 4.02°; 𝐵𝐹 10 = .292) and the ball distance at the target platform (cognitive model: 𝑀 = 2.95𝑢, 𝑆𝐷 = .25𝑢; no supervisor: 𝑀 = 2.97𝑢, 𝑆 𝐷 = .39𝑢; 𝐵𝐹 10 = .177) did not differ.</p><p>The cognitive model (𝑀 = 2.85𝑢, 𝑆𝐷 = .25𝑢) switched at significantly larger deviations of the ball on the source platform than the participants themselves (no supervisor: 𝑀 = 2.66𝑢, 𝑆𝐷 = .39𝑢; 𝑍 = -3.770, 𝑝 &lt; .001, 𝐵𝐹 10 = 173.515). Further, participants tended to slow down the ball on the source platform to a significantly lower speed (𝑀 = 1.12𝑢/𝑠, 𝑆 𝐷 = .30𝑢 /𝑠 ) before switching than the cognitive model (velocity at source, 𝑀 = 1.28𝑢 /𝑠, 𝑆𝐷 = .37𝑢/𝑠 ; 𝑍 = -2.570, 𝑝 = .01, 𝐵𝐹 10 = 12.902), while the cognitive model tended to switch at significantly higher ball speeds on the target platform (𝑀 = 1.17𝑢/𝑠, 𝑆 𝐷 = .34𝑢 /𝑠 ) than the participants in the no supervisor condition (𝑀 = 1.03𝑢/𝑠, 𝑆𝐷 = .28𝑢 /𝑠 ; 𝑍 = -2.795, 𝑝 = .005, 𝐵𝐹 10 = 14.912). Overall, the results suggest that participants switched more cautiously between the platforms themselves (no supervisor condition) than when using the best-performing AMS (cognitive model). They spent more time on the platforms and acted more carefully regarding a stable situation on the source platform before switching. Further, they switched at lower speeds of the ball on the target platform than the cognitive model.</p><p>Finally, we evaluated if the playing styles of less-skilled and higher-skilled players differ in the no supervisor condition using Mann-Whitney U tests (see Figure <ref type="figure" target="#fig_5">7</ref>). Similar to the cognitive model, higher-skilled players switched more frequently and spent less time on a platform (higher-skilled: 𝑀 = 3.87𝑠, 𝑆 𝐷 = 1.15𝑠; lower-skilled: 𝑀 = 5.06𝑠, 𝑆𝐷 = 1.80𝑠; 𝑈 = 122, 𝑝 = .013, 𝐵𝐹 10 = 2.875). They also "cleared" the source platform closer to the neutral position before switching (higher-skilled: 𝑀 = 8.33°, 𝑆𝐷 = .2.66°; lower-skilled: 𝑀 = 11.75°, 𝑆𝐷 = .4.47°; 𝑈 = 115, 𝑝 = .008, 𝐵𝐹 10 = 2.557). Also regarding the other parameters of the source platform, skilled players slowed down the ball more (higher-skilled: 𝑀 = .94𝑢 /𝑠, 𝑆𝐷 = .18𝑢/𝑠; lowerskilled: 𝑀 = 1.29𝑢/𝑠, 𝑆𝐷 = .30𝑢 /𝑠 ; 𝑈 = 70, 𝑝 &lt; .001, 𝐵𝐹 10 = 113.238) and kept it closer to the center before switching (higher-skilled: 𝑀 = 2.46𝑢, 𝑆 𝐷 = .23𝑢; lower-skilled: 𝑀 = 2.87𝑢, 𝑆𝐷 = .41𝑢; 𝑈 = 755, 𝑝 &lt; .001, 𝐵𝐹 10 = 34.361).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Subjective Workload and Experience</head><p>Considering the subjective workload as assessed by NASA-TLX, Friedman tests indicated significant effects for all sub-dimensions (Mental Demand: 𝜒 2 = 33.85, 𝑝 &lt; .001, Physical Demand 𝜒 2 = 14.01, 𝑝 &lt; .01, Temporal Demand 𝜒 2 = 19.59, 𝑝 &lt; .001, Effort 𝜒 2 = 20.99, 𝑝 &lt; .001, Frustration 𝜒 2 = 25.02, 𝑝 &lt; .001, Subjective Performance 𝜒 2 = 19.37, 𝑝 &lt; .001).</p><p>Pairwise Wilcoxon test (with Bonferroni-Holm correction) showed that playing with the AMSs trained on the cognitive (𝑝 &lt; .001) and the unconstrained (𝑝 &lt; .01) models has significantly lower mental demand, compared to the notification and the no supervisor conditions. Similar results were obtained for the physical demand. Also here, the cognitive and unconstrained models were rated significantly less physically demanding than no supervisor and notification (𝑝 &lt; .05). Regarding pace rush, both the no supervisor and the cognitive model conditions were rated significantly less temporally demanding than the notification condition (𝑝 &lt; .001). The no supervisor and notification conditions further received significantly higher scores for Effort than the two AMSs trained on the unconstrained and cognitive models (𝑝 &lt; .05). Participants felt significantly more frustrated with the unconstrained and the notification conditions than in the cognitive and the no The results indicate that the AMS prompted participants to switch faster and resolve more difficult situations, while they acted more cautiously when playing without the system. Higher values for platform rotation (degrees), ball distance (Unity units), and ball velocity (Unity units/s.) indicate more difficult situations.</p><p>supervisor conditions (𝑝 &lt; .01 and 𝑝 &lt; .05). Considering subjective performance, the notification condition had significantly lower ratings than the other conditions (𝑝 &lt; .05). Additionally, the cognitive model had significantly higher ratings than the unconstrained one (𝑝 &lt; .05).</p><p>Finally, we assessed participants' overall preference with a single Likert-scale item (𝜒 2 = 22.05, 𝑝 &lt; .001). Thereby, both the  AMS trained with the cognitive model as well as the no supervisor condition received significantly higher scores than the other two conditions (𝑝 &lt; .001).</p><p>Experienced Game Players prefer full under-human control mode. The Pearson correlation matrix revealed a significantly higher preference towards the no supervisor mode by respondents with good computer/video game skills (they also tend to assess the subjective overall experience of no supervisor mode higher). This was accompanied by a significantly lower preference for the RL models (see Figure <ref type="figure" target="#fig_6">8</ref> for details).</p><p>Multiple Linear Model of predicting overall experience explains almost 60% of its variability by physical demand, amount of hard work, level of stress or annoyance, and subjective success in accomplishing the task. Multiple linear regression was used to test if variables of NASA-TLX significantly predicted the overall experience regardless of the mode. For this, we combined the answers in all modes together. Akaike Information Criterion (AIC) was applied to find the best model fit. The overall regression was statistically significant (R2 adjusted = 0.584, F(6, 153) = 38.08, p &lt; .001). We found that physical demand (𝛽 = -0.14, 𝑝 = .012), effort (𝛽 = 0.17, 𝑝 = .006), frustration level (𝛽 = -0.39, 𝑝 &lt; .001) and subjective performance (𝛽 = 0.58, 𝑝 &lt; .001) with intercept 2.85 (𝑝 &lt; .001) significantly predicted the overall experience. The final model explains 58.4% of overall experience variability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">DISCUSSION</head><p>The results of the experiment confirm our main hypothesis that an RL-based AMS that automatically switches between tasks can significantly improve human performance in a multitasking scenario. Consequently, we claim that this work has genuine implications for the design of future attention management systems, which we discuss as follows.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">RL-Based Attention Management Demands Cognitive Models of User Behavior</head><p>The proposed concept achieved comparably high performance only with the AMS trained on the cognitive model, compared to the unconstrained model. This result was expected. The unconstrained model would, for example, be able to constantly switch back and forth within milliseconds as there are no interruption or resumption lags. The results demonstrate that a user model with simulated human constraints is essential to achieve the desired result. On average, participants yielded 1.5 times higher scores using the AMS trained with the cognitive model compared to their self-determined interruption strategy in the no supervisor condition. Still, the AMS helped less skilled players more than highly skilled players. One explanation could be that the concept itself is not robust enough to improve the performance of all high-performing humans. However, there are multiple possibilities to further improve the performance.</p><p>First, while our study used a cognitive model based on a single person, greater improvements are plausible when participants use a cognitive model fitting their individual style of playing. We plan to use approximate Bayesian computation to directly infer parameter values of participants in future studies <ref type="bibr" target="#b45">[46,</ref><ref type="bibr" target="#b55">56]</ref>. Presumably, choosing the right model might help to improve all players' performance with the AMS. Second, we could try to improve our reward function for the AMS. Third, we did not excessively use computational resources when training our agents, and longer training with improved hyperparameters could yield a better result. Fourth, we plan to improve the cognitive model itself. For example, our architecture was based on the assumption that a player would only focus on the active platform. To better account for the concurrent multitasking aspect of the game (i.e., players could always see both platforms), the cognitive model can be improved by an additional agent sharing the visual attention even to the currently inactive task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">The AMS Provoked Fast-paced Playing without Influencing Subjective Workload</head><p>The task switching behavior induced by the AMS was quite different compared to the participants' self-determined strategy. Participants spent more time on the platforms and aimed at a more stable situation before switching. This finding is in line with previous research, which suggested that humans tend to monotask until the workload in the primary task is reduced <ref type="bibr" target="#b67">[68]</ref>. At the same time, they tended to switch to less urgent situations on the target platform than the AMS. These results can be interpreted in a way that the participants behaved more cautiously while the AMS fostered fastpaced and intensive playing. Previous research has suggested that more frequent interruptions can be beneficial over less frequent switches <ref type="bibr" target="#b53">[54]</ref> and that faster switching may benefit rehearsal and recovery <ref type="bibr" target="#b2">[3]</ref>. Another explanation could be that participants' load was better configured for the task <ref type="bibr" target="#b89">[90]</ref>. One could interpret particular configurations of the source platform (small angle, little speed, and deviation of the ball) as being better suitable for task switching since such configurations are closer to "natural breakpoints" or times of "low mental load". Interestingly, participants tended to switch during such configurations, while the AMS switched at higher angles, deviations, and speeds. This would contrast with the idea that task switching always works best in such situations. Interestingly, the higher pace and the more critical situations with the AMS were not reflected in participants' subjective perception of workload. The AMS based on the cognitive model yielded significantly lower effort as well as mental and physical demand compared to the no supervisor condition. This could result from the fact that automated switching without the need for monitoring leads to less overall workload. Another explanation could be that the game was very stressful, which in turn could have provoked players to act more cautiously without support. Furthermore, it could be observed that participants with higher skills behaved more similarly to the AMS in terms of their average duration on a platform.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Automated Switching is Better than Interruptions in Fast-Paced Environments</head><p>Interestingly, participants performed worst in the notification mode, where they had to confirm task switches using a button when being interrupted, despite the suggestions originated from our best performing AMS, the cognitive model. Past research has suggested that self-interruptions are more disruptive than external interruptions <ref type="bibr" target="#b46">[47]</ref>. Thus, it would be reasonable to assume that it could be easier for participants to be receptive to an interruption than to monitor both platforms and self-interrupt. However, the notification condition received the worst performance overall and was also subjectively rated worst in terms of the NASA-TLX scores and users' preferences. Presumably, the continuous demand of the balancing task combined with the need to confirm an upcoming interruption before acting has created an additional mental load. Another explanation could be users' tendency to defer interruptions to times of low workload or subtask boundaries even in fast-paced settings like driving <ref type="bibr" target="#b9">[10]</ref>. Maybe participants unintentionally wanted to clean up the primary task before switching, despite this negatively influencing their performance. Research on AMSs in automated vehicles has proposed to prevent users from self-negotiating their receptivity to driving-related interruptions <ref type="bibr" target="#b83">[84]</ref>. The results of the presented experiment confirm that automated switching has advantages over user freedom in the context of fast-paced scenarios. Still, we believe that this finding is strongly task-dependent and may differ in other, particularly less time-critical environments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.4">Adaptability to other Multitasking Scenarios</head><p>Multitasking can be categorized among various dimensions, such as the time spent on a task <ref type="bibr" target="#b66">[67]</ref>, task complexity, relation to the primary task, continuous vs. discrete tasks, and of course, the tasks' demand on perceptual, cognitive, and physical resources <ref type="bibr" target="#b12">[13]</ref>. In this work, we have demonstrated the potential of an RL-supported AMS in a dual-task balancing game. We believe that our concept can be generalized to fast-paced, visual-motoric, and continuous multitasking situations that demand urgent reactions (i.e., driving or remote control of multiple vehicles/drones, etc.). We observed a benefit already when operating on two instances of the same task. We argue that the AMS would show an even higher performance gain with a higher number of platforms since it would be much more difficult for users to monitor all of them simultaneously. Also, our scenario allowed users to monitor both platforms concurrently. Real-life situations where this is not possible (for example, a driver focusing either on the outside environment or an in-vehicle display <ref type="bibr" target="#b42">[43]</ref>) might even more benefit from an AMS that can utilize information outside of the users' field of view. Similarly, some multitasking situations require not only a refocus of attention and cognitive engagement but also a physical reaction (such as putting the smartphone in a safe place). Another important aspect is to investigate different tasks. In our example, we simulated a situation with two identical versions of a "primary task". We argue that the scenario did include interruption and resumption lags, as participants had to quickly accommodate another platform with a different configuration (i.e., ball speed, direction, position, etc.). Nevertheless, the effects of task switching on cognitive processes are higher when alternating between activities with differing (perceptual, cognitive, and physical) demands and task structures <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b29">30]</ref>. It will be interesting to see how the AMS is able to perform in such settings. Finally, the balancing game represents continuous tasks that progress independently from the user, where the AMS can learn that particular configurations require attention. In contrast, discrete tasks such as writing a text do not change their state while the user is engaged in another task <ref type="bibr" target="#b85">[86]</ref>. This may require less focus of the AMS on the task environment (beyond the currently active task) and more inclusion of the users' psychophysiological states. In the future, we will (1) integrate physiological measurements to assess constructs such as stress, cognitive load, or monitoring, (2) extend our reward functions (i.e., minimizing stress levels while maximizing performance), and (3) implement a wide range of different tasks with varying demands on skill-, rule-, and knowledge-based performance (such as lane keeping in a vehicle <ref type="bibr" target="#b56">[57]</ref>, an airport control tower simulation <ref type="bibr" target="#b88">[89]</ref>, and standardized tasks like n-back <ref type="bibr" target="#b63">[64]</ref>, PASAT <ref type="bibr" target="#b77">[78]</ref>, etc.). We further call for downloading and extending our software, implementing additional tasks, or playing around with the cognitive models and algorithms to further improve performance and research of cooperative AMSs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.5">Towards General Attention Management Systems</head><p>One major downside of existing AMSs is that they are not taskindependent. Most existing concepts are based on theories or operate data-driven. Theoretical assumptions require expert knowledge of the involved tasks, and data-driven approaches require large, labeled datasets <ref type="bibr" target="#b4">[5]</ref>. In contrast, a general and task-independent AMS would be transferable to any task without specific adaptations. Computational rationality requires modeling constraints and utilities for the RL agents to reproduce human-like behavior <ref type="bibr" target="#b34">[35]</ref>. Also our system relies on task-relevant data. We argue that given sufficient training, the AMS agent itself would not necessarily require such data as long as a suitable reward can be extracted (similar to computer games that perceive pixel streams <ref type="bibr" target="#b52">[53]</ref>). However, the cognitive model is constrained by assumptions regarding the perception of the environment (i.e., ball positions and velocities).</p><p>Potentially, there exists a set of constraints to model interruption and resumption behavior of humans independent of particular tasks, or at least with a small set of task characteristics (such as the expected physical, perceptual, or cognitive load needed to manage clean-up and resumption). Assuming optimal human performance when fully attending a task, such model could be used to train a task-independent, general AMS that minimizes interruption and resumption costs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.6">General Human Factors Considerations</head><p>Participants' subjective experiences were strongly driven by their self-rated gaming skills. Skilled players preferred the no supervisor condition of the AMSs. Nevertheless, the AMS based on the cognitive model was rated similarly in terms of the overall experience than the no supervisor condition. Additionally, overall subjective experience in a multitasking context depends on such characterises as effort to play, frustration level, physical demand, and subjective performance. Consequently, the development process should not solely focus on task performance but also on other important requirements such as users' well-being. We will experiment with stress measurements as an additional factor for our reward function in the future, with the aim of fostering both performance and relaxation. Additionally, this project focuses on human-AI cooperation in a multitasking setting while not touching upon the general question how tasks should be distributed among AI systems and humans at all (i.e., "levels of automation" <ref type="bibr" target="#b60">[61]</ref>). Given the simplicity of the implemented task, one can argue that the best-performing system in our case would be one solely controlled by AI and without a human in the loop. We argue that such considerations require researching carefully human preferences. For example, it is known that substituting humans with technology comes with the risk of loosing meaningful activities and interactions, while a proper distribution of activities can maintain user agency and the feeling of being in control <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b48">49]</ref>. While answering this question is beyond the scope of the current work, we believe that RL agents operating on user models have the potential to also provide a more fine-grained and dynamic distribution of tasks in the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.7">Limitations</head><p>Besides the issues discussed above, the following limitations must be considered. Most importantly, the scenario at hand does not represent a real-life task (beyond gaming). Both tasks (i.e., left and right platforms) are the same and have an equal state space and equal conceptual criteria like the goal state and condition-action rules. This makes it easier for humans to adapt to new situations as they change tasks compared to situations where the tasks are not equal. Therefore future work should investigate if the results of this work can also be observed for different tasks. Further, The AMS agent was trained based on a single cognitive model describing only the behavior of one participant. It can be assumed that the constraints of humans cover a wide range so a single cognitive model cannot be applied for all participants. For instance, this could be the explanation why there was no significant performance increase for some highly skilled players. For a simple task such as the one presented, a single model might have been appropriate. However, in situations where users can behave much more flexibly and have even greater variability in skills of different types (i.e., perceptual, cognitive, motor skills, etc.), personal adaptation will be essential. We also cannot rule out that participants adjusted their playing behavior based on the condition. Most likely, they sometimes also focused on the inactive platform, which was not represented in our cognitive user models. Finally, the system solely aims at productivity, which has ethical implications in a real-life context. To build successful AMSs, one also must take well-being and varying participant needs into account.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION</head><p>AMSs aim for better multitasking support for humans. Due to the complexity of human behavior and the involved environments, sophisticated AMSs hardly exist. In this work, we proposed to develop future systems with RL agents that utilize computational rationality.</p><p>To demonstrate the capabilities of this idea, we implemented a fastpaced visual-motoric balancing game where users had to switch between two tasks to balance balls on two platforms. Our aim was to design an AMS agent that finds opportune moments for interruptions and automatically switches between the platforms. Therefore, we used concepts of computational rationality to develop a model with cognitive constraints, which is used to train the AMS agent. The cognitive model is defined by its constraints and their extent, which are determined by means of parameters. We evaluated the approach in a user study with N=43 participants, who experienced four different conditions. We compared an AMS trained on the cognitive model with other AMS agents using an unconstrained model, as well as a notification mode where users had to confirm task switches. These conditions were compared to a baseline where participants themselves had to switch between the tasks. Thereby, we assessed performance (game scores), player/model behavior, and subjective ratings for workload. Our results show that the AMS agent trained on the cognitive model could significantly improve participants' performance, in contrast to their self-determined interruption strategies as well as the other conditions. Computational rationality was a key concept for our results as the unconstrained user model could not benefit human performance. Further, the best performing AMS using the cognitive model made participants switch between the platforms at a higher pace, while participants themselves acted more cautiously. Finally, cooperation with the AMS was rated best in terms of subjective workload according to multiple dimensions of the NASA-TLX. With this work, we have confirmed our hypothesis that RL and CR can be used to improve human multitasking performance and build more sophisticated attention management systems in the future.</p><p>We will extend our system to include additional tasks with different user demands and re-evaluate our results. Additionally, we hope that the community uses our developed tool to research and evaluate AMSs for various purposes. Given the large amount of technology surrounding us, the time for attention management is now!</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: The multitasking continuum describes the relationship between concurrent and sequential multitasking. The balancing task used for this project contains aspects of both concurrent and sequential multitasking (adapted from Salvucci et al. [70] left). Task switching results in switch costs given by the interruption and the resumption lags (right).</figDesc><graphic coords="4,53.80,83.69,504.41,66.53" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>3. 4 . 2</head><label>42</label><figDesc>Cognitive Model. The human modeling agent mimics the behavior of a human playing the balancing game. Human players are subject to certain constraints in perceiving the actual state of the game. The following constraints were defined: 1. Adaptation of the internal representation (velocity and position) of the ball after a task switch. 2. Imprecise values of the following objects due to limitations in visual perception: 2.1. Position of the ball 2.2. Velocity of the ball 2.3. Angle of the platform</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: The change of the belief ball position over time. The white ball shows the currently believed ball position. The red line indicates the velocity with the highest probability of the normal distribution. The black line points to the average direction of the sample velocities. At step 1, the left platform is active (indicated by the green color). At step 2, an upcoming task switch is indicated by the white color of the target platform. At step 3, the task switch is performed resulting in an update of the belief ball position of the right platform: from an imprecise position in step 2 to the true position at step 3. In steps 3 to 6, the increasing mismatch, between the belief ball position and the true ball position on the left, inactive platform, can be seen. This ever-increasing mismatch is caused by the determined sigma values of the normal distribution.</figDesc><graphic coords="8,53.80,83.69,504.40,229.59" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Participants' absolute (left) and normalized (right) game scores in the four experimental conditions. A higher score indicates better performance. The normalized scores (based on players' maximum performance over all episodes) allow for a better visual interpretation of the data since the absolute scores strongly varied between the participants.</figDesc><graphic coords="10,53.80,321.79,504.40,148.93" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Comparisons between the best-performing AMS trained using the cognitive model and the no supervisor condition.The results indicate that the AMS prompted participants to switch faster and resolve more difficult situations, while they acted more cautiously when playing without the system. Higher values for platform rotation (degrees), ball distance (Unity units), and ball velocity (Unity units/s.) indicate more difficult situations.</figDesc><graphic coords="12,66.41,83.68,479.21,505.48" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Comparison of low and highly skilled players. Similar to the AMS, highly skilled players switched more frequently. They also "cleared" the source platform better before switching than the less skilled players. Higher values for platform rotation (in degrees) indicate more difficult situations.</figDesc><graphic coords="13,66.41,83.69,479.18,161.07" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Pearson Correlation Matrix between skills in games and mode preferences. Non-significant variables are crossed out.</figDesc><graphic coords="13,55.00,304.53,237.85,184.09" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="1,53.80,305.03,504.40,127.56" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc></figDesc><graphic coords="5,53.80,83.69,504.38,198.63" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 :</head><label>1</label><figDesc>Players' performance and subjective ratings in the different conditions. The absolute score resembles the game time in seconds until the game is over, the normalized score is based on players' maximum performance over all episodes, and the distance to the center shows the average deviation of the balls to the platform centers in Unity units (i.e., "meters").</figDesc><table><row><cell></cell><cell>Cognitive Model</cell><cell>No Supervisor</cell><cell>Unconstrained</cell><cell>Notification</cell></row><row><cell></cell><cell>M (SD)</cell><cell>M (SD)</cell><cell>M (SD)</cell><cell>M (SD)</cell></row><row><cell></cell><cell cols="2">Performance Data</cell><cell></cell><cell></cell></row><row><cell>Absolute score (s)</cell><cell>36.29 (35.17)</cell><cell>25.99 (27.05)</cell><cell>19.71 (16.10)</cell><cell>20.03 (18.47)</cell></row><row><cell>Normalized score</cell><cell>.34 (.17)</cell><cell>.26 (.15)</cell><cell>.22 (.14)</cell><cell>.23 (.15)</cell></row><row><cell>Distance to center</cell><cell>3.12 (.30)</cell><cell>3.19 (.25)</cell><cell>3.11 (.26)</cell><cell>3.21 (.25)</cell></row><row><cell>Reaction time (ms)</cell><cell>346 (151)</cell><cell>323 (179)</cell><cell>306 (94)</cell><cell>314 (143)</cell></row><row><cell></cell><cell cols="2">Subjective Workload</cell><cell></cell><cell></cell></row><row><cell>Mental demand</cell><cell>3.68 (1.57)</cell><cell>5.02 (1.39)</cell><cell>4.07 (1.53)</cell><cell>4.91 (1.44)</cell></row><row><cell>Physical demand</cell><cell>2.32 (1.29)</cell><cell>3 (1.75)</cell><cell>2.41 (1.50)</cell><cell>2.84 (1.80)</cell></row><row><cell>Temporal demand</cell><cell>4.02 (1.34)</cell><cell>4.09 (1.70)</cell><cell>4.55 (1.55)</cell><cell>5.18 (1.59)</cell></row><row><cell>Effort</cell><cell>4.11 (1.50)</cell><cell>4.96 (1.31)</cell><cell>4.34 (1.52)</cell><cell>5.11 (1.45)</cell></row><row><cell>Frustration</cell><cell>3.86 (1.67)</cell><cell>3.59 (1.62)</cell><cell>4.66 (1.31)</cell><cell>5 (1.46)</cell></row><row><cell>Subj. performance</cell><cell>4.25 (1.28)</cell><cell>3.93 (1.56)</cell><cell>3.71 (1.05)</cell><cell>3.14 (1.44)</cell></row><row><cell></cell><cell cols="2">User Preference</cell><cell></cell><cell></cell></row><row><cell>Overall rating</cell><cell>4.39 (1.48)</cell><cell>4.43 (1.56)</cell><cell>3.48 (1.23)</cell><cell>3.05 (1.54)</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0"><p>https://github.com/reapphil/AITentiveMultitasking</p></note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>ACKNOWLEDGMENTS</head><p>This project is supported by the <rs type="funder">Austrian Science Fund (FWF)</rs> under grant Nr.<rs type="grantNumber">P35976-N</rs> (AITentive) and the <rs type="funder">Research Council of Finland</rs> under grant <rs type="grantNumber">Nrs. 328400</rs>, <rs type="grantNumber">341763</rs>, and <rs type="grantNumber">328813</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funding" xml:id="_KVY6CrB">
+					<idno type="grant-number">P35976-N</idno>
+				</org>
+				<org type="funding" xml:id="_F9jVYRH">
+					<idno type="grant-number">Nrs. 328400</idno>
+				</org>
+				<org type="funding" xml:id="_zxMj8NT">
+					<idno type="grant-number">341763</idno>
+				</org>
+				<org type="funding" xml:id="_6JxT3qH">
+					<idno type="grant-number">328813</idno>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">If Not Now, when?: The Effects of Interruption at Different Moments Within Task Execution</title>
+		<author>
+			<persName><forename type="first">Piotr</forename><forename type="middle">D</forename><surname>Adamczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">P</forename><surname>Bailey</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/985692.985727</idno>
+		<ptr target="https://doi.org/10.1145/985692.985727" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Vienna, Austria; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="page" from="271" to="278" />
+		</imprint>
+	</monogr>
+	<note>CHI &apos;04)</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Alter</surname></persName>
+		</author>
+		<title level="m">Irresistible: The rise of addictive technology and the business of keeping us hooked</title>
+		<meeting><address><addrLine>London, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Penguin</publisher>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Memory for goals: An activationbased model</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Erik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Altmann</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Gregory Trafton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive science</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="39" to="83" />
+			<date type="published" when="2002">2002. 2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Guidelines for Human-AI Interaction</title>
+		<author>
+			<persName><forename type="first">Saleema</forename><surname>Amershi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dan</forename><surname>Weld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mihaela</forename><surname>Vorvoreanu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Adam</forename><surname>Fourney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Besmira</forename><surname>Nushi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Penny</forename><surname>Collisson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jina</forename><surname>Suh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shamsi</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Paul</forename><forename type="middle">N</forename><surname>Bennett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kori</forename><surname>Inkpen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaime</forename><surname>Teevan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruth</forename><surname>Kikin-Gil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Horvitz</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3290605.3300233</idno>
+		<ptr target="https://doi.org/10.1145/3290605.3300233" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2019 CHI Conference on Human Factors in Computing Systems<address><addrLine>Glasgow, Scotland Uk; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1" to="13" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;19)</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A Survey of Attention Management Systems in Ubiquitous Computing Environments</title>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Isabel</forename><surname>Hübener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ann-Kathrin</forename><surname>Seipp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandra</forename><surname>Ohly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Klaus</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Veljko</forename><surname>Pejovic</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3214261</idno>
+		<ptr target="https://doi.org/10.1145/3214261" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc. ACM Interact. Mob. Wearable Ubiquitous Technol</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">27</biblScope>
+			<date type="published" when="2018-07">2018. jul 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">On the need for attention-aware systems: Measuring effects of interruption on task performance, error rate, and affective state</title>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">P</forename><surname>Bailey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><forename type="middle">A</forename><surname>Konstan</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chb.2005.12.009</idno>
+		<ptr target="https://doi.org/10.1016/j.chb.2005.12.009" />
+	</analytic>
+	<monogr>
+		<title level="j">Computers in Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="685" to="708" />
+			<date type="published" when="2006-07">2006. July 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The effect of time-based cost of error in target-directed pointing tasks</title>
+		<author>
+			<persName><forename type="first">Nikola</forename><surname>Banovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tovi</forename><surname>Grossman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Fitzmaurice</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2470654.2466181</idno>
+		<ptr target="https://doi.org/10.1145/2470654.2466181" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Paris, France; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="1373" to="1382" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;13)</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Intrinsically motivated learning of hierarchical collections of skills</title>
+		<author>
+			<persName><forename type="first">Satinder</forename><surname>Andrew G Barto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nuttapong</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Chentanez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd International Conference on Development and Learning</title>
+		<meeting>the 3rd International Conference on Development and Learning<address><addrLine>California, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Citeseer</publisher>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="page">19</biblScope>
+		</imprint>
+		<respStmt>
+			<orgName>UCSD Institute for Neural Computation</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The effects of time constraints on user behavior for deferrable interruptions</title>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Bogunovich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><surname>Salvucci</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1978942.1979404</idno>
+		<ptr target="https://doi.org/10.1145/1978942.1979404" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Vancouver, BC, Canada; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="3123" to="3126" />
+		</imprint>
+	</monogr>
+	<note>CHI &apos;11)</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Interruption management in the context of take-over-requests in conditional driving automation</title>
+		<author>
+			<persName><forename type="first">Avinoam</forename><surname>Borowsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Noa</forename><surname>Zangi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tal</forename><surname>Oron-Gilad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Human-Machine Systems</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1015" to="1024" />
+			<date type="published" when="2022">2022. 2022</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">The costs of multitasking in threaded cognition</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Borst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Taatgen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the eighth international conference on cognitive modeling</title>
+		<meeting>the eighth international conference on cognitive modeling<address><addrLine>New York, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Psychology Press</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="133" to="138" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">The problem state: a cognitive bottleneck in multitasking</title>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">A</forename><surname>Jelmer P Borst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hedderik</forename><surname>Taatgen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Rijn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: Learning, memory, and cognition</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">363</biblScope>
+			<date type="published" when="2010">2010. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">What Makes Interruptions Disruptive? A Process-Model Account of the Effects of the Problem State Bottleneck on Task Interruption and Resumption</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jelmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">A</forename><surname>Borst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hedderik</forename><surname>Taatgen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Van Rijn</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2702123.2702156</idno>
+		<ptr target="https://doi.org/10.1145/2702123.2702156" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 33rd Annual ACM Conference on Human Factors in Computing Systems (Seoul, Republic of Korea) (CHI &apos;15)</title>
+		<meeting>the 33rd Annual ACM Conference on Human Factors in Computing Systems (Seoul, Republic of Korea) (CHI &apos;15)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2015">2015. 2971-2980</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Computational Models of User Multitasking</title>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tuomo</forename><surname>Kujala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/oso/9780198799603.003.0013</idno>
+		<ptr target="https://academic.oup.com/book/0/chapter/297822125/chapter-pdf/40117570/oso-9780198799603-chapter-13.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">Computational Interaction</title>
+		<meeting><address><addrLine>Oxford, England</addrLine></address></meeting>
+		<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Pervasive Attentive User Interfaces</title>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Bulling</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/MC.2016.32</idno>
+		<ptr target="https://doi.org/10.1109/MC.2016.32" />
+	</analytic>
+	<monogr>
+		<title level="j">Computer</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="94" to="98" />
+			<date type="published" when="2016-01">2016. Jan. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Does the difficulty of an interruption affect our ability to resume?</title>
+		<author>
+			<persName><forename type="first">Deborah</forename><forename type="middle">A</forename><surname>David M Cades</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Boehm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">A</forename><surname>Gregory Trafton</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Monk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the human factors and ergonomics society annual meeting</title>
+		<meeting>the human factors and ergonomics society annual meeting<address><addrLine>Los Angeles, CA</addrLine></address></meeting>
+		<imprint>
+			<publisher>SAGE Publications Sage CA</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="234" to="238" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Does the difficulty of an interruption affect our ability to resume?</title>
+		<author>
+			<persName><forename type="first">Deborah</forename><forename type="middle">A</forename><surname>David M Cades</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Boehm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">A</forename><surname>Gregory Trafton</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Monk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the human factors and ergonomics society annual meeting</title>
+		<meeting>the human factors and ergonomics society annual meeting<address><addrLine>Los Angeles, CA</addrLine></address></meeting>
+		<imprint>
+			<publisher>SAGE Publications Sage CA</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="234" to="238" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">The Emergence of Interactive Behavior: A Model of Rational Menu Search</title>
+		<author>
+			<persName><forename type="first">Xiuli</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2702123.2702483</idno>
+		<ptr target="https://doi.org/10.1145/2702123.2702483" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 33rd Annual ACM Conference on Human Factors in Computing Systems (Seoul, Republic of Korea) (CHI &apos;15)</title>
+		<meeting>the 33rd Annual ACM Conference on Human Factors in Computing Systems (Seoul, Republic of Korea) (CHI &apos;15)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="4217" to="4226" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">A Cognitive Model of How People Make Decisions Through Interaction with Visual Displays</title>
+		<author>
+			<persName><forename type="first">Xiuli</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandra</forename><forename type="middle">Dorothee</forename><surname>Starke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Baber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3025453.3025596</idno>
+		<ptr target="https://doi.org/10.1145/3025453.3025596" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2017 CHI Conference on Human Factors in Computing Systems<address><addrLine>Denver, Colorado, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1205" to="1216" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;17)</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Human Factors Definitions for Automated Driving and Related Research Topics</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>SAE International</publisher>
+			<pubPlace>Pennsylvania, USA</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Driving Automation Systems Committee et</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Instant messaging: Effects of relevance and timing</title>
+		<author>
+			<persName><forename type="first">Mary</forename><surname>Czerwinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edward</forename><surname>Cutrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Horvitz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">People and computers XIV: Proceedings of HCI</title>
+		<meeting><address><addrLine>London, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2000">2000</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="71" to="76" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Eliciting Spoken Interruptions to Inform Proactive Speech Agent Design</title>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christian</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sandy</forename><surname>Gould</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><forename type="middle">R</forename><surname>Cowan</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3469595.3469618</idno>
+		<ptr target="https://doi.org/10.1145/3469595.3469618" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd Conference on Conversational User Interfaces (Bilbao (online), Spain) (CUI &apos;21)</title>
+		<meeting>the 3rd Conference on Conversational User Interfaces (Bilbao (online), Spain) (CUI &apos;21)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">12</biblScope>
+		</imprint>
+	</monogr>
+	<note>Article 23</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<author>
+			<persName><forename type="first">C</forename><surname>Ferreira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Geig</surname></persName>
+		</author>
+		<ptr target="https://www.intel.com/content/www/us/en/developer/articles/guide/get-started-with-the-unity-entity-component-system-ecs-c-sharp-job-system-and-burst-compiler.html" />
+		<title level="m">Get Started with the Unity* Entity Component System (ECS), C# Job System, and Burst Compiler</title>
+		<imprint>
+			<publisher>Intel Corporation</publisher>
+			<date type="published" when="2018">2018. 2022-11-12) 1 (2018</date>
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Investigating Episodes of Mobile Phone Activity as Indicators of Opportune Moments to Deliver Notifications</title>
+		<author>
+			<persName><forename type="first">Joel</forename><forename type="middle">E</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Greenhalgh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Benford</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2037373.2037402</idno>
+		<ptr target="https://doi.org/10.1145/2037373.2037402" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 13th International Conference on Human Computer Interaction with Mobile Devices and Services</title>
+		<meeting>the 13th International Conference on Human Computer Interaction with Mobile Devices and Services<address><addrLine>Stockholm, Sweden; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="181" to="190" />
+		</imprint>
+	</monogr>
+	<note>) (Mobile-HCI &apos;11)</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">How Not to Lie with Statistics: The Correct Way to Summarize Benchmark Results</title>
+		<author>
+			<persName><forename type="first">Philip</forename><forename type="middle">J</forename><surname>Fleming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">J</forename><surname>Wallace</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/5666.5673</idno>
+		<ptr target="https://doi.org/10.1145/5666.5673" />
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="218" to="221" />
+			<date type="published" when="1986-03">1986. mar 1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A personal resource for technology interaction: development and validation of the affinity for technology interaction (ATI) scale</title>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Franke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christiane</forename><surname>Attig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Wessel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="456" to="467" />
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Driving Hotzenplotz: A Hybrid Interface for Vehicle Control Aiming to Maximize Pleasure in Highway Driving</title>
+		<author>
+			<persName><forename type="first">Anna-Katharina</forename><surname>Frison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Wintersberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Riener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clemens</forename><surname>Schartmüller</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3122986.3123016</idno>
+		<ptr target="https://doi.org/10.1145/3122986.3123016" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 9th International Conference on Automotive User Interfaces and Interactive Vehicular Applications</title>
+		<meeting>the 9th International Conference on Automotive User Interfaces and Interactive Vehicular Applications<address><addrLine>Oldenburg, Germany; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="236" to="244" />
+		</imprint>
+	</monogr>
+	<note>AutomotiveUI &apos;17</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Learning Cooperative Personalized Policies from Gaze Data</title>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Gebhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><surname>Hecox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Bas Van Opheusden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Wigdor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Otmar</forename><surname>Hillis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hrvoje</forename><surname>Hilliges</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benko</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3332165.3347933</idno>
+		<ptr target="https://doi.org/10.1145/3332165.3347933" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 32nd Annual ACM Symposium on User Interface Software and Technology</title>
+		<meeting>the 32nd Annual ACM Symposium on User Interface Software and Technology<address><addrLine>New Orleans, LA, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="197" to="208" />
+		</imprint>
+	</monogr>
+	<note>UIST &apos;19)</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Hierarchical reinforcement learning as a model of human task interleaving</title>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Gebhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Otmar</forename><surname>Hilliges</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Brain &amp; Behavior</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="284" to="304" />
+			<date type="published" when="2020">2020. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">What does it mean for an interruption to be relevant? An investigation of relevance as a memory effect</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Sandy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Gould</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><forename type="middle">L</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cox</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the human factors and ergonomics society annual meeting</title>
+		<meeting>the human factors and ergonomics society annual meeting<address><addrLine>Los Angeles, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>SAGE Publications Sage CA</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page" from="149" to="153" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Development of NASA-TLX (Task Load Index): Results of Empirical and Theoretical Research</title>
+		<author>
+			<persName><forename type="first">Sandra</forename><forename type="middle">G</forename><surname>Hart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lowell</forename><forename type="middle">E</forename><surname>Staveland</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0166-4115(08)62386-9</idno>
+		<ptr target="https://doi.org/10.1016/S0166-4115(08)62386-9" />
+	</analytic>
+	<monogr>
+		<title level="m">Human Mental Workload</title>
+		<title level="s">Advances in Psychology</title>
+		<editor>
+			<persName><forename type="first">Peter</forename><forename type="middle">A</forename><surname>Hancock</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Najmedin</forename><surname>Meshkati</surname></persName>
+		</editor>
+		<meeting><address><addrLine>North-Holland, Amsterdam, Netherlands</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1988">1988</date>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="139" to="183" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Interruption of the Tower of London task: support for a goal-activation approach</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Helen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dylan</forename><forename type="middle">M</forename><surname>Hodgetts</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jones</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Experimental Psychology: General</title>
+		<imprint>
+			<biblScope unit="volume">135</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">103</biblScope>
+			<date type="published" when="2006">2006. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Principles of Mixed-initiative User Interfaces</title>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Horvitz</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/302979.303030</idno>
+		<ptr target="https://doi.org/10.1145/302979.303030" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Pittsburgh, Pennsylvania, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="page" from="159" to="166" />
+		</imprint>
+	</monogr>
+	<note>CHI &apos;99)</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Notification, disruption, and memory: Effects of messaging interruptions on memory and performance</title>
+		<author>
+			<persName><surname>Ecmce Horvitz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Human-Computer Interaction: INTERACT</title>
+		<meeting><address><addrLine>Amsterdam, Netherlands</addrLine></address></meeting>
+		<imprint>
+			<publisher>IOS Press</publisher>
+			<date type="published" when="2001">2001</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">263</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Towards machines that understand people</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jussi</forename><surname>Pp Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AI Magazine</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="312" to="327" />
+			<date type="published" when="2023">2023. 2023</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Investigating the Effectiveness of Mental Workload As a Predictor of Opportune Moments for Interruption</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shamsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">P</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bailey</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1056808.1056948</idno>
+		<ptr target="https://doi.org/10.1145/1056808.1056948" />
+	</analytic>
+	<monogr>
+		<title level="m">CHI &apos;05 Extended Abstracts on Human Factors in Computing Systems</title>
+		<meeting><address><addrLine>Portland, OR, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2005">2005</date>
+			<biblScope unit="page" from="1489" to="1492" />
+		</imprint>
+	</monogr>
+	<note>) (CHI EA &apos;05)</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Effects of intelligent notification management on users and their tasks</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shamsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">P</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bailey</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1357054.1357070</idno>
+		<ptr target="https://doi.org/10.1145/1357054.1357070" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Florence, Italy; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="93" to="102" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;08)</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Oasis: A framework for linking notification delivery to the perceptual structure of goal-directed tasks</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shamsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><forename type="middle">P</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Bailey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Computer-Human Interaction (TOCHI)</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1" to="28" />
+			<date type="published" when="2010">2010. 2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Notifications and awareness: a field study of alert usage and preferences</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shamsi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Iqbal</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Horvitz</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1718918.1718926</idno>
+		<ptr target="https://doi.org/10.1145/1718918.1718926" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2010 ACM Conference on Computer Supported Cooperative Work</title>
+		<meeting>the 2010 ACM Conference on Computer Supported Cooperative Work<address><addrLine>Savannah, Georgia, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="27" to="30" />
+		</imprint>
+	</monogr>
+	<note>CSCW &apos;10)</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Integrating knowledge of multitasking and interruptions across different perspectives and research methods</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">P</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Sandy</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Gould</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">W</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna</forename><forename type="middle">L</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Cox</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijhcs.2015.03.002</idno>
+		<ptr target="https://doi.org/10.1016/j.ijhcs.2015.03.002" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title/>
+		<author>
+			<orgName type="collaboration">JASP Team</orgName>
+		</author>
+		<ptr target="https://jasp-stats.org/" />
+	</analytic>
+	<monogr>
+		<title level="j">JASP</title>
+		<imprint>
+			<biblScope unit="volume">0</biblScope>
+			<biblScope unit="issue">18</biblScope>
+			<date type="published" when="2023">2023</date>
+		</imprint>
+	</monogr>
+	<note>Computer software</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Touchscreen Typing As Optimal Supervisory Control</title>
+		<author>
+			<persName><forename type="first">Jussi</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aditya</forename><surname>Acharya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Uzair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinhui</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3411764.3445483</idno>
+		<ptr target="https://doi.org/10.1145/3411764.3445483" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2021 CHI Conference on Human Factors in Computing Systems<address><addrLine>Yokohama, Japan; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="volume">720</biblScope>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Multitasking in driving as optimal adaptation under uncertainty</title>
+		<author>
+			<persName><forename type="first">Tuomo</forename><surname>Jussi Pp Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Kujala</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Oulasvirta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Human factors</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1324" to="1341" />
+			<date type="published" when="2021">2021. 2021</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Modelling Drivers&apos; Adaptation to Assistance Systems</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">P</forename><surname>Jussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tuomo</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Kujala</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3409118.3475150</idno>
+		<ptr target="https://doi.org/10.1145/3409118.3475150" />
+	</analytic>
+	<monogr>
+		<title level="m">13th International Conference on Automotive User Interfaces and Interactive Vehicular Applications</title>
+		<meeting><address><addrLine>Leeds, United Kingdom; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="12" to="19" />
+		</imprint>
+	</monogr>
+	<note>) (AutomotiveUI &apos;21)</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Unity: A general platform for intelligent agents</title>
+		<author>
+			<persName><forename type="first">Arthur</forename><surname>Juliani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent-Pierre</forename><surname>Berges</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ervin</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jonathan</forename><surname>Harper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Elion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><surname>Goy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hunter</forename><surname>Henry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marwan</forename><surname>Mattar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1809.026271</idno>
+		<imprint>
+			<date type="published" when="2018">2018. 2018</date>
+			<biblScope unit="page">28</biblScope>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Inferring Cognitive Models from Data using Approximate Bayesian Computation</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Kangasrääsiö</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kumaripaba</forename><surname>Athukorala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jukka</forename><surname>Corander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samuel</forename><surname>Kaski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3025453.3025576</idno>
+		<ptr target="https://doi.org/10.1145/3025453.3025576" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2017 CHI Conference on Human Factors in Computing Systems<address><addrLine>Denver, Colorado, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1295" to="1306" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;17)</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Interrupt me: External interruptions are less disruptive than self-interruptions</title>
+		<author>
+			<persName><forename type="first">Ioanna</forename><surname>Katidioti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jelmer</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Borst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">A</forename><surname>Marieke K Van Vugt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Taatgen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computers in Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="page" from="906" to="915" />
+			<date type="published" when="2016">2016. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Optimizing for Happiness and Productivity: Modeling Opportune Moments for Transitions and Breaks at Work</title>
+		<author>
+			<persName><forename type="first">Harmanpreet</forename><surname>Kaur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><forename type="middle">C</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Mcduff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mary</forename><surname>Czerwinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jaime</forename><surname>Teevan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shamsi</forename><forename type="middle">T</forename><surname>Iqbal</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3313831.3376817</idno>
+		<ptr target="https://doi.org/10.1145/3313831.3376817" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2020 CHI Conference on Human Factors in Computing Systems<address><addrLine>Honolulu, HI, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1" to="15" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Hotzenplotz: Reconciling Automation with Experience</title>
+		<author>
+			<persName><forename type="first">Holger</forename><surname>Klapperich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Hassenzahl</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2971485.2971532</idno>
+		<ptr target="https://doi.org/10.1145/2971485.2971532" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 9th Nordic Conference on Human-Computer Interaction</title>
+		<meeting>the 9th Nordic Conference on Human-Computer Interaction<address><addrLine>Gothenburg, Sweden; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page">10</biblScope>
+		</imprint>
+	</monogr>
+	<note>NordiCHI &apos;16). Article 39</note>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Ablenkung durch moderne Informations-und Kommunikationstechniken und soziale Interaktion bei Autofahrern</title>
+		<author>
+			<persName><forename type="first">Joerg</forename><surname>Kubitzki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wolfgang</forename><surname>Fastenmeier</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<pubPlace>Stuttgart, Germany</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Allianz AG</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Personalized heartsteps: A reinforcement learning algorithm for optimizing physical activity</title>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kristjan</forename><surname>Greenewald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Predrag</forename><surname>Klasnja</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Susan</forename><surname>Murphy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the ACM on Interactive, Mobile, Wearable and Ubiquitous Technologies</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="2020">2020. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">The cost of interrupted work: more speed and stress</title>
+		<author>
+			<persName><forename type="first">Gloria</forename><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniela</forename><surname>Gudith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ulrich</forename><surname>Klocke</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1357054.1357072</idno>
+		<ptr target="https://doi.org/10.1145/1357054.1357072" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Florence, Italy; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="107" to="110" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;08)</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Playing Atari with Deep Reinforcement Learning</title>
+		<author>
+			<persName><forename type="first">Volodymyr</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Koray</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ioannis</forename><surname>Antonoglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daan</forename><surname>Wierstra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Martin</forename><surname>Riedmiller</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1312.5602[cs.LG</idno>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">The effect of frequent versus infrequent interruptions on primary task resumption</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Christopher</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Monk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the human factors and ergonomics society annual meeting</title>
+		<meeting>the human factors and ergonomics society annual meeting<address><addrLine>Los Angeles, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>SAGE Publications Sage CA</publisher>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="295" to="299" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">The effect of interruption duration and demand on resuming suspended goals</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Christopher A Monk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Deborah</forename><forename type="middle">A</forename><surname>Gregory Trafton</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Boehm-Davis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of experimental psychology: Applied</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">299</biblScope>
+			<date type="published" when="2008">2008. 2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Amortized Inference with User Simulations</title>
+		<author>
+			<persName><forename type="first">Hee-Seung</forename><surname>Moon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Byungjoo</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3544548.3581439</idno>
+		<ptr target="https://doi.org/10.1145/3544548.3581439" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2023 CHI Conference on Human Factors in Computing Systems<address><addrLine>Hamburg, Germany; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="volume">773</biblScope>
+			<biblScope unit="page">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Driving and multitasking: the good, the bad, and the dangerous</title>
+		<author>
+			<persName><forename type="first">Menno</forename><surname>Nijboer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jelmer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hedderik</forename><surname>Borst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">A</forename><surname>Van Rijn</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Taatgen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in psychology</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page">1718</biblScope>
+			<date type="published" when="2016">2016. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Reducing users&apos; perceived mental effort due to interruptive notifications in multi-device mobile environments</title>
+		<author>
+			<persName><forename type="first">Tadashi</forename><surname>Okoshi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Ramos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hiroki</forename><surname>Nozaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename><surname>Nakazawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anind</forename><forename type="middle">K</forename><surname>Dey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hideyuki</forename><surname>Tokuda</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2750858.2807517</idno>
+		<ptr target="https://doi.org/10.1145/2750858.2807517" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2015 ACM International Joint Conference on Pervasive and Ubiquitous Computing</title>
+		<meeting>the 2015 ACM International Joint Conference on Pervasive and Ubiquitous Computing<address><addrLine>Osaka, Japan; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="475" to="486" />
+		</imprint>
+	</monogr>
+	<note>UbiComp &apos;15)</note>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Computational Rationality as a Theory of Interaction</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">P</forename><surname>Jussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3491102.3517739</idno>
+		<ptr target="https://doi.org/10.1145/3491102.3517739" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2022 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2022 CHI Conference on Human Factors in Computing Systems<address><addrLine>New Orleans, LA, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">359</biblScope>
+			<biblScope unit="page">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Surviving task interruptions: Investigating the implications of long-term working memory theory</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pertti</forename><surname>Saariluoma</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijhcs.2006.04.006</idno>
+		<ptr target="https://doi.org/10.1016/j.ijhcs.2006.04.006" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="page" from="941" to="961" />
+			<date type="published" when="2006-10">2006. Oct. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">A model for types and levels of human interaction with automation</title>
+		<author>
+			<persName><forename type="first">Raja</forename><surname>Parasuraman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">B</forename><surname>Sheridan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Wickens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on systems, man, and cybernetics-Part A: Systems and Humans</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="286" to="297" />
+			<date type="published" when="2000">2000. 2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<monogr>
+		<title level="m" type="main">Probabilistic Formulation of the Take The Best Heuristic</title>
+		<author>
+			<persName><forename type="first">Tomi</forename><surname>Peltola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jussi</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Samuel</forename><surname>Kaski</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1911.00572</idno>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+		</imprint>
+	</monogr>
+	<note>stat.AP</note>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Sensor-Based Identification of Opportune Moments for Triggering Notifications</title>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Poppinga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wilko</forename><surname>Heuten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Susanne</forename><surname>Boll</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/MPRV.2014.15</idno>
+		<ptr target="https://doi.org/10.1109/MPRV.2014.15" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Pervasive Computing</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="22" to="29" />
+			<date type="published" when="2014">2014. 2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Individual differences in media multitasking and performance on the n-back</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename><surname>Brandon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Ralph</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Smilek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Attention, Perception, &amp; Psychophysics</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="582" to="592" />
+			<date type="published" when="2017">2017. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Skills, rules, and knowledge; signals, signs, and symbols, and other distinctions in human performance models</title>
+		<author>
+			<persName><forename type="first">Jens</forename><surname>Rasmussen</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TSMC.1983.6313160</idno>
+		<ptr target="https://doi.org/10.1109/TSMC.1983.6313160" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Systems, Man, and Cybernetics SMC</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="257" to="266" />
+			<date type="published" when="1983">1983. 1983</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Attention aware systems: Theories, applications, and research agenda</title>
+		<author>
+			<persName><forename type="first">Claudia</forename><surname>Roda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julie</forename><surname>Thomas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computers in Human Behavior</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="557" to="587" />
+			<date type="published" when="2006">2006. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Multitasking and monotasking: the effects of mental workload on deferred task interruptions</title>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Bogunovich</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1753326.1753340</idno>
+		<ptr target="https://doi.org/10.1145/1753326.1753340" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Atlanta, Georgia, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="85" to="88" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;10)</note>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">A processmodel account of task interruption and resumption: When does encoding of the problem state occur?</title>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">A</forename><surname>Monk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gregory Trafton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Human Factors and Ergonomics Society Annual Meeting</title>
+		<meeting>the Human Factors and Ergonomics Society Annual Meeting<address><addrLine>Los Angeles, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>SAGE Publications Sage CA</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="799" to="803" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Threaded cognition: an integrated theory of concurrent multitasking</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dario</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">A</forename><surname>Salvucci</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Taatgen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological review</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">101</biblScope>
+			<date type="published" when="2008">2008. 2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Toward a unified theory of the multitasking continuum: from concurrent performance to task switching, interruption, and resumption</title>
+		<author>
+			<persName><forename type="first">Dario</forename><forename type="middle">D</forename><surname>Salvucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niels</forename><forename type="middle">A</forename><surname>Taatgen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jelmer</forename><forename type="middle">P</forename><surname>Borst</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1518701.1518981</idno>
+		<ptr target="https://doi.org/10.1145/1518701.1518981" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Boston, MA, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="1819" to="1828" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;09)</note>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">A practical guide to measuring usability</title>
+		<author>
+			<persName><forename type="first">Jeff</forename><surname>Sauro</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Measuring Usability LLC</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">124</biblScope>
+			<date type="published" when="2010">2010. 2010</date>
+			<pubPlace>Denver</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Designing Task Resumption Cues for Interruptions in Mobile Learning Scenarios</title>
+		<author>
+			<persName><forename type="first">Christina</forename><surname>Schneegass</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Fiona</forename><surname>Draxler</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-030-30457-7_5</idno>
+		<ptr target="https://doi.org/10.1007/978-3-030-30457-7_5SeriesTitle:Human-ComputerInteractionSeries" />
+	</analytic>
+	<monogr>
+		<title level="m">Technology-Augmented Perception and Cognition</title>
+		<editor>
+			<persName><forename type="first">Evangelos</forename><surname>Niforatos</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Tilman</forename><surname>Dingler</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page" from="125" to="181" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Children adapt drawing actions to their own motor variability and to the motivational context of action</title>
+		<author>
+			<persName><forename type="first">Siti</forename><surname>Rohkmah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohd</forename><surname>Shukri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="page" from="152" to="165" />
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">The influence of task interruption on individual decision making: An information overload perspective</title>
+		<author>
+			<persName><forename type="first">Cheri</forename><surname>Speier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joseph</forename><forename type="middle">S</forename><surname>Valacich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Iris</forename><surname>Vessey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Decision sciences</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="337" to="360" />
+			<date type="published" when="1999">1999. 1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Mitigating the Effects of Reading Interruptions by Providing Reviews and Previews</title>
+		<author>
+			<persName><forename type="first">Namrata</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rajiv</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jennifer</forename><surname>Healey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zoya</forename><surname>Bylinskii</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tilman</forename><surname>Dingler</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3411763.3451610</idno>
+		<ptr target="https://doi.org/10.1145/3411763.3451610" />
+	</analytic>
+	<monogr>
+		<title level="m">Extended Abstracts of the 2021 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting><address><addrLine>Yokohama, Japan; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2021">2021</date>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+	<note>Article 229</note>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">How To Reclaim The Huge Losses That Multitasking Forces On Your Company</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Steinhorst</surname></persName>
+		</author>
+		<ptr target="https://www.forbes.com/sites/curtsteinhorst/2020/02/28/how-to-reclaim-the-huge-losses-that-multitasking-forces-on-your-company/?sh=26d7e8cbc024" />
+	</analytic>
+	<monogr>
+		<title level="j">Forbes.com</title>
+		<imprint>
+			<date type="published" when="2020-08-22">2020. August 22, 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<monogr>
+		<title level="m" type="main">Reinforcement learning: An introduction</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Richard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">G</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Barto</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>MIT press</publisher>
+			<pubPlace>Cambridge, MA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">A comprehensive review of the paced auditory serial addition test (PASAT)</title>
+		<author>
+			<persName><surname>Tom N Tombaugh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Archives of clinical neuropsychology</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="53" to="76" />
+			<date type="published" when="2006">2006. 2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">Task interruptions</title>
+		<author>
+			<persName><forename type="first">Trafton</forename><surname>Gregory</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">A</forename><surname>Monk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Reviews of human factors and ergonomics</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="111" to="126" />
+			<date type="published" when="2007">2007. 2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Attentive user interfaces</title>
+		<author>
+			<persName><forename type="first">Roel</forename><surname>Vertegaal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="30" to="33" />
+			<date type="published" when="2003">2003. 2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<monogr>
+		<title level="m" type="main">Permanently online, permanently connected: Living and communicating in a POPC world</title>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Vorderer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dorothée</forename><surname>Hefner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leonard</forename><surname>Reinecke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Klimmt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Routledge</publisher>
+			<pubPlace>New York; London</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title level="a" type="main">The Computer for the 21 st Century</title>
+		<author>
+			<persName><forename type="first">Mark</forename><surname>Weiser</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific american</title>
+		<imprint>
+			<biblScope unit="volume">265</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="94" to="105" />
+			<date type="published" when="1991">1991. 1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title level="a" type="main">Processing resources and attention</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Christopher</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wickens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Multiple task performance</title>
+		<meeting><address><addrLine>Florida, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>CRC Press</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="3" to="34" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title level="a" type="main">Let Me Finish before I Take Over: Towards Attention Aware Device Integration in Highly Automated Vehicles</title>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Wintersberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Riener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clemens</forename><surname>Schartmüller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Anna-Katharina</forename><surname>Frison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Klemens</forename><surname>Weigl</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3239060.3239085</idno>
+		<ptr target="https://doi.org/10.1145/3239060.3239085" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 10th International Conference on Automotive User Interfaces and Interactive Vehicular Applications</title>
+		<meeting>the 10th International Conference on Automotive User Interfaces and Interactive Vehicular Applications<address><addrLine>Toronto, ON, Canada; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="53" to="65" />
+		</imprint>
+	</monogr>
+	<note>AutomotiveUI &apos;18</note>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<analytic>
+		<title level="a" type="main">Attentive user interfaces to improve multitasking and take-over performance in automated driving: the auto-net of things</title>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Wintersberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Clemens</forename><surname>Schartmüller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>Riener</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Mobile Human Computer Interaction (IJMHCI)</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="40" to="58" />
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b85">
+	<analytic>
+		<title level="a" type="main">Designing for Continuous Interaction with Artificial Intelligence Systems</title>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Wintersberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Niels</forename><surname>Van Berkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nadia</forename><surname>Fereydooni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Benjamin</forename><surname>Tag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Elena</forename><forename type="middle">L</forename><surname>Glassman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Buschek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ann</forename><surname>Blandford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Florian</forename><surname>Michahelles</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3491101.3516409</idno>
+		<ptr target="https://doi.org/10.1145/3491101.3516409" />
+	</analytic>
+	<monogr>
+		<title level="m">Extended Abstracts of the 2022 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting><address><addrLine>New Orleans, LA, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="volume">170</biblScope>
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+	<note>CHI EA &apos;22)</note>
+</biblStruct>
+
+<biblStruct xml:id="b86">
+	<analytic>
+		<title level="a" type="main">Task switching and the measurement of &quot;switch costs</title>
+		<author>
+			<persName><forename type="first">Glenn</forename><surname>Wylie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alan</forename><surname>Allport</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological research</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="212" to="233" />
+			<date type="published" when="2000">2000. 2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b87">
+	<analytic>
+		<title level="a" type="main">Augmenting Human Cognition with an AI-Mediated Intelligent Visual Feedback</title>
+		<author>
+			<persName><forename type="first">Songlin</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3544548.3580905</idno>
+		<ptr target="https://doi.org/10.1145/3544548.3580905" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2023 CHI Conference on Human Factors in Computing Systems<address><addrLine>Hamburg, Germany; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2023">2023</date>
+			<biblScope unit="page">16</biblScope>
+		</imprint>
+	</monogr>
+	<note>Article 26</note>
+</biblStruct>
+
+<biblStruct xml:id="b88">
+	<analytic>
+		<title level="a" type="main">Effect of multitasking on simulator sickness and performance in 3D aerodrome control training</title>
+		<author>
+			<persName><forename type="first">Yörük</forename><surname>Birsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Uğur</forename><surname>Açıkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yavuz</forename><surname>Turhan</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Akbulut</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Simulation &amp; Gaming</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="27" to="49" />
+			<date type="published" when="2018">2018. 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b89">
+	<analytic>
+		<title level="a" type="main">Attention and automation: New perspectives on mental underload and performance</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Neville</forename><forename type="middle">A</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Stanton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Theoretical issues in ergonomics science</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="178" to="194" />
+			<date type="published" when="2002">2002. 2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b90">
+	<analytic>
+		<title level="a" type="main">Optimizing the Timing of Intelligent Suggestion in Virtual Reality</title>
+		<author>
+			<persName><forename type="first">Difeng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruta</forename><surname>Desai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hrvoje</forename><surname>Benko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Tanya</forename><forename type="middle">R</forename><surname>Jonker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aakar</forename><surname>Gupta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3526113.3545632</idno>
+		<ptr target="https://doi.org/10.1145/3526113.3545632" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 35th Annual ACM Symposium on User Interface Software and Technology</title>
+		<meeting>the 35th Annual ACM Symposium on User Interface Software and Technology<address><addrLine>Bend, OR, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2022">2022</date>
+			<biblScope unit="page">20</biblScope>
+		</imprint>
+	</monogr>
+	<note>UIST &apos;22). Article 6</note>
+</biblStruct>
+
+<biblStruct xml:id="b91">
+	<analytic>
+		<title level="a" type="main">Reducing Interruptions at Work: A Large-Scale Field Study of FlowLight</title>
+		<author>
+			<persName><forename type="first">Manuela</forename><surname>Züger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><surname>Corley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">André</forename><forename type="middle">N</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Boyang</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Fritz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><surname>Shepherd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vinay</forename><surname>Augustine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Patrick</forename><surname>Francis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nicholas</forename><surname>Kraft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Will</forename><surname>Snipes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3025453.3025662</idno>
+		<ptr target="https://doi.org/10.1145/3025453.3025662" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2017 CHI Conference on Human Factors in Computing Systems<address><addrLine>Denver, Colorado, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="61" to="72" />
+		</imprint>
+	</monogr>
+	<note>CHI &apos;17)</note>
+</biblStruct>
+
+<biblStruct xml:id="b92">
+	<analytic>
+		<title level="a" type="main">Sensing Interruptibility in the Office: A Field Study on the Use of Biometric and Computer Interaction Sensors</title>
+		<author>
+			<persName><forename type="first">Manuela</forename><surname>Züger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sebastian</forename><forename type="middle">C</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">André</forename><forename type="middle">N</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Fritz</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3173574.3174165</idno>
+		<ptr target="https://doi.org/10.1145/3173574.3174165" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2018 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2018 CHI Conference on Human Factors in Computing Systems<address><addrLine>Montreal QC, Canada; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="1" to="14" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;18)</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

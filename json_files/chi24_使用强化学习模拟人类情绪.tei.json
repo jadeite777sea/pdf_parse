@@ -1,0 +1,542 @@
+{
+  "INTRODUCTION": {
+    "text": "Emotions have a signifcant infuence on interpersonal dynamics and outcomes in daily interactions. Similar efects are also present in human-computer interaction (HCI) [1], where users exhibit emotions akin to face-to-face interactions [2]. Consequently, emotions shape perceptions of interactive systems and impact the success of interactions [3][4][5]. It is therefore a long-standing goal of HCI to understand and predict a user's emotions. This is a challenging problem because while humans have an innate ability to recognize emotions in others, and make inferences and reason about them [6], computers lack this capacity. They require an explicit emotion model in order to make sense of and adapt to users' emotions. Many attempts to enhance computers' emotion detection focus on analyzing psychophysiological signals stemming from the user's autonomic nervous system [7][8][9]. However, the challenge of automated emotion detection is difcult due to the interplay between emotions and cognition [10][11]. Cognitive processes are unobservable, limiting machines to interpreting emotions based on observable behavior and physiological changes. Yet, if humans can deduce emotions from minimal observations, why can't machines? This paper posits that discerning user emotions requires a theory bridging cognition and emotions. Models accomplishing this implement psychological theories of human cognitive-emotional processes, aiming to deduce emotions from sparse data using modelinformed biases [12][13][14][15]. While several such models have emerged recently, their integration into HCI remains limited. The main contribution of our paper is the adaptation of the temporal diference reinforcement learning model of appraisal [16] to HCI. We assess the model's predictive capabilities in an interactive task, and expand it to capture the dynamic nature of emotions during interactions. The model's key innovation is merging a reward processing mechanism with appraisal theory, using a unifed reinforcement learning (RL) framework. Yet, it hasn't so far been adapted to interactive tasks, nor assessed with any real-life tasks involving human emotions. In this study, our focus is on examining and modeling three emotions: happiness, boredom, and irritation. These were selected due to their frequent occurrence in HCI and their substantial impact on user behavior, engagement, and the overall user experience [17]. The selected emotions represent a spectrum from positive (happiness), via neutral (boredom), to negative (irritation) [18][19][20]. Figure 1 illustrates the model at work: 'Lucy' strives to achieve her objectives in an interactive task. Each progressive step elicits positive feedback, leading to positive value estimates. As the task advances, Lucy gains confdence in her goal attainment. When prompted about her emotions after the task, she expresses happiness, but also a hint of boredom due to the task's simplicity. She doesn't feel frustrated. The bar graphs in Figure 1 display human self-report results from a relatively straightforward, rewarding task alongside the model's predictions. The alignment between the two stems from a computational cognitive emotion model that estimates the user's likely emotions given interactive events during the task. Predictions are made by applying a computationally grounded cognitive model, not by observing physiological signals or learning a model from human responses. Existing computational cognitive emotion models fall short in predicting the scenarios we present here, primarily because they do not incorporate a simulation of an autonomous agent capable of evaluating and selecting actions to optimize anticipated outcomes. We foresee multiple applications of this approach. First, afective computing researchers could integrate our work to existing models on physiological signals, improving the accuracy of emotion detection. Second, machines equipped with a model-based understanding of their users' emotions can simulate, in silico, alternative courses of action, deciding on one that is best predicted to achieve the desired emotional outcome [21][14].",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "The role of afect and emotion in HCI. Afect and emotion in human-computer interaction: From theory to applications",
+        "author": "Russell Beale, Christian Peter",
+        "year": "2008"
+      },
+      {
+        "id": "[2]",
+        "text": "Can social agents elicit shame as humans do?",
+        "author": "Tanja Schneeberger, Mirella Scholtes, Bernhard Hilpert, Markus Langer, Patrick Gebhard",
+        "year": "2019"
+      },
+      {
+        "id": "[3]",
+        "text": "MITHOS-Mixed Reality Interactive Teacher Training System for Confict Situations at School",
+        "author": "Chirag Bhuvaneshwara, Manuel Anglet, Bernhard Hilpert, Lara Chehayeb, Ann-Kristin Meyer, Daksitha Withanage Don, Dimitra Tsovaltzi, Patrick Gebhard, Antje Biermann, Sinah Auchtor",
+        "year": "2023"
+      },
+      {
+        "id": "[4]",
+        "text": "20 years of Research on Embodied Conversational Agents",
+        "author": "Patrick Gebhard, Dimitra Tsovaltzi, Tanja Schneeberger, Fabrizio Nunnari",
+        "year": "2022"
+      },
+      {
+        "id": "[5]",
+        "text": "Employing Virtual Agents for Building Trust in Driving Automation: A Qualitative Pilot Study",
+        "author": "Bernhard Hilpert, Gebhard, Schneeberger",
+        "year": "2021"
+      },
+      {
+        "id": "[6]",
+        "text": "Formalizing emotion concepts within a Bayesian model of theory of mind",
+        "author": "Rebecca Saxe, Sean Dae Houlihan",
+        "year": "2017"
+      },
+      {
+        "id": "[7]",
+        "text": "Autonomic nervous system activity in emotion: A review",
+        "author": "D Sylvia, Kreibig",
+        "year": "2010"
+      },
+      {
+        "id": "[8]",
+        "text": "Psychophysiological response patterning in emotion: Implications for afective computing. A blueprint for an afectively competent agent: Cross-fertilization between emotion psychology",
+        "author": "Gunnar Sylvia D Kreibig, Tobias Schaefer, Brosch",
+        "year": "2010"
+      },
+      {
+        "id": "[9]",
+        "text": "Afective computing",
+        "author": "Rosalind Wright Picard",
+        "year": "1995"
+      },
+      {
+        "id": "[10]",
+        "text": "Emotional expressions reconsidered: Challenges to inferring emotion from human facial movements",
+        "author": "Lisa Feldman, Barrett, Ralph Adolphs, Stacy Marsella, Aleix M Martinez, Seth D Pollak",
+        "year": "2019"
+      },
+      {
+        "id": "[11]",
+        "text": "The dynamic architecture of emotion: Evidence for the component process model",
+        "author": "Klaus R Scherer",
+        "year": "2009"
+      },
+      {
+        "id": "[12]",
+        "text": "Evaluating a computational model of emotion",
+        "author": "Jonathan Gratch, Stacy Marsella",
+        "year": "2005"
+      },
+      {
+        "id": "[13]",
+        "text": "Emotion in reinforcement learning agents and robots: a survey",
+        "author": "Joost Thomas M Moerland, Catholijn M Broekens, Jonker",
+        "year": "2018"
+      },
+      {
+        "id": "[14]",
+        "text": "Towards a prediction and data driven computational process model of emotion",
+        "author": "Klaus R Scherer",
+        "year": "2019"
+      },
+      {
+        "id": "[15]",
+        "text": "The Deep Method: Towards Computational Modeling of the Social Emotion Shame driven by Theory, Introspection, and Social Signals",
+        "author": "Tanja Schneeberger, Mirella Hladkỳ, Ann-Kristin Thurner, Jana Volkert, Alexander Heimerl, Tobias Baur, Elisabeth André, Patrick Gebhard",
+        "year": "2023"
+      },
+      {
+        "id": "[16]",
+        "text": "Modeling Cognitive-Afective Processes with Appraisal and Reinforcement Learning",
+        "author": "Jiayi Zhang, Joost Broekens, Jussi Jokinen",
+        "year": "2023"
+      },
+      {
+        "id": "[17]",
+        "text": "The phenomenon of boredom",
+        "author": "Marion Martin, Gaynor Sadlo, Graham Stew",
+        "year": "2006"
+      },
+      {
+        "id": "[18]",
+        "text": "Workplace user frustration with computers: An exploratory investigation of the causes and severity",
+        "author": "Jonathan Lazar, Adam Jones, Ben Shneiderman",
+        "year": "2006"
+      },
+      {
+        "id": "[19]",
+        "text": "Exploring the relationship between smartphone activities, fow experience, and boredom in free time",
+        "author": "Louis Leung",
+        "year": "2020"
+      },
+      {
+        "id": "[20]",
+        "text": "Momentary pleasure or lasting meaning? Distinguishing eudaimonic and hedonic user experiences",
+        "author": "D Elisa, Kasper Mekler, Hornbaek",
+        "year": "2016"
+      },
+      {
+        "id": "[21]",
+        "text": "Towards machines that understand people",
+        "author": "Andrew Howes, Jussi Pp Jokinen, Antti Oulasvirta",
+        "year": "2023"
+      }
+    ],
+    "subsections": {}
+  },
+  "BACKGROUND": {
+    "text": "Understanding and predicting the user's emotions is a long-standing objective in HCI. To that end, afective computing studies and develops systems designed to recognize, interpret, simulate, and respond to human emotions [1]. Since the founding of this feld [2], the main research lines revolve around the detection and interpretation of afective and social signals from humans [3], modeling the diferent facets of human-agent interaction [4][5][6], as well as computational simulation of emotion processes based on psychological theories [7], especially appraisal theories [8][9][10]. Afective computing has produced a number of key techniques that use sensors to infer emotional states, often based on either basic emotion [11] or core afect theories [12]. In contrast, appraisal theory stands out as a promising foundation for computational cognitive emotion models due to its dedication to explaining emotions within integrated cognitive-afective processes inherent to humans [13]. Cognitive models of appraisal delineate an evaluative process (appraisal) by which specifc situations evoke particular emotional responses, given the subject's goals [14][15][16][17]. For instance, the component process model (CPM) proposes a set of sequential cognitive checks, which assess situational stimuli based on characteristics like novelty, intrinsic pleasantness, goal relevance, and coping [18][19]. The CPM predicts that the collective efect of these evaluations results in an emotion-specifc outcome profle. Most commonly occurring profles are called 'modal', and are associated with an emotion word, such as happiness, joy, or anger [20]. Such appraisal models provide a detailed and empirically verifable account of the cognitive mechanics underpinning the appraisal process and its associated emotion [21]. Moreover, these models enable their specifcs to be formalized in computationally implementable terms [22][19], making them suitable for creating machines that understand their users' emotions. While this allows for a clear stepby-step analysis of how a specifc emotion may have been elicited by a given situational stimulus, especially for computational implementations of this model, it only provides a framework for the static, momentary assessment of emotion elicitation, i.e. a specifc moment in time. Yet, most scenarios, especially interactive tasks, encompass an extended temporal context and repeated situational evaluations, underscoring the need for a more continuous account of computational appraisal. Reward processing models have been used in afective computing and HCI to estimate and predict user responses, allowing systems to adapt their behaviors [23][24][25]. At its core, a reward processing modeling seeks to understand decision-making based on anticipated rewards, with the ultimate aim of maximizing these rewards over time [26]. The operating principle is that positive outcomes reinforce behaviors, encouraging their repetition. Yet, the approach has limitations in modeling emotions: it often oversimplifes motivations by assuming agents act purely for rewards, overlooking aspects such as cognitive processing or behavioral constraints. Furthermore, there is still a considerable gap between a reward-processing model of emotion and a realistic model of human emotions. Computational rationality is an approach that has recently been used in modeling a variety of interactive tasks [27]. It posits that humans can be modeled as agents whose decision-making and behavior are optimal within the bounds imposed by information, computational resources, and expected outcome utility [28]. This approach has an interesting connection to the reward processing model of emotion: in computational rational modeling, RL is used to derive bounded optimal behavior policies. At the heart of computational rationality in HCI is implementing a simulated user's goals as a reward function [29][30][31]. This facilitates the integration of emotion into computational rationality, thereby implementing emotion as part of an emerging modeling paradigm in HCI. However, what stands in the way of implementing a model of user's emotions within computational rationality is the aforementioned gap between reward processing models of emotion and a more realistic understanding of human emotions. It has been recently suggested that appraisal theory is a promising candidate for bridging this gap [32][33]. In many ways, appraisal theory is well suited for modeling emotion within the computational rationality framework, if it is implemented via the reward processing carried out in bounded optimal agents. This is because both appraisal theory and computational rationality embrace the importance of goals in making predictions, and note that it is not merely the events of the environment that shape behavior, but also cognition. In a demonstration of this, a recent model integrates appraisal theory with RL [33]. While the model is promising, it is limited in being evaluated only with vignettes -textual descriptions -of everyday situations. Our goal with this paper is to review the applicability of this model in interactive tasks, and evaluate and design it further to ft this goal.",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "A systematic review on affective computing: Emotion models, databases, and recent advances",
+        "author": "Yan Wang, Wei Song, Wei Tao, Antonio Liotta, Dawei Yang, Xinlei Li, Shuyong Gao, Yixuan Sun, Weifeng Ge, Wei Zhang",
+        "year": "2022"
+      },
+      {
+        "id": "[2]",
+        "text": "Afective computing",
+        "author": "Rosalind W Picard",
+        "year": "2000"
+      },
+      {
+        "id": "[3]",
+        "text": "The social signal interpretation (SSI) framework: multimodal signal processing and recognition in real-time",
+        "author": "Johannes Wagner, Florian Lingenfelser, Tobias Baur, Ionut Damian, Felix Kistler, Elisabeth André",
+        "year": "2013"
+      },
+      {
+        "id": "[4]",
+        "text": "The Handbook on Socially Interactive Agents: 20 years of Research on Embodied Conversational Agents",
+        "author": "Birgit Lugrin, Catherine Pelachaud, David Traum",
+        "year": "2022"
+      },
+      {
+        "id": "[5]",
+        "text": "Look What I Made It Do-The Mod-elIT Method for Manually Modeling Nonverbal Behavior of Socially Interactive Agents",
+        "author": "Anna Lea Reinwarth, Tanja Schneeberger, Fabrizio Nunnari, Patrick Gebhard, Uwe Altmann, Janet Wessler",
+        "year": "2023"
+      },
+      {
+        "id": "[6]",
+        "text": "Transfer of Social Human-Human Interaction to Social Human-Agent Interaction",
+        "author": "Tanja Schneeberger",
+        "year": "2018"
+      },
+      {
+        "id": "[7]",
+        "text": "Emotion. The Handbook on Socially Interactive Agents: 20 Years of Research on Embodied Conversational Agents, Intelligent Virtual Agents, and Social Robotics",
+        "author": "Joost Broekens",
+        "year": "2021"
+      },
+      {
+        "id": "[8]",
+        "text": "WASABI: Afect simulation for agents with believable interactivity",
+        "author": "Christian Becker-Asano",
+        "year": "2008"
+      },
+      {
+        "id": "[9]",
+        "text": "ALMA: a layered model of afect",
+        "author": "Patrick Gebhard",
+        "year": "2005"
+      },
+      {
+        "id": "[10]",
+        "text": "EMA: A process model of appraisal dynamics",
+        "author": "C Stacy, Jonathan Marsella, Gratch",
+        "year": "2009"
+      },
+      {
+        "id": "[11]",
+        "text": "Basic emotions, natural kinds, emotion schemas, and a new paradigm",
+        "author": "Carroll E Izard",
+        "year": "2007"
+      },
+      {
+        "id": "[12]",
+        "text": "Core afect and the psychological construction of emotion",
+        "author": "Russell James",
+        "year": "2003"
+      },
+      {
+        "id": "[13]",
+        "text": "Towards a prediction and data driven computational process model of emotion",
+        "author": "Klaus R Scherer",
+        "year": "2019"
+      },
+      {
+        "id": "[14]",
+        "text": "Appraisal theories of emotion: State of the art and future development",
+        "author": "Agnes Moors, Phoebe C Ellsworth, Klaus R Scherer, Nico H Frijda",
+        "year": "2013"
+      },
+      {
+        "id": "[15]",
+        "text": "The cognitive structure of emotions",
+        "author": "Andrew Ortony, Gerald L Clore, Allan Collins",
+        "year": "2022"
+      },
+      {
+        "id": "[16]",
+        "text": "Emotions are emergent processes: they require a dynamic computational architecture",
+        "author": "Klaus R Scherer",
+        "year": "2009"
+      },
+      {
+        "id": "[17]",
+        "text": "Putting appraisal in context: Toward a relational model of appraisal and emotion",
+        "author": "A Craig, Leslie D Smith, Kirby",
+        "year": "2009"
+      },
+      {
+        "id": "[18]",
+        "text": "Advocating a componential appraisal model to guide emotion recognition",
+        "author": "Marcello Mortillaro, Ben Meuleman, Klaus R Scherer",
+        "year": "2012"
+      },
+      {
+        "id": "[19]",
+        "text": "A systems approach to appraisal mechanisms in emotion",
+        "author": "David Sander, Didier Grandjean, Klaus R Scherer",
+        "year": "2005"
+      },
+      {
+        "id": "[20]",
+        "text": "What are emotions? And how can they be measured",
+        "author": "Klaus R Scherer",
+        "year": "2005"
+      },
+      {
+        "id": "[21]",
+        "text": "The dynamic architecture of emotion: Evidence for the component process model",
+        "author": "Klaus R Scherer",
+        "year": "2009"
+      },
+      {
+        "id": "[22]",
+        "text": "Nonlinear appraisal modeling: An application of machine learning to the study of emotion production",
+        "author": "Ben Meuleman, Klaus R Scherer",
+        "year": "2013"
+      },
+      {
+        "id": "[23]",
+        "text": "Bandit models of human behavior: Reward processing in mental disorders",
+        "author": "Djallel Bounefouf, Irina Rish, Guillermo A Cecchi",
+        "year": "2017-08-15"
+      },
+      {
+        "id": "[24]",
+        "text": "A Comparative Study on Reward Models for UI Adaptation with Reinforcement Learning",
+        "author": "Daniel Gaspar-Figueiredo, Marta Fernández-Diego, Silvia Abrahao, Emilio Insfran",
+        "year": "2023"
+      },
+      {
+        "id": "[25]",
+        "text": "A Markov reward process-based framework for resilience analysis of multistate energy systems under the threat of extreme events",
+        "author": "Zhiguo Zeng, Yi-Ping Fang, Qingqing Zhai, Shijia Du",
+        "year": "2021"
+      },
+      {
+        "id": "[26]",
+        "text": "Afective-cognitive learning and decision making: A motivational reward framework for afective agents",
+        "author": "Hyungil Ahn, Rosalind W Picard",
+        "year": "2005"
+      },
+      {
+        "id": "[27]",
+        "text": "Computational rationality as a theory of interaction",
+        "author": "Antti Oulasvirta, Andrew Jussi Pp Jokinen, Howes",
+        "year": "2022"
+      },
+      {
+        "id": "[28]",
+        "text": "Computational rationality: Linking mechanism and behavior through bounded utility maximization",
+        "author": "Andrew Richard L Lewis, Satinder Howes, Singh",
+        "year": "2014"
+      },
+      {
+        "id": "[29]",
+        "text": "A cognitive model of how people make decisions through interaction with visual displays",
+        "author": "Xiuli Chen, Sandra Dorothee Starke, Chris Baber, Andrew Howes",
+        "year": "2017"
+      },
+      {
+        "id": "[30]",
+        "text": "Touchscreen Typing As Optimal Supervisory Control",
+        "author": "Jussi Jokinen, Aditya Acharya, Mohammad Uzair, Xinhui Jiang, Antti Oulasvirta",
+        "year": "2021"
+      },
+      {
+        "id": "[31]",
+        "text": "Multitasking in driving as optimal adaptation under uncertainty",
+        "author": "Tuomo Jussi Pp Jokinen, Antti Kujala, Oulasvirta",
+        "year": "2021"
+      },
+      {
+        "id": "[32]",
+        "text": "Emotion in reinforcement learning agents and robots: a survey",
+        "author": "Joost Thomas M Moerland, Catholijn M Broekens, Jonker",
+        "year": "2018"
+      },
+      {
+        "id": "[33]",
+        "text": "Modeling Cognitive-Afective Processes with Appraisal and Reinforcement Learning",
+        "author": "Jiayi Zhang, Joost Broekens, Jussi Jokinen",
+        "year": "2023"
+      }
+    ],
+    "subsections": {}
+  },
+  "MODELING": {
+    "text": "In this section we review the recent model that formalizes emotional appraisal using RL [1], and develop it further. In section 3.1 we outline the foundations of RL; in sections 3.2 and 3.3 we describe the existing model that integrates appraisal into RL; and in section 3.4 we build on this model.",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "Modeling Cognitive-Afective Processes with Appraisal and Reinforcement Learning",
+        "author": "Jiayi Zhang, Joost Broekens, Jussi Jokinen",
+        "year": "2023"
+      }
+    ],
+    "subsections": {
+      "Sequential Decision-Making": {
+        "text": "The model's interactive episodes are formalized via a Markov decision process (MDP), a mathematical framework for modeling decision-making problems in stochastic environments [1]. It is a tuple < , , , , >, where denotes the set of states and represents the set of actions that the agent can take. The state transition function (, , ′ ) describes the probability of transitioning from state ∈ to state ′ ∈ when taking action ∈ . The reward function (, , ′ ) defnes the immediate reward an agent receives when transitioning from state to state ′ by performing action . The discount factor discounts future rewards when calculating the value of actions. In order to maximize the long-term rewards of a sequential decision-making task described with an MDP, an RL agent interacts with the environment, encoding the state transition probabilities and the reward function. The problem of RL is to derive an optimal policy * , which maps states to action probabilities such that behavior according to it maximizes the expected cumulative reward over time. The value function of a state under a policy , denoted as (), is the expected return when starting in state and following policy thereafter. The function () is the state-value function for policy : Í ∞ where = =0 represents the expected discounted return, and E denotes the expected value of the policy. The value of performing an action ∈ while in a state ∈ is defned as: The agent learns the optimal policy by interacting with the environment, receiving feedback in the form of rewards, and updating its value estimates for state-action pairs. In temporal diference (TD) learning, the value estimates are based on the diference between the expected and the observed value: (3) where is the learning rate. ′ is the reward received after moving to the new state and ( ′ ) is the estimated value for the new state. This operation updates the value () associated with a state as soon as the new state ′ is reached, by computing the diference between predicted and observed values. Combining equations 2 and 3 results in a form of TD learning called Q-learning [1], which can be expressed as",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Reinforcement learning: An introduction",
+            "author": "S Richard, Andrew G Sutton, Barto",
+            "year": "2018"
+          }
+        ],
+        "subsections": {}
+      },
+      "Appraisal Calculation": {
+        "text": "Several appraisals are discussed in the literature, including relevance, implication, coping potential, and normative signifcance [1]. In the RL appraisal model [2], four appraisals were considered: suddenness, goal relevance, conduciveness, and power. This choice was made because these appraisals have distinct representational capacities (regarding real-life episodes), and minimal inter-correlation, and they are suitable for integration into an RL model. Suddenness is part of the novelty assessment of an event during appraisal. Specifcally, it quantifes the frequency with which a transition to state ′ occurs after action is taken in a prior state by the agent. Suddenness is denoted by and is defned as: where ˆ is a world model. It approximates the true transition function , and is learned by the agent during interaction. The intuition of ˆ is that the agent learns to expect certain state-action-state transitions, and therefore encountering such a transition triggers a suddenness appraisal: how expected was this transition? Goal relevance checks how relevant an event is, given the agent's current goal. The more goal-relevant an event is, the stronger emotional reactions there will probably be [3]. Goal relevance is operationalized as the magnitude of the TD error observed during value prediction updates: where Conduciveness appraisal in the CPM evaluates if an event aids the agent's goal attainment. Conducive events generally elicit positive emotions, while obstructive ones invoke negative ones [4]. In the RL appraisal model, conduciveness is likened to both the direction and magnitude of the discrepancy between expected and actual outcomes. This concept is quantifed by standardizing its values between 0 (highly unconducive) and 1 (very conducive), with 0.5 marking neutral events that meet expectations. The intrinsic conduciveness of an event relies on the agent's cognitive value update, informed by prior expectations and goals. Goal conduciveness is expressed as: It is worth mentioning that goal relevance and conduciveness in emotional appraisal are not inherently correlative. Events that are goal-relevant may still be unconducive, as observed in negative emotions like despair, irritation, and sadness. Conversely, conducive events can have low goal relevance, exemplifed by scenarios eliciting boredom. Power appraisal is part of the more general coping evaluation, asking how much an agent infuences an event's outcome. For instance, an experienced user possesses power due to their knowledge, while a novice lacks this. Power appraisal provides a means to explain why a particular event, such as an error message, might cause widely diferent emotions in diferent users (e.g. confusion or even fear in novice users, and irritation in experienced users). In the model, power refects the agent's ability to discern between benefcial and non-benefcial actions. When the values for various actions difer, the agent is believed to have power. Conversely, identical values or a singular action option denote no power. Power is quantifed as: This formulation underscores that the essence of the agent's power lies in its ability to identify which actions to pursue and which to avoid. In the simulations below, we standardize the power appraisal by dividing by the highest absolute value.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Appraisal considered as a process of multilevel sequential checking",
+            "author": "Klaus R Scherer",
+            "year": "2001"
+          },
+          {
+            "id": "[2]",
+            "text": "Modeling Cognitive-Afective Processes with Appraisal and Reinforcement Learning",
+            "author": "Jiayi Zhang, Joost Broekens, Jussi Jokinen",
+            "year": "2023"
+          },
+          {
+            "id": "[3]",
+            "text": "Emotions are emergent processes: they require a dynamic computational architecture",
+            "author": "Klaus R Scherer",
+            "year": "2009"
+          },
+          {
+            "id": "[4]",
+            "text": "A systems approach to appraisal mechanisms in emotion",
+            "author": "David Sander, Didier Grandjean, Klaus R Scherer",
+            "year": "2005"
+          }
+        ],
+        "subsections": {}
+      },
+      "Classifer": {
+        "text": "In order to predict modal emotions (emotion words such as 'happiness' or 'irritation') from the computed appraisals, the vector of the four appraisals needs to be classifed. In the model, this classifer is created by connecting modal emotions to particular values or profles of such vectors. These profles are shown in Table 1, which summarizes textual descriptions connecting appraisal profles and modal emotions [1]. Details of how this was done are reported in [2]. For this study, we employed simulated data to train and test our classifer. The simulated data were generated by transforming nominal appraisals from Table 1 into a range of quantitative values (Table 2). We used a linear Support Vector Machine (SVM) for classifcation, focusing on the penalty parameter to balance maximizing the margin and minimizing classifcation errors. Our goal was to approximate human performance in the classifer. We We tested 100 SVM classifers with varying values (0.0035 to 0.006) against the simulated data. The classifer's precision closely matched human performance at a value of 0.0049, with a variance of 0.0004. To account for individual diferences, we trained an SVM classifer for each participant, each with a value sampled from a normal distribution (mean = 0.0049, variance = 0.0004), refecting the variance in human precision, thereby ensuring that our model not only matched average human performance but also captured individual variability. Importantly, the parameter was not ftted to minimize the model's prediction error against human emotion ratings, but to the same rating precision level as found in the human data. The goal of this procedure was to bring the variance of our modal emotion predictions more in line with human self-responses: with a value too large, only the most intense emotion would be predicted; by lowering the value, the model predicts also other, less intense emotions. This refects how humans are able to experience various emotions simultaneously. With the classifer, the computational appraisal model is able to predict emotion words from value computations of an RL agent, via the equations for diferent appraisals.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "Appraisal considered as a process of multilevel sequential checking",
+            "author": "Klaus R Scherer",
+            "year": "2001"
+          },
+          {
+            "id": "[2]",
+            "text": "Modeling Cognitive-Afective Processes with Appraisal and Reinforcement Learning",
+            "author": "Jiayi Zhang, Joost Broekens, Jussi Jokinen",
+            "year": "2023"
+          }
+        ],
+        "subsections": {}
+      },
+      "Extending The Model for Sequential Emotions": {
+        "text": "While the model presented above bridges appraisal theory and a general computational approach to modeling interactive behavior, it lacks in capturing the episodic nature of the interaction, wherein a single episode there are bound to be diferent emotional reactions. For instance, encountering an error multiple times during interaction should not result in multiple 'snapshot' instances of irritation, but rather a continuously growing feeling of irritation. In other words, emotions do not appear and disappear, but linger and interact. To that end, we augment the model. Initially, in this paper, we implement a simple moving window average, which considers not merely the present state evaluation, but those that precede it. + 1 where, () is the prediction from the classifcation of a given emotion e at time step t, and n is the length of the window. In this paper, experiment 2, we set = 2, but this number depends on the abstraction level of the simulation. In the future, we also envision a discounting factor, making emotions that occurred further in the past have less impact on the present emotional state.",
+        "citations": [],
+        "subsections": {}
+      }
+    }
+  },
+  "EVALUATION 4.1 General Method": {
+    "text": "Given the goal of this paper -adapting an RL-based appraisal model to predict emotion in interactive tasks -, we focus our evaluation on users within an interactive environment. This approach difers from the vignette-based method used previously in validation. This paper introduces two original studies and assesses the model's predictions based on their outcomes. Our focus is on three common emotions in HCI: happiness, boredom, and irritation [1][2][3]. Happiness refects the fulfllment of a user's goals or desires, and can lead to increased user engagement. Boredom signifes a lack of stimulation, possibly due to a system's failure to maintain the user's interest. Irritation is typically associated with frustrating events that may be due to system errors, poor design, or a failure to meet user expectations. The experimental tasks derive from appraisal theory principles, refecting the targeted emotions' appraisal profles (see Table 1). For example, the happiness task featured low-suddenness, and high goal-conduciveness events, while irritation involved goalobstructive events where participants had some power. Having formalized these appraisals computationally, we implemented identical manipulations in the computational task designs. The frst experiment tests the original single-appraisal model against data collected from real emotional experiences. In the second, we test the idea of averaging emotions over longer sequences.",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "Workplace user frustration with computers: An exploratory investigation of the causes and severity",
+        "author": "Jonathan Lazar, Adam Jones, Ben Shneiderman",
+        "year": "2006"
+      },
+      {
+        "id": "[2]",
+        "text": "Exploring the relationship between smartphone activities, fow experience, and boredom in free time",
+        "author": "Louis Leung",
+        "year": "2020"
+      },
+      {
+        "id": "[3]",
+        "text": "Momentary pleasure or lasting meaning? Distinguishing eudaimonic and hedonic user experiences",
+        "author": "D Elisa, Kasper Mekler, Hornbaek",
+        "year": "2016"
+      }
+    ],
+    "subsections": {
+      "Materials:": {
+        "text": "We constructed six online tasks, three for each experiment. The material was a text paragraph (about 220 words) in the English language sourced from Wikipedia, and the participants had to answer questions about the text. Multiple questions were designed from the same source text. To infuence participants' emotions, we made specifc design alterations. For the happiness task, the questions were meaningful, correct answers resulted in positive feedback, and in the end the participant received a message congratulating them for good performance (Figure 2a). The boredom task featured a large number of monotonous, simple questions, and intentionally neutral feedback both for an individual task and at the end of the experiment (Figure 2b). Finally, the irritation task incorporated multiple system errors, leading to incorrect selections irrespective of user decisions, culminating in task failure and negative feedback (Figure 2c). The text and all questions are presented in full in Appendix B. second experiment, = 45 participants were recruited, 15 for each task (average age 29 ( = 7.3), 15 men and 30 women). All participants were sourced online through Prolifc, and were required to be native English speakers.With this requirement we aimed to eliminate potential biases or variations in the comprehension of the text, allowing participants to concentrate primarily on the test's structure.",
+        "citations": [],
+        "subsections": {
+          "Procedure:": {
+            "text": "Participants evaluated their emotions using a rating scale that was part of the online experiment design. This scale encompassed emotion words, asking participants to report on their current feelings (0 indicating \"not experiencing this emotion at all\" and 10 denoting \"experiencing this emotion intensely\"). Besides the primary emotions of interest (happiness, boredom, irritation), we introduced two other emotions (joy, sadness) to divert concentrated attention from the manipulated emotions. In the frst experiment, the self-report was administered once post-task. In the second, evaluations occurred four times: initially, twice during the tasks, and upon completion. Correlations between the self-reported emotions are reported in the Appendix C. A between-subjects design was used, with participants engaging solely in one of the three emotional conditions. Diferent participants took part in the two experiments.",
+            "citations": [],
+            "subsections": {}
+          },
+          "Data Analysis:": {
+            "text": "In analyzing the self-reporting of the targeted three emotions, we frst standardized them to reduce the impact of individuals interpreting the scale diferently. For each participant, we normalized their ratings by dividing their rating for an emotion by the total sum of their ratings for all three emotions. This ensured that the rating for each emotion ranged between 0 and 1, with the combined ratings always summing up to 1. The rationale for this was that we expected the participants to hold a diferent internal standard for how strong a particular rating for an emotion is. However, what could be assumed to be common to all participants is how they rate the emotions in relation to each other. For model predictions, we designed 6 simulated environments to represent each task using the MDP formalism. The formalized tasks are shown in Figure 3 (experiment 1) and Figure 5 (experiment 2). An RL agent was trained via tabular Q-learning to converge on an optimal policy separately for each task. From the converged models, we computed four appraisal measures using the equations of the previous section. The resulting appraisal vectors were classifed into modal emotion probabilities using an SVM, which was calibrated as described in section 3.3. An overview of the data processing fow is shown in Appendix A.",
+            "citations": [],
+            "subsections": {}
+          }
+        }
+      },
+      "Experiment 1": {
+        "text": "The frst experiment aimed to elicit three emotions in three betweensubjects tasks: happiness, boredom and irritation. The participants carried out tasks that manipulated these target emotions based on appraisal theory. Table 1 shows the appraisal profle. The MDPs that formalize the three tasks are illustrated in Fig. 3. For the MDP of the happiness task, serves as the Goal state with positive rewards, while denotes the error state with negative rewards. Initiating from the state , the agent can perform the exclusive action , transitioning to 1. This action represents the task's start, and 1 represents the state where the participant is shown a question with two options. These choices are represented by two actions: 1 for the selection that is correct, and 2 for incorrect. Electing for 1 ofers an 80% likelihood for the agent to land in the goal state, contrasted with a 20% chance of ending up in the error state. This probabilistic outcome recognizes the real-world scenario where, despite intending to choose correctly, participants might inadvertently err due to incorrect knowledge or confusion. The appraisal analysis occurs at the onset of the goal state, when the agent transitions from S1 to G. The numerical patterns for  appraisal of the experiment, generated by these models, are shown in Table 3. Note the discrepancy in goal relevance of irritation between Tables 1 and3. The reason for this is that in the experiment, we wanted to emphasize the irritation in human participants by making the obstructing task very goal-relevant. The boredom MDP shares a similar confguration in its initial states and 1. The distinction lies in the reward values: ) is set to -1. This design choice makes the task less rewarding, both positively and negatively, implying that the outcome is less important. Appraisal analysis is conducted at 2. In the irritation task, we introduce a high likelihood of reaching the problematic state of the system even when opting for the correct choice 1. This represents the frustrating event when a certainly correct action results in an unwanted state due to system errors. The appraisal analysis happens accordingly when the problem state is encountered. The average standardized self-rated emotions from the participants after the tasks and the model predictions are presented in Fig. 4. Overall, our model achieved a reasonable degree of ft to  the data, 2 = 0.78, RMSE = 0.13. The manipulations proved effective for both human evaluations and model outcomes. In every task, both humans and the model rated the target emotion with the highest intensity.",
+        "citations": [],
+        "subsections": {}
+      },
+      "Experiment 2": {
+        "text": "Our second experiment aimed to expose the process nature of emotion and show that a static snapshot emotional state, either via a self-report or a model-based prediction, does not provide a full understanding of emotions during the interaction. To that end, the participants again interacted with the tasks designed to elicit one of the three emotions, but now they self-reported their emotions four times: beginning, twice during the tasks, and at the end of the experiment. While these separate self-reports are still static measurements alone, the progression of these self-reports over time can be used to evaluate the process nature of emotion and how well our model captures that. Figure 5 illustrates the MDPs utilized in the second experiment. They bear a resemblance to those from the frst experiment, but are extended to three appraisal stages. Unlike the participants, who were expected to already have some emotional experiences upon  starting the experiment, our model does not have the frst emotion measurement. That complicates how the SMA (Eq. 9) is implemented. Thus, the initial emotions of the model were set to the average initial values obtained from human participants when they rated their emotions before the task started. At each time stage, we extracted appraisals from the model. Using the same trained SVM classifer as in the frst experiment, these appraisals were then transformed into predictions of modal emotion intensities. We did not recalibrate the SVM classifer's parameters for this new experiment. Unlike in the frst experiment, we used the average of the current and previous emotion predictions to capture the process nature of emotion. We performed a regression analysis on the human emotion values against our model's predictions, with each experiment as a fxed term. The results yielded an 2 = 0.86, RMSE of 0.19, a reasonable ft between predictions and responses. From Figure 6, it is evident that the targeted emotions increase over time, while the non-targeted ones decrease. This trend is consistent in both human evaluations and model predictions, and is particularly pronounced in the happiness and irritation tasks. However, the results from the boredom task warrant further discussion. The boredom rating sees an uptick, but there's also a slight increase in participants' irritation ratings. This can be attributed to the inherent challenge in designing a universally neutral interactive task. In our boredom task, the repetitiveness of the simple questions, combined with the sheer volume and limited feedback, likely led to participants becoming impatient and consequently irritated. Furthermore, the self-reported happiness levels in the boredom task were higher than boredom ratings, potentially due to participant response bias where the participants want to provide good feedback to the experimenters and are generally favorable of their task designs [1]. This might have resulted in over-reporting happiness in a task designed primarily to elicit boredom. This is also possible for the happiness task in the frst experiment, where the participants did not report as much boredom as predicted by the model. However, a more general view of all the graphs over these time stages clearly shows a decline in happiness and a rise in boredom. This points to the need for a more in-depth data analysis, focusing on the temporal shifts in emotion ratings as a contextual reference for participants' emotional responses.",
+        "citations": [
+          {
+            "id": "[1]",
+            "text": "You Can Always Do Better!\" The Impact of Social Proof on Participant Response Bias",
+            "author": "Aditya Vashistha, Fabian Okeke, Richard Anderson, Nicola Dell",
+            "year": "2018"
+          }
+        ],
+        "subsections": {}
+      }
+    }
+  },
+  "DISCUSSION AND CONCLUSION": {
+    "text": "Empirical evaluation: The goal of the paper was to adapt and demonstrate a computational cognitive emotion model that simulates emotion in response to goal-driven interaction events. With some exceptions, the model closely mirrored emotional self-reports collected from human participants engaging in interactive tasks. This accuracy stemmed from incorporating appraisal theory into an RL computational framework, facilitated by a theory linking reward prediction errors with emotional responses [1][2]. Furthermore, our fndings support the validity of appraisal theory, as both the human and computational experiment task designs were rooted in appraisal-centric hypotheses. While our validating experiments included human participants self-reporting their emotions, future research should extend its scope into more emotions and tasks. The designed interventions intentionally exerted a pronounced emotional impact, and the tasks do not represent the wide range of tasks typically performed by humans on computers. In the future, adapting the model for more involved interactive scenarios beyond the simple interactions discussed here is crucial. The MDP framework utilized in this paper has simulated various interactions, such as multitasking while driving [3], touchscreen typing [4], and GUI-based decision-making [5]. Given that these tasks elicit emotions, our model should be able to predict them. Furthermore, while happiness, boredom, and irritation are prevalent emotions in interaction, there are other emotions relevant in HCI. We limited the amount of emotion to these key ones to focus on testing the model. However, there is a broader spectrum of emotions that the model should be able to predict. The challenge for future research lies in either controlling the experiments carefully to elicit targeted emotions, or collecting a large naturalistic dataset that considers a wide range of lived human emotions. Finally, this paper used a simple moving window average to capture the persistence of emotion throughout an episode. In the future, more complicated formulas should be considered and the complex time-dependent dynamic of emotion investigated. Implications: In the future, we foresee our model used in interactive systems that anticipate and adapt to their users' states [6], including emotional responses. Even in its current theoretical form, the model can provide designers with insights by allowing them to examine how variations in task progression or user goals infuence emotional outcomes. This implies that the model discussed herein should be adjustable individually, and tailored to a specifc user's objectives and profciency. By inferring a user's underlying cognitive states, the model's alignment with the human user can be enhanced, potentially boosting the accuracy and validity of its predictions. Conclusion: With the increase in automated and intelligent machines that interact with their users, it becomes imperative that collaborative agents possess an understanding of their human users. A crucial aspect of this understanding is emotion. Alignment between humans and technologies embedded with artifcial intelligence is risked, if the latter cannot predict their users' emotional responses to interactive events. With computational cognitive models like those developed here, it becomes possible to implement an explicit understanding of emotion into artifcial agents. This understanding is not merely an ability to predict, given observed behavior or physiological signals, but to provide reasons for the causes of predicted emotions and internally simulate various 'what if' experiments to facilitate fuent interaction with the user. For the purposes of open science as recommended by [7] we present the model code and data from the experiments freely available at https://gitlab.jyu.f/zhangjy/simulating_emotions_chi.",
+    "citations": [
+      {
+        "id": "[1]",
+        "text": "Emotion in reinforcement learning agents and robots: a survey",
+        "author": "Joost Thomas M Moerland, Catholijn M Broekens, Jonker",
+        "year": "2018"
+      },
+      {
+        "id": "[2]",
+        "text": "Modeling Cognitive-Afective Processes with Appraisal and Reinforcement Learning",
+        "author": "Jiayi Zhang, Joost Broekens, Jussi Jokinen",
+        "year": "2023"
+      },
+      {
+        "id": "[3]",
+        "text": "Multitasking in driving as optimal adaptation under uncertainty",
+        "author": "Tuomo Jussi Pp Jokinen, Antti Kujala, Oulasvirta",
+        "year": "2021"
+      },
+      {
+        "id": "[4]",
+        "text": "Touchscreen Typing As Optimal Supervisory Control",
+        "author": "Jussi Jokinen, Aditya Acharya, Mohammad Uzair, Xinhui Jiang, Antti Oulasvirta",
+        "year": "2021"
+      },
+      {
+        "id": "[5]",
+        "text": "A cognitive model of how people make decisions through interaction with visual displays",
+        "author": "Xiuli Chen, Sandra Dorothee Starke, Chris Baber, Andrew Howes",
+        "year": "2017"
+      },
+      {
+        "id": "[6]",
+        "text": "Towards machines that understand people",
+        "author": "Andrew Howes, Jussi Pp Jokinen, Antti Oulasvirta",
+        "year": "2023"
+      },
+      {
+        "id": "[7]",
+        "text": "Empirical research in afective computing: an analysis of research practices and recommendations",
+        "author": "Janet Wessler, Tanja Schneeberger, Bernhard Hilpert, Alexandra Alles, Patrick Gebhard",
+        "year": "2021"
+      }
+    ],
+    "subsections": {}
+  },
+  "A DATA PROCESSING FLOW": {
+    "text": "",
+    "citations": [],
+    "subsections": {}
+  },
+  "B EXPERIMENTAL SETUP (EXPERIMENTS 1 AND 2)": {
+    "text": "The text used in the tasks (from https://en.wikipedia.org/wiki/ English_language) Modern English has spread around the world since the 17th century as a consequence of the worldwide infuence of the British Empire and the United States of America. Through all types of printed and electronic media of these countries, English has become the leading language of international discourse and the lingua franca in many regions and professional contexts such as science, navigation and law. English is the most spoken language in the world and the third-most spoken native language in the world, after Standard Chinese and Spanish. It is the most widely learned second language and is either the ofcial language or one of the ofcial languages in 59 sovereign states. There are more people who have learned English as a second language than there are native speakers. As of 2005, it was estimated that there were over 2 billion speakers of English. English is the majority native language in the United Kingdom, the United States, Canada, Australia, New Zealand and the Republic of Ireland, and is widely spoken in some areas of the Caribbean, Africa, South Asia, Southeast Asia, and Oceania. It is a co-ofcial language of the United Nations, the European Union and many other world and regional international organisations. It is the most widely spoken Germanic language, accounting for at least 70% of speakers of this Indo-European branch.",
+    "citations": [],
+    "subsections": {}
+  },
+  "Questions for the": {
+    "text": "",
+    "citations": [],
+    "subsections": {}
+  },
+  "ACKNOWLEDGMENTS": {
+    "text": "This research has been supported by the Academy of Finland (grant 330347) and partially sponsored by the Hybrid Intelligence project (grant number 024.004.022).",
+    "citations": [],
+    "subsections": {}
+  }
+}

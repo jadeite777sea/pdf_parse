@@ -1,0 +1,1782 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Adapting User Interfaces with Model-based Reinforcement Learning</title>
+				<funder>
+					<orgName type="full">Finnish Center for Artifcial Intelligence</orgName>
+					<orgName type="abbreviated">FCAI</orgName>
+				</funder>
+				<funder ref="#_YR3NJYf">
+					<orgName type="full">HumaneAI Net</orgName>
+				</funder>
+				<funder ref="#_KG7StBV">
+					<orgName type="full">Agence Nationale de la Recherche</orgName>
+					<orgName type="abbreviated">ANR</orgName>
+				</funder>
+				<funder ref="#_m3Ct8VR">
+					<orgName type="full">Academy of Finland</orgName>
+				</funder>
+				<funder>
+					<orgName type="full">Network of Centers of Excellence)</orgName>
+				</funder>
+				<funder>
+					<orgName type="full">Department of Communications and Networking (Comnet)</orgName>
+				</funder>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Kashyap</forename><surname>Todi</surname></persName>
+							<email>kashyap.todi@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Aalto University</orgName>
+								<address>
+									<country key="FI">Finland</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Luis</forename><forename type="middle">A</forename><surname>Leiva</surname></persName>
+							<email>luis.leiva@uni.lu</email>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">University of Luxembourg Luxembourg</orgName>
+								<orgName type="institution" key="instit2">Sorbonne Université</orgName>
+								<orgName type="institution" key="instit3">CNRS</orgName>
+								<orgName type="institution" key="instit4">ISIR</orgName>
+								<address>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+							<email>gilles.bailly@sorbonne-universite.fr</email>
+							<affiliation key="aff2">
+								<orgName type="institution">Aalto University</orgName>
+								<address>
+									<country key="FI">Finland</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Adapting User Interfaces with Model-based Reinforcement Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">18FC88B008E4A6F88A6A49924B377316</idno>
+					<idno type="DOI">10.1145/3411764.3445497</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.2-SNAPSHOT" ident="GROBID" when="2025-04-01T12:10+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Human-centered computing → Interactive systems and tools Adaptive User Interfaces</term>
+					<term>Reinforcement Learning</term>
+					<term>Predictive Models</term>
+					<term>Monte Carlo Tree Search</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Adapting an interface requires taking into account both the positive and negative efects that changes may have on the user. A carelessly picked adaptation may impose high costs to the user -for example, due to surprise or relearning efort -or "trap" the process to a suboptimal design immaturely. However, efects on users are hard to predict as they depend on factors that are latent and evolve over the course of interaction. We propose a novel approach for adaptive user interfaces that yields a conservative adaptation policy: It fnds benefcial changes when there are such and avoids changes when there are none. Our model-based reinforcement learning</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Figure <ref type="figure">1</ref>: We present a model-based reinforcement learning approach for adaptive UIs that can improve usability while avoiding unexpected changes that surprise the user or require relearning. An interface is adapted by simulating several possible sequences of adaptations and evaluating them using predictive models in HCI. This approach avoids greedy, disadvantageous adaptations, and may anticipate possible user responses even with limited observation data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Adaptive user interfaces can autonomously change the content, layout, or style of an interface to improve their ft with the user's capabilities and interests. This paper looks at a foundational technical problem of adaptive interfaces that lies at the intersection of human-computer interaction and machine learning research: How to select adaptations? An adaptive system must decide what to adapt, and when -or when not -to make changes. Diferent computational approaches to this problem have been studied, among others, rule-based systems, heuristics, bandits, Bayesian optimisation, and supervised learning (see section 2). Although positive empirical results have been obtained (e.g., <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b48">49,</ref><ref type="bibr" target="#b50">51,</ref><ref type="bibr" target="#b51">52,</ref><ref type="bibr" target="#b53">54]</ref>), known approaches have been criticised for being unpredictable and unreliable; they pick detrimental adaptations unacceptably often <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b21">22,</ref><ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b55">56]</ref>. Estimation of utility is required for selecting an adaptation. Utility -in this case -refers to the usefulness of an adaptation to the user, or how it is perceived to beneft interaction when possible costs are taken into account. Picking an adaptation can be considered a hypothesis on how useful it is for user. Unfortunately, utility is very hard to estimate accurately -hard both at design time as well as interactively from the kind of data these systems have access to, such as clicks or viewing duration. In machine learning terms, utility is latent. Moreover, in adaptive interaction, utility is also non-stationary. That is, the skills and interests of the user evolve over time. A change that would make sense in the beginning when the user is novice with the design may be devastating for an experienced user.</p><p>We believe that adaptive systems could provide greater benefts by planning sequences of adaptations that gracefully lead a user through gradual changes. However, non-stationarity makes planning challenging: considering only a short period of time (i.e. a short horizon) can result in suboptimal designs. An adaptation that is overft to a novice could be impossible to recover from later on when the user is more experienced. On the other hand, planning a long sequence of adaptations increases the size of search space, growing exponentially with the length of the planning horizon.</p><p>Model-based reinforcement learning is here developed as a principled and efective approach to these issues. We defne the adaptation problem as a stochastic sequential decision problem <ref type="bibr" target="#b6">[7]</ref>, where the adaptive system should plan a sequence of adaptations over a long horizon. Reinforcement learning (RL) is a class of machine learning methods appropriate for this type of problems. Typically, a policy is learnt via trial-and-error that maximises future cumulative utility. Our RL approach is model-based as it uses predictive HCI models to estimate utility. These models simulate consequences -benefts and costs -of possible adaptation sequences without actually executing them <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b49">50]</ref>. However, their application is conditioned on their accuracy: They should accurately predict short-term costs such as due to relearning as well as longer-term improvements to performance. Generally, such models are available at least in the areas of pointing, menu interaction, and graphical layouts. In comparison with an alternative, the model-free approach, the model-based approach requires less training and better generalises across conditions <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b49">50]</ref>. However, fnding the best adaption -by assessing the value of each sequence of adaptations with predictive models -is computationally costly, especially when considering sequences of changes over a long horizon. To solve this computational problem in an online setting, we use a combination of Monte Carlo Tree Search (MCTS) for planning, and deep learning to boost performance. To avoid extensive trial-and-error with users in the loop, our deep learning models are trained ofine using HCI models.</p><p>Our general approach can be applied for various HCI applications, such as adaptive mobile homescreens, graphical layouts, and application menus. We demonstrate it specifcally in the context of adaptive menus. The task is to adapt the interface by changing the arrangement and grouping of menu items (Figure <ref type="figure">1</ref>), thus improving the menu's usability. We exploit and extend multiple menu search models from literature to estimate the upper and lower bounds of the value of an adaptation as well as their change as the user learns. This helps us form an adaptation policy that accounts for diferent user strategies and avoids adaptations that incur high costs to users. Our technical evaluation shows that our solution can tackle realistic problem sizes, and fnd favourable adaptations, on a commodity computer. Finally, we present results from an empirical evaluation where the approach compared favourably against a non-adaptive baseline design and a frequency-based adaptation policy.</p><p>To sum up, this paper makes three key contributions:</p><p>(1) A new formulation for adaptive interfaces that formalises them as a stochastic sequential decision-making problem; (2) Development of model-based reinforcement learning for planning adaptations in the case where users learn; (3) Application in adaptive menus with demonstrated benefts to usability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">PREVIOUS WORK: MACHINE LEARNING METHODS FOR ADAPTIVE INTERFACES</head><p>Our work contributes to methods for adaptive interfaces designed to operate autonomously, that is without explicit feedback or training samples from user. The core computational problem we review here is how to pick an adaptation; we do not cover issues like prior elicitation, explainability, nor the design space of intelligent interaction techniques.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Rules, heuristics, and logic</head><p>Early work on this topic studied rule systems, heuristics, and logic as the basis of deciding what to adapt (see, e.g., <ref type="bibr" target="#b43">[44]</ref>). For example, in menu-based interaction, most systems still follow a heuristic approach, where adaptation is picked based on hand-written heuristics that exploit click frequency, visit duration, recency or other specifc features that can be computed from observation data <ref type="bibr" target="#b20">[21]</ref>. These approaches, in general, are feasible only when sensed input is highly predictive of the most appropriate adaptation. Another limitation is that writing a comprehensive and accurate rule system requires plenty of foresight. A rule system must be developed that, on the one hand, covers conceivable conditions the system can enter and, on the other, can graciously resolve conficts when multiple rules apply.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Machine learning</head><p>The prevailing understanding is that learning is a key capability for adaptive systems <ref type="bibr" target="#b31">[32]</ref>. Two learning capabilities are needed: (1) inference, the capability to update assumptions about the user based on observations; and (2) decision-making, the capability to choose appropriate adaptation in the light of assumptions about the user <ref type="bibr" target="#b40">[41]</ref>. The two challenges can be relaxed, for example if user state is trivially known, or if the state is highly predictive of appropriate adaptation. In the latter case, the problem can be approached as a supervised learning problem, where a mapping is learned between user data and suitable adaptations. While this approach has been successful for input techniques, such as gesture recognition <ref type="bibr" target="#b56">[57]</ref>, it is an open question if this scales up to adaptive interfaces, which must not only learn user state but fexibly decide how to intervene in the user interface. A practical obstacle is how to obtain a dataset that describes the consequences of possible adaptations on possible users.</p><p>In the rest of the section, we focus on the general case, where both inference and decision-making are required and non-trivial.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Bandit systems and Bayesian optimisation</head><p>Bandit systems are one of the most successful probabilistic approaches to this problem, not only for recommendation systems but also for interface design and adaptation <ref type="bibr" target="#b37">[38]</ref>. Each adaptation is modelled as an 'arm' associated with a distribution describing expected gains. Given prior data and new evidence on the measured success of an adaptation, bandits use Bayes theorem to update expectation. Importantly, a principled solution is ofered to the exploration/exploitation problem. Methods like Thompson sampling can optimally balance between exploring actions, to learn about which actions work, and exploitation, to converge to good designs.</p><p>Bayesian optimisation generalises bandit systems to the case of multiple interrelated decision variables <ref type="bibr" target="#b46">[47]</ref>. It is a global optimisation method that tries to fnd optimal adaptation by probing to a black box function; here, the user. It is a robust and sample-efcient and well-suited for noisy, expensive-to-evaluate functions. The method uses a surrogate model for approximating the model ft across the parameter space and quantify uncertainty. This is necessary for the acquisition rule to address the exploration-exploitation trade-of. This way, it is possible to learn adaptive responses via trial and error. Applications have been shown in human-in-the-loop design of interface features <ref type="bibr" target="#b14">[15]</ref> and adaptation of low-dimensional design features <ref type="bibr" target="#b29">[30]</ref>. However, while bandits and BO have been successful in simpler adaptation problems, like recommendations and calibration of interface parameters, their intrinsic limitation is that they are myopic; that is, they do not plan over a series of changes -a capability we need in adaptive interaction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Reinforcement learning</head><p>Unlike bandits, reinforcement learning permits learning policies for sequences of actions where rewards are not immediately achievable. While applications have been shown for example in crowdsourcing <ref type="bibr" target="#b13">[14]</ref>, dialogue systems <ref type="bibr" target="#b57">[58]</ref>, and gaze-based interactions <ref type="bibr" target="#b19">[20]</ref>, a known limitation with the prevailing model-free RL approach is still the extensive amount of poor attempts (or trials) that are required to learn a good policy <ref type="bibr" target="#b49">[50]</ref> This makes it poorly suitable for situations with very large state-action spaces.</p><p>Model-based RL uses a predictive model to simulate possibilities without frst trying them out, which is useful for adaptive interfaces, because it signifcantly improves the efciency of fnding good solutions <ref type="bibr" target="#b27">[28]</ref>. A policy can be determined with much fewer trials, and if the model is good, at times directly. Outside of user interfaces, we fnd applications of model-based RL, for example in board games, robots, video games <ref type="bibr" target="#b28">[29]</ref>, as well as behaviour-change applications, such as in generating behavioural instructions for people with dementia <ref type="bibr" target="#b22">[23]</ref>. A grand obstacle for applications in adaptive systems is the model: where to get a good one? A related problem is that of drift: prediction errors can have a compounding, cumulative efect on planning performance. In HCI, although previous work has explored the use of model-free RL (e.g., see <ref type="bibr" target="#b34">[35]</ref>), model-based RL has not been explored in adaptive interfaces at large, as far as we know. Also, while predictive models have been used for oneshot design generation <ref type="bibr" target="#b41">[42]</ref>, design space exploration <ref type="bibr" target="#b52">[53]</ref>, and for selecting a single action in a myopic manner <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b50">51]</ref>, they have not been used for simulation-based planning in an adaptive system.</p><p>In this paper, we approach the fundamental problem of selecting user interface adaptations by applying model-based RL, and exploiting predictive HCI models, to simulate and plan adaptations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">PROBLEM FORMULATION</head><p>We formulate the problem of adaptation as a stochastic sequential decision-making problem <ref type="bibr" target="#b6">[7]</ref>. The adaptive system must decide what to adapt, if anything, given its observations. It should pick a sequence of adaptations in order to maximise their expected value to user over a longer window of interactions. For example, in our application example later on, we optimise for performance improvements in menu selection tasks achievable over multiple sessions of interactions. Further, in a stochastic problem, the world is neither fully known nor under the control of the system. In our case, while the system can change the interface, it cannot change the human, which has its own latent processes. For example, humans learn and change interests. This complicates the problem: Any greedily chosen adaptation may lead to irreversibly poor interactions later on. Thus, adaptations must be picked with a horizon of such developments in mind.</p><p>In the following, we formulate this problem as a Markov decision process (MDP). The beneft of an MDP formulation is that it ofers a rigorous and actionable understanding of the problem. In particular, it (1) illuminates the decision problem, (2) links it to a body of theoretical results and practical approaches in AI and ML research, and (3) points toward appropriate algorithmic solutions.</p><p>The problem of adaptive interfaces is that of maximising expected cumulative discounted rewards r (s t , a t ) from acting according to an optimal policy π * (see e.g. <ref type="bibr" target="#b25">[26]</ref>):</p><formula xml:id="formula_0">" # ∞ Õ π * = argmax E π γ t r (s t , a t )<label>(1)</label></formula><formula xml:id="formula_1">π t =0 p(s t +1 |s t , a t )</formula><p>where,</p><p>• s ∈ S is a state of interaction; This consists of both the interface design (d) and the user (u)</p><p>• a ∈ A is an adaptation; i.e. a change that can be carried out on the interface. • p is a transition function; it provides the probability of transitioning from state s to state s t +1 after performing adaptation a; i.e., p(s t +1 |s t , a t ). • r is a reward collected for making adaptation a in state s.</p><p>• γ is a discount factor controlling for how much to favour immediate (small γ ) vs. long-term (large γ ) reward.</p><p>Consider the case of adapting the homescreen layout of smartphones, consisting of a grid of application icons. Here, a state s of the system consists of both the homescreen design d and latent state of the user u who is interacting with the device. More specifcally, the design d can encapsulate factors such as the arrangement of icons, their grouping or relationship to other icons, and other relevant features. With regard to the user u, aspects such as expertise, interests, and abilities, can be considered.</p><p>Given an initial homescreen design, with which the user has interacted, an adaptation a would result in a new design by, for example, changing the layout or ordering of icons. Upon adaptation, the transition function p specifes how the internal state of the user (e.g. their expertise) changes along with the external design state. The reward r then signifes the beneft an adaptation provides to the user by improving future interactions, for example, by reducing the time required to select an icon. Finally, the discount factor γ indicates to the adaptive system how immediate benefts and long-term improvements contribute towards the reward. Given this setting, the goal of the system is to fnd a suitable policy τ that can be used to select adaptations that maximise the estimated cumulative reward.</p><p>Finding a policy to select adaptations can be challenging for adaptive interfaces. While the true state of the design is fully observable, the system does not have access to the true state of the user. We can only estimate it through HCI models, where predictions provide us a belief about the user status (for the theoretical implications of this, see <ref type="bibr" target="#b1">[2]</ref>). Further, due to the lack of user feedback, computing reward is not straightforward. Instead, predictive HCI models can be used to build objective functions related to performance and re-learning costs. Note that this formulation does not take a stance on what is the 'right' objective function. Finally, at any given state, there is a large number of possible adaptations that can change the design. When considering a sequence of adaptations over a long horizon, the state space grows exponentially. In the following, we describe how these challenges are addressed via model-based RL.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">METHOD: DEEP MODEL-BASED REINFORCEMENT LEARNING</head><p>The core of this approach considers planning: the selection of a sequence of adaptation with the goal of maximising utility to user. Planning algorithms such as minimax and A-star, among others, utilise a tree representation of the search space. They have found several applications (e.g. game-playing <ref type="bibr" target="#b7">[8]</ref>, circuit-routing <ref type="bibr" target="#b10">[11]</ref>, etc.). The tree consists of nodes, connected by branches, representing valid states and transitions between them. However, classic tree search algorithms often require expansion of the entire tree. This is computationally expensive given the large number of possible adaptations (breadth) and long horizons (depth) in adaptive interfaces.</p><p>Monte Carlo Tree Search (MCTS) has been successfully employed in various game-playing applications to plan a sequence of moves effciently (see <ref type="bibr" target="#b8">[9]</ref>). MCTS can operate under uncertainty by analysing the most promising moves, and expanding tree nodes using random sampling based approaches. A well-known, inspiring application of MCTS is in AlphaGo <ref type="bibr" target="#b47">[48]</ref>, the computer program capable of playing the game of Go competitively against human players. A key insight here has been to incorporate neural networks to help predict which branches have highest expected value, and thereby deal with larger problem instances. In our work, we incorporate a value neural network to compute longer sequence cases faster.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Planning with MCTS</head><p>In contrast to game-playing applications, where a win/loss defnes the terminal state, our case does not have a well-defned horizon. The user could keep interacting for years. We thus need to estimate a cumulative reward over a horizon of reasonable length. In other parts, our solution follows standard implementations of MCTS (Figure <ref type="figure" target="#fig_0">2</ref>):</p><p>1. Selection: When a user concludes an interaction session, the root state s 0 is given by the current design d 0 and user observations u 0 . A state s j ∈ S is selected via Upper Confdence Trees (UCT), a widely used estimator in model-based planning <ref type="bibr" target="#b30">[31]</ref>. A key feature is that it has a coefcient C to balance between exploration and exploitation when evaluating several possible UI adaptations:</p><formula xml:id="formula_2">s r j ln n i UCT = + C (2) n j n j</formula><p>where r j is the total reward for child state s j , n j is the number of times s j has been visited, and n i is the number of times parent state s i has been visited. Exploration constant C in our application is set √ to 1/ 2 following convention. If all adaptations from the selected state s j have been previously explored, then selection is repeated until a leaf state is selected with unexplored adaptations.</p><p>2. Expansion: The selected node s j is next expanded by picking an adaptation a ∈ A that results in a new state s j+1 . At this point, n j+1 , r j+1 = 0. In our application, we further assume that the expanded state is either visible or invisible to the user. Invisibility can be exploited to plan multiple adaptations in a single turn.</p><p>3. Roll-outs and simulations: During one roll-out, as the tree has no value estimates to inform the selection of consequential states, adaptations {a 0 , . . . , a N } ∈ A are chosen at random, and rewards are estimated using predictive HCI models. All models simulate what would happen with that adaptation sequence and return an estimate of values over the whole window. This is repeated for a fxed number of steps, given by the horizon H , and cumulative rewards are computed for each predictive model:  4. Backpropagation: At the end of a simulation, the cumulative reward r j+1 is backpropagated from the newly-expanded state s j+1 to the initial state s 0 , and values (rewards r and visits n) are updated.</p><formula xml:id="formula_3">H Õ r j+1 = r k (3) k =j+2 u 0 d 0 u 1 d 1 u n d n u 2 d</formula><p>The above steps (1-4) are repeated several times to obtain value estimates for each adapted state.</p><p>Selecting the next adaptation: Given these value estimates, the system can now choose the best adaptation (by setting C = 0 in Equation <ref type="formula">2</ref>) to maximise expected utility for the user while avoiding costly changes.</p><p>We support several ways for selecting adaptation that allows controlling for the trade-of between risk and gain. Our approach assumes that there are multiple predictive HCI models that bound the true behaviour, for example by ofering best-case and (realistic) worst-case estimates. Alternatively, predictive models can be included to address multiple objectives, such as task completion time, cognitive load, and disruption <ref type="bibr" target="#b24">[25]</ref>. Combining value estimations from all models, we can implement diferent objective functions, such as:</p><p>(1) Average: The mean of rewards from each model gives total reward r , thus accounting for varying user strategies. (2) Optimistic: The system assumes optimal user strategy, and selects the model that maximises rewards. (3) Conservative: The system ensures that no user strategy is harmed by selecting the lowest-possible reward, and penalising negative rewards.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Value Estimation with Deep Neural Networks</head><p>To address large problem sizes in online settings, where repeating a sufcient number of MCTS simulations to attain robust estimates is infeasible, we develop a deep neural network architecture that can efciently provide predictions in real-time.</p><p>In place of rollouts, where simulations can be costly for longer horizons, a pretrained value network is used to directly obtain value estimates for unexplored states.  As illustrated in Figure <ref type="figure" target="#fig_2">3</ref>, we propose an m-headed n-tailed architecture that is trained end-to-end with backpropagation. Each of the m input parameters is treated as an independent model branch (head) that is eventually concatenated and passed to n independent model branches (tails). During ofine training, model-based data is generated using MCTS roll-outs from randomly sampled initial states. Value estimates, along with state (design and user) information, are given as input samples to a deep neural network model. Elementary design and user features are parameterised with the neural network model. This is then used to predict value estimates for any given state in an online setting. Note that we decouple value estimations from objective functions (see above), leaving it up to the adaptive system to decide how to use information from multiple models. The main advantages of using neural networks for estimation are that they have high learning capacity, and can evaluate thousands of states in real-time without running expensive simulations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Applications in Adaptive Interfaces</head><p>With certain conditions we outline here, the approach we outline is broadly useful across applications of adaptive interfaces. For example, it can be used to adapt the structure of webpages layouts,  arrange icons on mobile homescreens, or reorganise application menus. Depending on the application, the goal or objective can differ and might include minimising selection time, increasing saliency, reducing cognitive load, increasing engagement, or a combination of them. The approach can handle diferent types of adaptations including the presentation of the graphical elements (position, size, colour, etc.) or their behaviour (number of elements, animations, etc.). For any application case, a core aspect of our approach relies on HCI models <ref type="bibr" target="#b41">[42]</ref> to sufciently accurately capture the efects of these adaptations on the chosen goals. For instance, Fitts' law <ref type="bibr" target="#b38">[39]</ref> can be used to adapt the location and the size of an elements to minimise pointing time. Other practical limitations include the size of state-action space. In the following section, we demonstrate our approach with an application in adaptive menus, and present a novel HCI model to predict selection time in menus.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">APPLICATION: ADAPTIVE MENUS</head><p>To demonstrate the applicability of our approach, we tackle a challenging and open question in the feld of adaptive interfaces: adaptive menus. Menus have received extensive attention in HCI research because they are widely used, and adaptation has potential to improve usability <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b54">55]</ref>. It is known that unexpected changes in menus can introduce a temporary performance drop, increase cognitive load, and potentially lead to the rejection of the adaption/techniques <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b54">55]</ref>. No general solution has been proposed for autonomous adaptation that could not only move items to the top, but handle reorganisations more comprehensively. We provide a general solution here considering linear menus with up to 20 items, which covers a wide number of menus typically found in common operating systems, applications, and websites <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b5">6]</ref>. As menu adaptations, we only consider those modifying the position and grouping of items in the menus, leaving other presentation adaptations, such as highlighting and split menus, for future work. While we consider linear menus with textual labels, our solution can be extended to address the problem of adaptive homescreens (introduced in section 3) by extending the menu search model to consider two-dimensional grids and graphical icons.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Problem Defnition</head><p>Following the general formulation in section 3, we frst defne the adaptive menu problem. Figure <ref type="figure" target="#fig_3">4</ref> presents an exemplary illustration.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>State (S):</head><p>A state s ∈ S gives information about the menu design and the user.</p><p>We defne a design d ∈ D as a pair &lt; L, M &gt; where L is a nonhierarchical linear menu <ref type="bibr" target="#b39">[40]</ref> containing an ordered list of items. An item is either a word or a separator (used to create semantic groups). M is an association matrix defning the semantic relatedness between menu items. In our implementation, M is given by the designer as binary relationships by specifying lists of related items. For common words, it can be inferred using word embedding models <ref type="bibr" target="#b42">[43]</ref>.</p><p>The system observes user clicks on menu items to approximate a user's expertise and interest. We use a simplifed version of the learning component from ACT-R <ref type="bibr" target="#b0">[1]</ref> to compute user expertise for each menu item i l in a menu with n items:</p><formula xml:id="formula_4">n Õ B(i l ) = (T -T j,i l ) -ρ<label>(4)</label></formula><p>j=1</p><p>where B(i l ) is the level of activation of item i at location l in the memory, T is the current time, T j,i l is the time of the j th selection of i l , and ρ is a decay parameter equal to 0.5. User interest (or prediction scheme <ref type="bibr" target="#b54">[55]</ref>) is given by the frequency distribution of commands selected during the previous interaction session, containing N clicks. Additional statistical models of user interest and expertise <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b20">21,</ref><ref type="bibr" target="#b50">51]</ref>, can be plugged into our architecture. Feasible Adaptations (A): The set of possible adaptations A, through which a menu can be reorganised, includes (1) moving a menu item to a certain position, (2) swapping two items, (3) adding or removing a separator, (4) moving an entire group, (5) swapping two groups, and (6) not making any changes.</p><p>Transition function (p): We use MCTS, where the probability of making an adaptation from state s 0 to s 1 is given by UCT (Equation <ref type="formula">2</ref>). During planning, we balance between exploiting highreward adaptations and exploring others. When selecting an adaptation a to make on the current design d 0 , resulting in a new design d 1 , a greedy strategy is chosen:</p><formula xml:id="formula_5">r j argmax<label>(5)</label></formula><p>a n j Reward (r ): We extend predictive HCI models of menu use to obtain reward estimates. A key feature of these models is to take into account the implicit cost of adaptations. Given a pair of menu designs and estimates of user expertise and interest, these models predict selection time for items for varying user strategies. For each model, the reward r then is the diference in average selection time, weighted by user interest. Rewards from multiple models can be combined using any of the objective functions given in section 4.1.</p><p>When an adapted state is assumed to be displayed (visible) to the user, we simulate an interaction session (new clicks) based on user interest, and update expertise accordingly. Conversely, the system can use invisible states to withhold presentation and combine multiple adaptations, such that the state is used only as a pathway to another state without being displayed. Here, no user updates are applied.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Models for Simulating Menu Search</head><p>Several predictive models explain how users search within linear menus <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b39">40]</ref>. We build on these models to defne three search strategies, and use these to evaluate the utility of a menu design by simulating search tasks, illustrated in Figure <ref type="figure" target="#fig_4">5</ref>:</p><p>(1) Serial search: The user searches serially, from top to bottom, until the desired item is found in the menu. (2) Foraging search: Grouping of items is exploited such that the user only searches for the target within relevant groups. (3) Recall search: The user relies on memory to search for the desired item at an expected location in the menu. Our choice of the three models was made with the hypothesis that they would provide bounds for best-case and worst-case performance. In the beginning, best-case performance would be governed by foraging and serial search, but as experience accumulates, the (rational) user would shift to foraging based and recall-based strategies. But making the assumption that a user might -for reasons like lack of efort or interest -use a poor strategy allows us to defne a conservative policy for adaptation that is unlikely to annoy them. We note that it is possible to plug in additional search strategies (e.g. Random search <ref type="bibr" target="#b39">[40]</ref>) without modifying the general architecture of the algorithm.</p><p>Table <ref type="table">1</ref>: Key notations used in this section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Notation Description</head><p>Target item i at location l T model (i)</p><formula xml:id="formula_6">i l</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Search time for an item i with a given model δ Constant for cautious inspection cost of an item</head><p>Constant surprise penalty when an item is not found as expected T trail</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T c</head><p>Constant pointing time when the cursor trails eye gaze Boolean relationship between items i k and i l , from association matrix M B(i l )</p><formula xml:id="formula_7">M(i k , i l )</formula><p>Activation level for i at l 5.2.1 Serial search. When searching for a menu item i e at an expected position e, serial search <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b39">40]</ref> consists of a top-tobottom inspection of the menu, until the item is reached. Inspection (or reading) cost for any item i l is given by: δ</p><formula xml:id="formula_8">T read (i l ) = (6) 1 + B(i l )</formula><p>where B(i l ) is the activation of i at l, and δ is the cautious inspection cost constant when there is no activation. The total serial search time for a target at expected location e is thus given by: e Õ T serial (i e ) = T read (i j ) + T trail <ref type="bibr" target="#b6">(7)</ref> j=1</p><p>Where T trail is a constant pointing time assuming that the mouse cursor trails the eye-gaze (tracking strategy) during serial search <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b9">10]</ref>.</p><p>In an adapted menu, if the item's new location a is before the expected location e (a ⩽ e), the search time reduces following Equation <ref type="formula">7</ref>. However, if a is after e (a ⩾ e), surprise penalty T c is imposed upon not fnding the item as expected. Following this, the user cautiously inspects the remaining items at a slower rate δ . The total search time is:</p><formula xml:id="formula_9">T serial (i a ) = T serial (i e ) + T c + (a -e) • δ + T pointing<label>(8)</label></formula><p>To support serial search, it is advantageous for an adaptive system to move frequently-used items towards the top.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.2">Foraging search.</head><p>Here, semantic structure (grouping) is exploited to avoid wasting time inspecting groups that most likely do not contain the target item <ref type="bibr" target="#b3">[4]</ref>. The anchor, or frst element of a group, "signals" what is in the group. If the anchor is unrelated to the target, the user skips the group. If the anchor is related, the user performs a serial search within this group.</p><p>Consider a menu where n д is the number of groups, n д (i e ) is the location of the group that contains the target (i e ), and e the expected target location within the group. M(д j , i e ) ∈ [0, 1] specifes if i e is associated to an anchor д j . In a well-organised menu, where the anchor of one of the groups is related to the target item, foraging search time is:</p><formula xml:id="formula_10">n Õ д (i e ) T forage (i e ) = T read (д j ) +<label>(9)</label></formula><p>j=1 min(e(д j ),s(д j ))</p><formula xml:id="formula_11">Õ ª M(д j , i e ) • T read (i k )® + T trail k =1</formula><p>¬ where s(д j ) is the size of the group, and e(д j ) is the location of the target item t e within group д j if it is located within the group, ∞ otherwise. Finally, T trail remains the constant pointing time when the mouse cursor trails the eye gaze. Thus, items within related groups are inspected serially until the target is successfully found.</p><p>In a poorly organised menu, where the target item is not located within the expected group(s), a user frst attempts foraging search by inspecting all anchors, and all items within related anchors (given by Equation <ref type="formula" target="#formula_10">9</ref>). Upon not fnding the item, a surprise penalty T c is incurred, and the user reverts to serial search under caution from the top of the menu.</p><p>To support foraging search, it is desirable for an adaptive system to create groups of related items, or eliminate groups where items have no associations. (a) when the target is at an expected location, search proceeds as expected; (b) when the target is at an unexpected location, a penalty is imposed upon not fnding the target at its expected location (indicated by ×), and search reverts to slower strategies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Open</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5.2.3</head><p>Recall search. Recall (direct) search <ref type="bibr" target="#b4">[5]</ref> relies on user's memory, given by activations B, to directly glance at items without inspecting the entire menu. For a target item i, if there are no activations B i above a threshold θ (we use 0.5), the user reverts to serial search (Equation <ref type="formula">7</ref>). When B(i l ) ⩾ θ for a target i l at location l, the user attempts recall search by inspecting the item at l (Equation <ref type="formula">6</ref>).</p><p>If found at l, the user then performs a pointing task. Here, the visual search and pointing task are performed sequentially as eye movement is faster than mouse movement <ref type="bibr" target="#b4">[5]</ref>. We use Fitts' law to estimate pointing time in menus:</p><formula xml:id="formula_12">T pointing (i l ) = a p + b p • log(1 + i l ) (<label>10</label></formula><formula xml:id="formula_13">)</formula><p>where a p = 10.3 and b p = 4.8 according to <ref type="bibr" target="#b4">[5]</ref>.</p><p>If not found at l, after incurring surprise penalty T c , the user attempts local search, by randomly inspecting N local items in the vicinity of location l.</p><formula xml:id="formula_14">T local (i l ) = T c + δ • N local + T trail<label>(11)</label></formula><p>In non-ordered menus, N local is equal to 2 times the number of items in the Fovea. In semantic menus, N local is the number of items in the group.</p><p>In an adaptive menu, the target item i might have been encountered at several locations. Here, the user attempts recall search at all locations l ∈ L where B(i l ) ⩾ θ , until the target is found. The total recall search time for target i a at adapted location a is given by:</p><formula xml:id="formula_15">l ± Õ N /2 T recall (i a ) = T pointing (i a ) + T read (i l ) + T local (i l ) (12) l ∈L:B(i l )⩾θ</formula><p>If recall search fails (a &lt; L or B(t, a) &lt; θ ), the user eventually reverts to serial search under caution (Equation <ref type="formula" target="#formula_9">8</ref>).</p><p>To support recall, it is advantageous for an adaptive system to place frequently-encountered items at locations where they have been seen before.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Neural Network for Rewards Estimation</head><p>The above search models enable us to predict selection times for varying user strategies. By simulating consequences of adaptations during roll-outs, we can estimate implications of design changes on user performance. However, given the varying length of menu sizes, running simulations with long horizons can be infeasible for online settings. For example, for a menu with 15 items, and up to 8 separators, there are over 500 feasible adaptations. To address large problem sizes, we instantiate our general network architecture (Figure <ref type="figure" target="#fig_2">3</ref>) for adaptive menus. The key idea is to anticipate the rewards for a given menu adaptation taking into account the previous menu design and the user behaviour. The model inputs are: (1) design head: adapted menu design, association matrices of the current and adapted menu; (2) user head: previous and current clicks distribution. The model outputs reward predictions for each of the three search models: serial, foraging, and recall. Figure <ref type="figure" target="#fig_5">6</ref> illustrates the model architecture.</p><p>Each input is treated as an independent model branch (head) that is eventually concatenated and passed to three independent model branches (tails), one for each output reward. Each item in the adapted menu is converted to a one-hot encoded vector, fattened, and then passed to a fully connected layer. The association matrices are difed and passed to a long short-term memory (LSTM) layer, then passed to a fully connected layer. Finally, the click history is passed to an LSTM layer, which models sequential data and is  designed to handle long-term dependencies, and is then passed to a fully connected layer.</p><p>The concatenated inputs are passed to each network tail, which comprises two stacked fully connected layers. At the end of each tail, we use linear activation to predict each reward, since they are not bounded. For regularisation purposes, our architecture uses Dropout layers with drop rate 0.5 before each of the fully connected layers. This prevents overftting the model to the training data, improving generalisability to unseen data. The loss function for all model tails is the mean squared error (MSE), which is computed as the average of the squared diferences between the predicted and the actual values, which penalises large errors. We use the RMSProp optimiser, a popular stochastic gradient descent algorithm with momentums. We use learning rate η = 0.001 and decay factor β = 0.9 for the optimiser. We train the model for 200 epochs at most, using early stopping (10 epochs patience) to retain the best model weights, and monitor its performance on a validation set comprising 20% of training data. After training, our model achieved remarkable performance: MSE ser ial = 0.149, MSE f or aдe = 0.408, MSE r ecall = 0.431.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">EVALUATION</head><p>We validate our method, applied to adaptive menus, through technical and empirical evaluations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Technical Evaluation</head><p>We conducted a technical evaluation with realistic and challenging scenarios, where the adaptive system must adapt menus for simulated users. The two main questions we seek to answer are:</p><p>(1) Can a model-based planning approach successfully and consistently improve predicted usability?</p><p>(2) Does our neural network based solution scale it up to address larger problem sizes?</p><p>6.1.1 Tasks. Menu Designs and User Interest: We considered 3 menu sizes -5, 10, and 15 items -to address varying cases, from short contextual menus to longer application menus. In addition, up to 8 separators were allowed for grouping, resulting in menus with up to 23 items. We picked common labels for menu items, where categories specifed pairwise associations (e.g. animals, furniture, vegetables, clothing). For each menu size, we created 4 starting menu designs by randomly assigning labels to item positions. We used a Zipfan distribution to reasonably model menu usage <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b36">37]</ref>. We sampled 8 diferent click histories by randomly assigning frequency to item labels. This resulted in 3×8×4 = 96 confgurations, each assigned to a diferent simulated user. Reward Estimation: We compare two methods of estimating rewards: model-based simulations and value neural network predictions. With model-based simulations, predictive models are used during roll-outs to estimate rewards for each state. With value network predictions, our pre-trained network models are used to predict value estimates for each state.  used a GNU/Linux server with an Intel Xeon Gold CPU @ 2.10 GHz (64 bit processor) for simulations. The execution of the study was automated such that trials were conducted sequentially, to avoid variations in computational resource usage.</p><p>During each trial, a combination of {menu size × user history × menu design × objective function × reward source} was selected, and given as input to the system. In a constrained setting, the MCTS algorithm was allowed 400 iterations, and a shallow roll-out horizon of 4 steps, to build the search tree and fnd suitable adaptations.</p><p>6.1.3 Result: Success Rate. With the above setup, we frst evaluated whether our approach, and implementation, could successfully identify promising adaptations. As dependent variable, we measured success rate of fnding benefcial adaptations. We defne a successful trial as one where the predicted selection time is improved by adaptation. Figure <ref type="figure" target="#fig_6">7</ref> shows an example result for a challenging case with a 15-item menu.</p><p>The overall success rate with model-based simulation was 92.7%, indicating that in most cases an improvement was found. Similarly, with the value network, success rate was 89.6%. These results support our approach towards planning menu adaptations that can improve user performance.  6, 8, and 10 -depicting a range of planning horizons, from short sequences to longer sequences.</p><p>Figure <ref type="figure" target="#fig_8">8</ref> illustrates computation time results for each depth level (for 400 MCTS iterations). We observe that for depths ≤ 4, the value network does not provide much beneft. However, as search depth increases, while the computation time with our value network remains constant (mean M = 7.77s, SD = 1.0), it drastically increases with simulations (from M = 7.9s, SD = 3.5s at depth 4 to M = 39.0s, SD = 7.4 at depth 10).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Empirical Evaluation</head><p>The primary goal of this evaluation is to test whether our planning approach (henceforth MCTS) applied to linear menus improves performance in comparison with static menus (Static), and with the well-known frequency-based adaptive approach (Freqency) as a baseline (e.g. as in <ref type="bibr" target="#b33">[34]</ref>). In MCTS, the menu adapts after each block by planning adaptations; in Static, the menu does not adapt over time; in Freqency, the menu adapts based on the frequency of clicks on menu items. To this end, we conducted a lab study where participants completed selection tasks in a within-subject design with three conditions (Static, Freqency, MCTS).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.1">Materials.</head><p>For the experiment, linear menus with 15 item labels were randomly generated. Items labels were selected from common categories (e.g. animals, fruits, countries, etc.) to avoid prior biases. For each participant, two menus were generated for each of the three conditions, resulting in six unique menus. To avoid confusion, there were no overlaps in item labels or categories between the menus for a participant.</p><p>For each menu within a condition, a Zipfan distribution, known to accurately capture real-world command selections <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b36">37]</ref>, with shape s = 1.5 was used to control the frequency distribution of target items. The same frequency distribution was used for all three conditions within a participant. Unique frequency distributions were generated for every participant, to consider variance in user interests. These frequency distributions were then used to generate sequences of target items, to be presented as stimulus during the trials.</p><p>6.2.2 Participants. 18 participants (10 masculine, 8 feminine, 0 others), aged 18 to 38 (mean 27.2), with varying educational backgrounds, were opportunistically recruited. All participants reported frequent desktop or mobile, and web usage. Participation was compensated with a movie ticket voucher (approx. €12.00).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.3">Apparatus.</head><p>The experiment was conducted on a Macbook Pro, with a 15" Retina display. An Apple Magic Mouse with default tracking speed was used for selection tasks. The study interface was implemented using HTML and Javascript, and was displayed in a browser window. Timestamped cursor movements and clicks on menu items were recorded. 6.2.4 Stimulus and Task. The target item name was displayed at the top of the browser window. Participants began a trial by clicking on a confrm button, upon which the menu was displayed directly below. Errors were logged, and participants had to select the target item to fnish the trial. Upon clicking the target item, the menu was hidden, and a short break was provided. 6.2.5 Procedure and design. The experiment began with an introductory briefng and participant consent. In a within-subject experimental design, each participant tested the three conditions (Static, Freqency, MCTS) sequentially. Condition order was counterbalanced between participants using a 3×3 Latin square.</p><p>During each condition, the participant interacted with two diferent menus during 3 blocks. Within a block, the two menus appeared in an alternating order, separated by short breaks (3 seconds). For each menu, 20 selection tasks (trials) were completed. We introduced this design to refect the fact that (1) users perform several sessions of work in the real life (one session == 1 block), (2) users regularly switch between applications within a session, and thus use diferent menus <ref type="bibr" target="#b44">[45]</ref>: we wanted to avoid undesirable efects due to repetitive selection within a single menu, and (3) each menu has a diferent selection frequency, given by two Zipfan distributions.</p><p>Participants took mandatory breaks (1 minute) between two consecutive blocks, and longer breaks (5 minutes) between conditions where they answered open-ended interview questions. In summary, the design is: 18 participants × 3 conditions × 3 blocks × 2 menus × 20 selections = 6480 trials. Target Item Position: Given the menu selection scenario, items near the top of the menu are typically faster to select than items that are near the bottom. However, this selection time depends not only on the cursor movement distance, but also the user's ability to search for items in the menu. To get a better understanding of how the diferent conditions infuenced performance, we further looked at how target item positions in the menu infuence selection time. Figure <ref type="figure">9b</ref> illustrates the linear increase in selection time with target position for the three conditions. It can be observed that while selection time for the top-most items (lower target positions) is quite similar for the three conditions, with MCTS being the fastest, it increases more drastically for the Freqency condition, as compared to Static and MCTS. When we exclude the top-three target items, the diference in selection time between MCTS (mean = 2454 ms) and Freqency (mean = 2799 ms) is 344 ms (i.e. Freqency is about 15% slower).</p><p>6.2.7 Qalitative Results. During the study, participants were not informed about adaptations (if any) in advance. After each block, we asked them whether they noticed changes to menus during use, and their opinions about these changes (if any). 15 participants commented that they noticed changes in the Freqency condition, but only 2 participants noticed how these changes were occurring. Participants commented that the reordering was confusing, and prevented them from remembering item locations: "I might skip down instead of checking the top, and then go back to the top. " (P3). In the Static condition, participants could use their memory to directly access some items, but commented on the lack of proper grouping: "the items were not consistent in their grouping, and they were not intuitively grouped" (P11). In the MCTS condition, participants noticed that the categorisation of items into groups improved upon adaptation, and helped them in searching for related items: "the items were organised under categories often -that helped select items" (P18).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Summary</head><p>Results from our simulation-based evaluation ofer evidence for our approach and technical solutions. First, MCTS-based planning consistently proposes adaptations that could improve predicted performance (Figure <ref type="figure">9a</ref>). Second, as search depth increases, our results indicate that value network is more efcient for estimating reward predictions. Further, results from our user study highlight benefts over a static and an adaptive baseline. Through model-based planning, we can adapt menus that improve overall performance, as given by reduced selection time. A common pitfall of the frequencybased approach is that, although it can improve performance for commonly-used items or commands, it prevents recall and makes selection of other items increasingly difcult. In contrast, we observed (Figure <ref type="figure">9b</ref>) that adaptations made through our approach could provide these benefts while avoiding costly changes that require relearning and cause annoyance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION</head><p>We have presented a model-based reinforcement learning method suitable for adaptive interactions. While recent successes of reinforcement learning have created renewed enthusiasm toward this  approach in HCI, applications to adaptive user interfaces have remained scarce. To apply this class of machine learning methods for selecting adaptations, we have proposed the use of predictive models in HCI for value estimation during planning. We have presented solutions to several consequent technical challenges, most notably:</p><p>• How to model the decision problem in adaptive interfaces for model-based RL; • How to estimate MCTS roll-outs using HCI models; • How to design deep neural networks to boost planning.</p><p>To study and demonstrate the viability of the approach, we have applied it to the challenging case of adaptive menus by extending predictive models. Our simulated and empirical evaluations suggest signifcant and practically valuable improvements to usability. Importantly, the adaptive system does not require explicit user input, but is still able to perform conservatively without disadvantageous or annoying changes (Figure <ref type="figure" target="#fig_10">10</ref>). Our empirical evaluation reveals that this approach can work even when starting from poor designs that would be hard to recover with approaches that do not consider planning. Future adaptive applications can beneft from our general approach by exploiting and extending predictive models of interaction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Limitations and Future Work</head><p>We see several exciting topics for future research on model-based RL and its applications in HCI. First, one limitation to the applicability of the approach is the requirement for accurate models of short-and long-term consequences of adaptations. So far we have assumed that such models are expressed as step-by-step computer simulations or mathematical models. However, there is no reason why data-driven models (e.g. <ref type="bibr" target="#b58">[59]</ref>) -trained on larger datasets of user data -could not be used for this purpose, signifcantly expanding the scope of possible applications. Second, algorithm engineering is needed to deploy this approach to larger applications. In particular, presently, with our computing resources, problem sizes of up to 20 items are still within reach in the case of menu systems. To improve performance beyond that, techniques for GPU computation and more efcient training will need attention. Finally, while our work successfully used a value network, further improvements can be expected by implementing a policy network <ref type="bibr" target="#b47">[48]</ref>.</p><p>To conclude, we hope our work can be broadly appealing, and invite contributions from both the HCI and the machine learning community. At the core of model-based RL is an understanding of how users behave and what makes a good design in given conditions. We believe that future applications can beneft from this approach to improve interactions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">OPEN SCIENCE</head><p>We support adoption and further research eforts by providing an open code repository, with examples and instructions, on our project page: <ref type="url" target="https://userinterfaces.aalto.fi/adaptive">https://userinterfaces.aalto.fi/adaptive</ref>.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Model-based planning of adaptations using Monte-Carlo Tree Search (MCTS). Adaptations are selected using upperconfdence trees (UCT). After expanding a new node (adaptation), reward estimates are obtained through roll-outs, and backpropogated to the root node. The child with the highest value is picked as the next adaptation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Neural network architecture for obtaining value estimates. Training data is generated using HCI models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Menu adaptation with deep model-based RL. Given a current design and user observations, MCTS-based planning is used to select the next adaptation. Reward estimates are obtained either using predictive models or from a neural network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Figure 5: Model-based simulation of search for a target item ('Save As...').(a) when the target is at an expected location, search proceeds as expected; (b) when the target is at an unexpected location, a penalty is imposed upon not fnding the target at its expected location (indicated by ×), and search reverts to slower strategies.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Figure 6: Our value network architecture takes menu design and user features as input to provide individual reward predictions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 :</head><label>7</label><figDesc>Figure7: A sample result from the simulation study, for a 15item menu design. In 3 steps, the menu was adapted to better suit the given user's interests ('Gloves' group moved to the top), and improved some grouping ('Carrot' with 'Potato') as well.</figDesc><graphic coords="9,278.86,47.47,176.37,367.65" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>6. 1 . 4</head><label>14</label><figDesc>Result: Scalability. To assess the scalability of our solution, we compared computation time for model-based simulations vs. value network predictions. In addition to the horizon of 4 steps used to evaluate success rate, we evaluated 3 other search depths -</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Computation time for planning adaptations via model-based simulations vs. value network for varying search depths. Our value network exhibited consistent performance for longer horizons.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>6. 2 . 6 Figure 9 :</head><label>269</label><figDesc>Figure 9: (a) The MCTS condition was associated with signifcantly lower selection time as compared to the two baselines. Vertical bars indicate 95% confdence intervals. (b) For items positioned lower in the menu, selection time in Freqency increased more drastically than other conditions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 10 :</head><label>10</label><figDesc>Figure 10: Sequential adaptation of a 5-item menu. The system avoids greedily moving 'Cofee' (lowest frequency) at the frst step. In light of new observations, this change is justifed by the reduced user interest.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head></head><label></label><figDesc>6.1.2 Implementation. Our MCTS-based planning algorithm, and the predictive menu models, are implemented in Python 3.7. The value neural network is implemented with TensorFlow 2.0.0. We</figDesc><table><row><cell cols="2">User Interest</cell></row><row><cell cols="2">(Frequencies)</cell></row><row><cell cols="2">Gloves: 0.6</cell></row><row><cell cols="2">Carrot: 0.16</cell></row><row><cell cols="2">Panda: 0.1</cell></row><row><cell cols="2">Table: 0.06</cell></row><row><cell cols="2">Beans: 0.06</cell></row><row><cell cols="2">Bikini: 0.02</cell></row><row><cell cols="2">(Others: 0)</cell></row><row><cell cols="2">Adapt x 3</cell></row><row><cell cols="2">Predicted Average</cell></row><row><cell cols="2">Selection Time (s)</cell></row><row><cell>13.6s Current</cell><cell>7.2s Adapted</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div><head>ACKNOWLEDGMENTS</head><p>We thank all study participants for their time, and colleagues and reviewers for their helpful comments. This work was funded by the <rs type="funder">Department of Communications and Networking (Comnet)</rs>, the <rs type="funder">Finnish Center for Artifcial Intelligence (FCAI)</rs>, <rs type="funder">Academy of Finland</rs> projects '<rs type="projectName">Human Automata</rs>' and '<rs type="projectName">BAD</rs>', <rs type="funder">Agence Nationale de la Recherche</rs> (grant number <rs type="grantNumber">ANR-16-CE33-0023</rs>), and <rs type="funder">HumaneAI Net</rs> (<rs type="grantNumber">H2020 ICT 48</rs> <rs type="funder">Network of Centers of Excellence)</rs>.</p></div>
+			</div>
+			<listOrg type="funding">
+				<org type="funded-project" xml:id="_m3Ct8VR">
+					<orgName type="project" subtype="full">Human Automata</orgName>
+				</org>
+				<org type="funded-project" xml:id="_KG7StBV">
+					<idno type="grant-number">ANR-16-CE33-0023</idno>
+					<orgName type="project" subtype="full">BAD</orgName>
+				</org>
+				<org type="funding" xml:id="_YR3NJYf">
+					<idno type="grant-number">H2020 ICT 48</idno>
+				</org>
+			</listOrg>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">The atomic components of thought</title>
+		<author>
+			<persName><forename type="first">Christian</forename><forename type="middle">J</forename><surname>John R Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lebiere</surname></persName>
+		</author>
+		<idno type="DOI">10.4324/9781315805696</idno>
+		<ptr target="https://doi.org/10.4324/9781315805696" />
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>Psychology Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A POMDP Extension with Belief-dependent Rewards</title>
+		<author>
+			<persName><forename type="first">Mauricio</forename><surname>Araya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Olivier</forename><surname>Bufet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Vincent</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Françcois</forename><surname>Charpillet</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TCIAIG.2012.2186810</idno>
+		<ptr target="https://doi.org/10.1109/TCIAIG.2012.2186810" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems 23</title>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Laferty</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">C</forename><forename type="middle">K I</forename><surname>Williams</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Shawe-Taylor</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Zemel</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Culotta</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="64" to="72" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Flower Menus: A New Type of Marking Menu with Large Menu Breadth, within Groups and Efcient Expert Mode Memorization</title>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Lecolinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laurence</forename><surname>Nigay</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1385569.1385575</idno>
+		<ptr target="https://doi.org/10.1145/1385569.1385575" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Working Conference on Advanced Visual Interfaces (AVI &apos;08)</title>
+		<meeting>the Working Conference on Advanced Visual Interfaces (AVI &apos;08)</meeting>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="15" to="22" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Visual Menu Techniques</title>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Eric</forename><surname>Lecolinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laurence</forename><surname>Nigay</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3002171</idno>
+		<ptr target="https://doi.org/10.1145/3002171" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Comput. Surv</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">41</biblScope>
+			<date type="published" when="2016-12">2016. Dec. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Model of Visual Search and Selection Time in Linear Menus</title>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Duncan</forename><forename type="middle">P</forename><surname>Brumby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2556288.2557093</idno>
+		<ptr target="https://doi.org/10.1145/2556288.2557093" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI &apos;14)</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems (CHI &apos;14)</meeting>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="3865" to="3874" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Men-uOptimizer: Interactive Optimization of Menu Systems</title>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Timo</forename><surname>Kötzing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sabrina</forename><surname>Hoppe</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2501988.2502024</idno>
+		<ptr target="https://doi.org/10.1145/2501988.2502024" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 26th Annual ACM Symposium on User Interface Software and Technology (UIST &apos;13)</title>
+		<meeting>the 26th Annual ACM Symposium on User Interface Software and Technology (UIST &apos;13)</meeting>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="331" to="342" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Decision-making in a fuzzy environment</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Richard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lotf Asker</forename><surname>Bellman</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zadeh</surname></persName>
+		</author>
+		<idno type="DOI">10.1287/mnsc.17.4.B141</idno>
+		<ptr target="https://doi.org/10.1287/mnsc.17.4.B141" />
+	</analytic>
+	<monogr>
+		<title level="j">Management science</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">141</biblScope>
+			<date type="published" when="1970">1970. 1970</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A taxonomy of parallel game-tree search algorithms</title>
+		<author>
+			<persName><surname>Mark G Brockington</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICGA Journal</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="162" to="174" />
+			<date type="published" when="1996">1996. 1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A Survey of Monte Carlo Tree Search Methods</title>
+		<author>
+			<persName><forename type="first">Cameron</forename><forename type="middle">B</forename><surname>Browne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Edward</forename><surname>Powley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Whitehouse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><forename type="middle">M</forename><surname>Lucas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Peter</forename><forename type="middle">I</forename><surname>Cowling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Philipp</forename><surname>Rohlfshagen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Stephen</forename><surname>Tavener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Diego</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Spyridon</forename><surname>Samothrakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Simon</forename><surname>Colton</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TCIAIG.2012.2186810</idno>
+		<ptr target="https://doi.org/10.1109/TCIAIG.2012.2186810" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Computational Intelligence and AI in Games</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="43" />
+			<date type="published" when="2012">2012. 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">ACT-R/PM and menu selection: applying a cognitive architecture to HCI</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Byrne</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/ijhc.2001.0469</idno>
+		<ptr target="https://doi.org/10.1006/ijhc.2001.0469" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Human-Computer Studies</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="41" to="84" />
+			<date type="published" when="2001">2001. 2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">ASA-routing: A-Star Adaptive Routing Algorithm for Network-on-Chips</title>
+		<author>
+			<persName><forename type="first">Yuan</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiang</forename><surname>Ji</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Algorithms and Architectures for Parallel Processing</title>
+		<editor>
+			<persName><forename type="first">Jaideep</forename><surname>Vaidya</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Jin</forename><surname>Li</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="187" to="198" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A Predictive Model of Human Performance With Scrolling and Hierarchical Lists</title>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Cockburn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carl</forename><surname>Gutwin</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/07370020902990402</idno>
+		<ptr target="https://doi.org/10.1080/07370020902990402" />
+	</analytic>
+	<monogr>
+		<title level="j">Human-Computer Interaction</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="273" to="314" />
+			<date type="published" when="2009">2009. 2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">A Predictive Model of Menu Performance</title>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Cockburn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Carl</forename><surname>Gutwin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Saul</forename><surname>Greenberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1240624.1240723</idno>
+		<ptr target="https://doi.org/10.1145/1240624.1240723" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI &apos;07)</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems (CHI &apos;07)</meeting>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="627" to="636" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">POMDP-based control of workfows for crowdsourcing</title>
+		<author>
+			<persName><forename type="first">Peng</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><forename type="middle">S</forename><surname>Christopher H Lin</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Weld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artifcial Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">202</biblScope>
+			<biblScope unit="page" from="52" to="85" />
+			<date type="published" when="2013">2013. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Crowdsourcing Interface Feature Design with Bayesian Optimization</title>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">J</forename><surname>Dudley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><forename type="middle">T</forename><surname>Jacques</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Per</forename><surname>Ola Kristensson</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3290605.3300482</idno>
+		<ptr target="https://doi.org/10.1145/3290605.3300482" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2019 CHI Conference on Human Factors in Computing Systems<address><addrLine>Glasgow, Scotland Uk; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="1" to="12" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;19)</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A Comparison of Static, Adaptive, and Adaptable Menus</title>
+		<author>
+			<persName><forename type="first">Leah</forename><surname>Findlater</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joanna</forename><surname>Mcgrenere</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/985692.985704</idno>
+		<ptr target="https://doi.org/10.1145/985692.985704" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Vienna, Austria; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="page" from="89" to="96" />
+		</imprint>
+	</monogr>
+	<note>CHI &apos;04)</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Ephemeral Adaptation: The Use of Gradual Onset to Improve Menu Selection Performance</title>
+		<author>
+			<persName><forename type="first">Leah</forename><surname>Findlater</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Karyn</forename><surname>Mofatt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joanna</forename><surname>Mcgrenere</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jessica</forename><surname>Dawson</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1518701.1518956</idno>
+		<ptr target="https://doi.org/10.1145/1518701.1518956" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Boston, MA, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="1655" to="1664" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;09)</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">AccessRank: Predicting What Users Will Do Next</title>
+		<author>
+			<persName><forename type="first">Stephen</forename><surname>Fitchett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andy</forename><surname>Cockburn</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2207676.2208380</idno>
+		<ptr target="https://doi.org/10.1145/2207676.2208380" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>Austin, Texas, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="2239" to="2242" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;12)</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Composition during serial learning: A serial position efect</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Peter</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Frensch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Exp. Psychol. Learn. Mem. Cogn</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="423" to="423" />
+			<date type="published" when="1994">1994. 1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Learning Cooperative Personalized Policies from Gaze Data</title>
+		<author>
+			<persName><forename type="first">Christoph</forename><surname>Gebhardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Brian</forename><surname>Hecox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daniel</forename><surname>Bas Van Opheusden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">James</forename><surname>Wigdor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Otmar</forename><surname>Hillis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hrvoje</forename><surname>Hilliges</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Benko</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3332165.3347933</idno>
+		<ptr target="https://doi.org/10.1145/3332165.3347933" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 32nd Annual ACM Symposium on User Interface Software and Technology</title>
+		<meeting>the 32nd Annual ACM Symposium on User Interface Software and Technology<address><addrLine>New Orleans, LA, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="197" to="208" />
+		</imprint>
+	</monogr>
+	<note>UIST &apos;19)</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">SAM: A Modular Framework for Self-Adapting Web Menus</title>
+		<author>
+			<persName><forename type="first">Camille</forename><surname>Gobert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kashyap</forename><surname>Todi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3301275.3302314</idno>
+		<ptr target="https://doi.org/10.1145/3301275.3302314" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th International Conference on Intelligent User Interfaces (Marina del Ray, California) (IUI &apos;19)</title>
+		<meeting>the 24th International Conference on Intelligent User Interfaces (Marina del Ray, California) (IUI &apos;19)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="481" to="484" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Adaptive personalized interfaces-A question of viability</title>
+		<author>
+			<persName><forename type="first">Saul</forename><surname>Greenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ian</forename><forename type="middle">H</forename><surname>Witten</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01449298508901785</idno>
+		<ptr target="https://doi.org/10.1080/01449298508901785" />
+	</analytic>
+	<monogr>
+		<title level="j">Behaviour &amp; Information Technology</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="31" to="45" />
+			<date type="published" when="1985">1985. 1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Assisting persons with dementia during handwashing using a partially observable Markov decision process</title>
+		<author>
+			<persName><forename type="first">Jesse</forename><surname>Hoey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Von</forename><surname>Axel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pascal</forename><surname>Bertoldi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Alex</forename><surname>Poupart</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Mihailidis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Computer Vision Systems: Proceedings</title>
+		<imprint>
+			<date type="published" when="2007">2007. 2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Cognitive Modeling Reveals Menu Search in Both Random and Systematic</title>
+		<author>
+			<persName><forename type="first">Anthony</forename><forename type="middle">J</forename><surname>Hornof</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">David</forename><forename type="middle">E</forename><surname>Kieras</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/258549.258621</idno>
+		<ptr target="https://doi.org/10.1145/258549.258621" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACM SIGCHI Conference on Human Factors in Computing Systems (CHI &apos;97)</title>
+		<meeting>the ACM SIGCHI Conference on Human Factors in Computing Systems (CHI &apos;97)</meeting>
+		<imprint>
+			<date type="published" when="1997">1997</date>
+			<biblScope unit="page" from="107" to="114" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">A Probabilistic Mental Model for Estimating Disruption</title>
+		<author>
+			<persName><forename type="first">Bowen</forename><surname>Hui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Grant</forename><surname>Partridge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Craig</forename><surname>Boutilier</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1502650.1502691</idno>
+		<ptr target="https://doi.org/10.1145/1502650.1502691" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 14th International Conference on Intelligent User Interfaces</title>
+		<meeting>the 14th International Conference on Intelligent User Interfaces<address><addrLine>Sanibel Island, Florida, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="287" to="296" />
+		</imprint>
+	</monogr>
+	<note>) (IUI &apos;09)</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">When to trust your model: Model-based policy optimization</title>
+		<author>
+			<persName><forename type="first">Michael</forename><surname>Janner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Justin</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marvin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Levine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="12498" to="12509" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Modelling Learning of New Keyboard Layouts</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">P</forename><surname>Jussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sayan</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Sarcar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chaklam</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhenxin</forename><surname>Silpasuwanchai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiangshi</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Ren</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3025453.3025580</idno>
+		<ptr target="https://doi.org/10.1145/3025453.3025580" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2017 CHI Conference on Human Factors in Computing Systems<address><addrLine>Denver, Colorado, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="4203" to="4215" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;17)</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning: A survey</title>
+		<author>
+			<persName><forename type="first">Leslie</forename><surname>Pack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kaelbling</forename><surname>Michael L Littman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">W</forename><surname>Moore</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of artifcial intelligence research</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="237" to="285" />
+			<date type="published" when="1996">1996. 1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Model-based reinforcement learning for atari</title>
+		<author>
+			<persName><forename type="first">Lukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mohammad</forename><surname>Babaeizadeh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Milos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Blazej</forename><surname>Osinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roy</forename><forename type="middle">H</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Konrad</forename><surname>Czechowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dumitru</forename><surname>Erhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chelsea</forename><surname>Finn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Piotr</forename><surname>Kozakowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sergey</forename><surname>Levine</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1903.00374</idno>
+		<imprint>
+			<date type="published" when="2019">2019. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Optimal Sensor Position for a Computer Mouse</title>
+		<author>
+			<persName><forename type="first">Sunjun</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Byungjoo</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><surname>Van Gemert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3313831.3376735</idno>
+		<ptr target="https://doi.org/10.1145/3313831.3376735" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2020 CHI Conference on Human Factors in Computing Systems<address><addrLine>Honolulu, HI, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1" to="13" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;20)</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Bandit Based Monte-Carlo Planning</title>
+		<author>
+			<persName><forename type="first">Levente</forename><surname>Kocsis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Csaba</forename><surname>Szepesvári</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/11871842_29</idno>
+		<ptr target="https://doi.org/10.1007/11871842_29" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 17th European Conference on Machine Learning</title>
+		<meeting>the 17th European Conference on Machine Learning<address><addrLine>Berlin, Germany; Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer-Verlag</publisher>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="page" from="282" to="293" />
+		</imprint>
+	</monogr>
+	<note>ECML&apos;06)</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Machine learning for adaptive user interfaces</title>
+		<author>
+			<persName><forename type="first">Pat</forename><surname>Langley</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/3540634932_3</idno>
+		<ptr target="https://doi.org/10.1007/3540634932_3" />
+	</analytic>
+	<monogr>
+		<title level="m">Annual Conference on Artifcial Intelligence</title>
+		<imprint>
+			<date type="published" when="1997">1997. 1997</date>
+			<biblScope unit="page" from="53" to="62" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Benefts and Costs of Adaptive User Interfaces</title>
+		<author>
+			<persName><forename type="first">Talia</forename><surname>Lavie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Joachim</forename><surname>Meyer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijhcs.2010.01.004</idno>
+		<ptr target="https://doi.org/10.1016/j.ijhcs.2010.01.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Hum.-Comput. Stud</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="508" to="524" />
+			<date type="published" when="2010">2010. 2010</date>
+		</imprint>
+	</monogr>
+	<note>-08</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Quantitative results assessing design issues of selection-supportive menus</title>
+		<author>
+			<persName><forename type="first">Dong-Seok</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wan</forename><surname>Chul Yoon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Industrial Ergonomics</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="41" to="52" />
+			<date type="published" when="2004">2004. 2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Computer-Supported Form Design Using Keystroke-Level Modeling with Reinforcement Learning</title>
+		<author>
+			<persName><forename type="first">Katri</forename><surname>Leino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kashyap</forename><surname>Todi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mikko</forename><surname>Kurimo</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3308557.3308704</idno>
+		<ptr target="https://doi.org/10.1145/3308557.3308704" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th International Conference on Intelligent User Interfaces: Companion (IUI &apos;19)</title>
+		<meeting>the 24th International Conference on Intelligent User Interfaces: Companion (IUI &apos;19)</meeting>
+		<imprint>
+			<date type="published" when="2019">2019</date>
+			<biblScope unit="page" from="85" to="86" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Interaction-Based User Interface Redesign</title>
+		<author>
+			<persName><forename type="first">Luis</forename><surname>Leiva</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2166966.2167028</idno>
+		<ptr target="https://doi.org/10.1145/2166966.2167028" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2012 ACM International Conference on Intelligent User Interfaces</title>
+		<meeting>the 2012 ACM International Conference on Intelligent User Interfaces<address><addrLine>Lisbon, Portugal; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="311" to="312" />
+		</imprint>
+	</monogr>
+	<note>) (IUI &apos;12)</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Efects of Frequency Distribution on Linear Menu Performance</title>
+		<author>
+			<persName><forename type="first">Wanyu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Howes</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3025453.3025707</idno>
+		<ptr target="https://doi.org/10.1145/3025453.3025707" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2017 CHI Conference on Human Factors in Computing Systems<address><addrLine>Denver, Colorado, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="1307" to="1312" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;17)</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Interface Design Optimization as a Multi-Armed Bandit Problem</title>
+		<author>
+			<persName><forename type="first">J</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Derek</forename><surname>Lomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jodi</forename><surname>Forlizzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nikhil</forename><surname>Poonwala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nirmal</forename><surname>Patel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sharan</forename><surname>Shodhan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kishan</forename><surname>Patel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ken</forename><surname>Koedinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Emma</forename><surname>Brunskill</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2858036.2858425</idno>
+		<ptr target="https://doi.org/10.1145/2858036.2858425" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2016 CHI Conference on Human Factors in Computing Systems<address><addrLine>San Jose, California, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="4142" to="4153" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;16)</note>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Fitts&apos; Law as a Research and Design Tool in Human-Computer Interaction</title>
+		<author>
+			<persName><forename type="first">I</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Mackenzie</surname></persName>
+		</author>
+		<idno type="DOI">10.1207/s15327051hci0701_3</idno>
+		<ptr target="https://doi.org/10.1207/s15327051hci0701_3" />
+	</analytic>
+	<monogr>
+		<title level="j">Hum.-Comput. Interact</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="91" to="139" />
+			<date type="published" when="1992-03">1992. March 1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">The psychology of menu selection: Designing cognitive control at the human/computer interface</title>
+		<author>
+			<persName><surname>Kent L Norman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Intellect Books</title>
+		<imprint>
+			<date type="published" when="1991">1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Computational interaction</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/oso/9780198799603.001.0001</idno>
+		<ptr target="https://doi.org/10.1093/oso/9780198799603.001.0001" />
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Combinatorial Optimization of Graphical User Interface Designs</title>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ramesh</forename><surname>Niraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Morteza</forename><surname>Dayama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Maximilian</forename><surname>Shiripour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andreas</forename><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Karrenbauer</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/JPROC.2020.2969687</idno>
+		<ptr target="https://doi.org/10.1109/JPROC.2020.2969687" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc. IEEE</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="434" to="464" />
+			<date type="published" when="2020">2020. 2020</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName><forename type="first">Jefrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP)</title>
+		<meeting>the 2014 conference on empirical methods in natural language processing (EMNLP)</meeting>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Model-Based Automated Generation of User Interfaces</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Angel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Henrik</forename><surname>Puerta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">John</forename><forename type="middle">H</forename><surname>Eriksson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mark</forename><forename type="middle">A</forename><surname>Gennari</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Musen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twelfth National Conference on Artifcial Intelligence</title>
+		<meeting>the Twelfth National Conference on Artifcial Intelligence<address><addrLine>Seattle, Washington, USA; USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>American Association for Artifcial Intelligence</publisher>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="471" to="477" />
+		</imprint>
+	</monogr>
+	<note>AAAI &apos;94)</note>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Retroactive Transfer Phenomena in Alternating User Interfaces</title>
+		<author>
+			<persName><forename type="first">Reyhaneh</forename><surname>Raissi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Evanthia</forename><surname>Dimara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jacquelyn</forename><forename type="middle">H</forename><surname>Berry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wayne</forename><forename type="middle">D</forename><surname>Gray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gilles</forename><surname>Bailly</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3313831.3376538</idno>
+		<ptr target="https://doi.org/10.1145/3313831.3376538" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2020 CHI Conference on Human Factors in Computing Systems<address><addrLine>Honolulu, HI, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1" to="14" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;20)</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Split Menus: Efectively Using Selection Frequency to Organize Menus</title>
+		<author>
+			<persName><forename type="first">Andrew</forename><surname>Sears</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ben</forename><surname>Shneiderman</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/174630.174632</idno>
+		<ptr target="https://doi.org/10.1145/174630.174632" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Trans. Comput.-Hum. Interact</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="27" to="51" />
+			<date type="published" when="1994-03">1994. March 1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Taking the human out of the loop: A review of Bayesian optimization</title>
+		<author>
+			<persName><forename type="first">Bobak</forename><surname>Shahriari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kevin</forename><surname>Swersky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziyu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ryan</forename><forename type="middle">P</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nando</forename><forename type="middle">De</forename><surname>Freitas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc. IEEE</title>
+		<imprint>
+			<biblScope unit="volume">104</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="148" to="175" />
+			<date type="published" when="2015">2015. 2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Mastering the game of Go with deep neural networks and tree search</title>
+		<author>
+			<persName><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aja</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chris</forename><forename type="middle">J</forename><surname>Maddison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Arthur</forename><surname>Guez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Laurent</forename><surname>Sifre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">George</forename><surname>Van Den</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Julian</forename><surname>Driessche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ioannis</forename><surname>Schrittwieser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Veda</forename><surname>Antonoglou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Marc</forename><surname>Panneershelvam</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lanctot</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature16961</idno>
+		<ptr target="https://doi.org/10.1038/nature16961" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">529</biblScope>
+			<biblScope unit="page">7587</biblScope>
+			<date type="published" when="2016">2016. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Deep Sequential Recommendation for Personalized Adaptive User Interfaces</title>
+		<author>
+			<persName><forename type="first">Harold</forename><surname>Soh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scott</forename><surname>Sanner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Madeleine</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Greg</forename><surname>Jamieson</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3025171.3025207</idno>
+		<ptr target="https://doi.org/10.1145/3025171.3025207" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd International Conference on Intelligent User Interfaces (Limassol, Cyprus) (IUI &apos;17)</title>
+		<meeting>the 22nd International Conference on Intelligent User Interfaces (Limassol, Cyprus) (IUI &apos;17)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="589" to="593" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">Reinforcement learning: An introduction</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Richard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Andrew</forename><forename type="middle">G</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Barto</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Familiarisation: Restructuring Layouts with Visual Learning Models</title>
+		<author>
+			<persName><forename type="first">Kashyap</forename><surname>Todi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jussi</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kris</forename><surname>Luyten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3172944.3172949</idno>
+		<ptr target="https://doi.org/10.1145/3172944.3172949" />
+	</analytic>
+	<monogr>
+		<title level="m">23rd International Conference on Intelligent User Interfaces (IUI &apos;18)</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="page" from="547" to="558" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Individualising Graphical Layouts with Predictive Visual Search Models</title>
+		<author>
+			<persName><forename type="first">Kashyap</forename><surname>Todi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jussi</forename><surname>Jokinen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kris</forename><surname>Luyten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3241381</idno>
+		<ptr target="https://doi.org/10.1145/3241381" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Trans. Interact. Intell. Syst</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">24</biblScope>
+			<date type="published" when="2019-08">2019. Aug. 2019</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Sketchplore: Sketch and Explore with a Layout Optimiser</title>
+		<author>
+			<persName><forename type="first">Kashyap</forename><surname>Todi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Daryl</forename><surname>Weir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Antti</forename><surname>Oulasvirta</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2901790.2901817</idno>
+		<ptr target="https://doi.org/10.1145/2901790.2901817" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 ACM Conference on Designing Interactive Systems</title>
+		<meeting>the 2016 ACM Conference on Designing Interactive Systems<address><addrLine>Brisbane, QLD, Australia; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="543" to="555" />
+		</imprint>
+	</monogr>
+	<note>) (DIS &apos;16)</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Bubbling Menus: A Selective Mechanism for Accessing Hierarchical Drop-down Menus</title>
+		<author>
+			<persName><forename type="first">Theophanis</forename><surname>Tsandilas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Schraefel</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1240624.1240806</idno>
+		<ptr target="https://doi.org/10.1145/1240624.1240806" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the SIGCHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the SIGCHI Conference on Human Factors in Computing Systems<address><addrLine>San Jose, California, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="1195" to="1204" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;07)</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Exploring a Design Space of Graphical Adaptive Menus: Normal vs. Small Screens</title>
+		<author>
+			<persName><forename type="first">Jean</forename><surname>Vanderdonckt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sara</forename><surname>Bouzit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Gaëlle</forename><surname>Calvary</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Denis</forename><surname>Chêne</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3237190</idno>
+		<ptr target="https://doi.org/10.1145/3237190" />
+	</analytic>
+	<monogr>
+		<title level="j">ACM Trans. Interact. Intell. Syst</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">40</biblScope>
+			<date type="published" when="2019-07">2019. July 2019</date>
+		</imprint>
+	</monogr>
+	<note>Article 2</note>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Attentive User Interfaces</title>
+		<author>
+			<persName><forename type="first">Roel</forename><surname>Vertegaal</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/636772.636794</idno>
+		<ptr target="https://doi.org/10.1145/636772.636794" />
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="30" to="33" />
+			<date type="published" when="2003-03">2003. March 2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Vision-Based Gesture Recognition: A Review</title>
+		<author>
+			<persName><forename type="first">Ying</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Thomas</forename><forename type="middle">S</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Gesture-Based Communication in Human-Computer Interaction</title>
+		<editor>
+			<persName><forename type="first">Annelies</forename><surname>Brafort</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Rachid</forename><surname>Gherbi</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Sylvie</forename><surname>Gibet</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Daniel</forename><surname>Teil</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">James</forename><surname>Richardson</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Berlin Heidelberg, Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="page" from="103" to="115" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">POMDPbased statistical spoken dialog systems: A review</title>
+		<author>
+			<persName><forename type="first">Steve</forename><surname>Young</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Milica</forename><surname>Gašić</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Blaise</forename><surname>Thomson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jason</forename><forename type="middle">D</forename><surname>Williams</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc. IEEE</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1160" to="1179" />
+			<date type="published" when="2013">2013. 2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Modeling Human Visual Search Performance on Realistic Webpages Using Analytical and Deep Learning Methods</title>
+		<author>
+			<persName><forename type="first">Arianna</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yang</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/3313831.3376870</idno>
+		<ptr target="https://doi.org/10.1145/3313831.3376870" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2020 CHI Conference on Human Factors in Computing Systems</title>
+		<meeting>the 2020 CHI Conference on Human Factors in Computing Systems<address><addrLine>Honolulu, HI, USA; New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computing Machinery</publisher>
+			<date type="published" when="2020">2020</date>
+			<biblScope unit="page" from="1" to="12" />
+		</imprint>
+	</monogr>
+	<note>) (CHI &apos;20)</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
