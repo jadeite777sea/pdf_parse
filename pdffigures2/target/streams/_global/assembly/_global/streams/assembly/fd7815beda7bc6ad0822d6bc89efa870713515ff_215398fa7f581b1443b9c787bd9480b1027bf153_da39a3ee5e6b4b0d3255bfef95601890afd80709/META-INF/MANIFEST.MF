@@ -1,0 +1,271 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: bcmail
+Bnd-LastModified: 1648681668772
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Implementation-Vendor-Id: org.bouncycastle
+Application-Library-Allowable-Codebase: *
+Import-Package: org.bouncycastle.asn1;version="1.71",org.bouncycastle.
+ asn1.cms;version="1.71",org.bouncycastle.asn1.cryptopro;version="1.71
+ ",org.bouncycastle.asn1.nist;version="1.71",org.bouncycastle.asn1.oiw
+ ;version="1.71",org.bouncycastle.asn1.pkcs;version="1.71",org.bouncyc
+ astle.asn1.rosstandart;version="1.71",org.bouncycastle.asn1.smime;ver
+ sion="1.71",org.bouncycastle.asn1.teletrust;version="1.71",org.bouncy
+ castle.asn1.x500;version="1.71",org.bouncycastle.asn1.x509;version="1
+ .71",org.bouncycastle.asn1.x9;version="1.71",org.bouncycastle.cert;ve
+ rsion="1.71",org.bouncycastle.cert.bc;version="1.71",org.bouncycastle
+ .cert.jcajce;version="1.71",org.bouncycastle.cms;version="1.71",org.b
+ ouncycastle.cms.jcajce;version="1.71",org.bouncycastle.i18n;version="
+ 1.71",org.bouncycastle.i18n.filter;version="1.71",org.bouncycastle.jc
+ e.provider;version="1.71",org.bouncycastle.operator;version="1.71",or
+ g.bouncycastle.operator.jcajce;version="1.71",org.bouncycastle.util;v
+ ersion="1.71",org.bouncycastle.x509;version="1.71",javax.activation;r
+ esolution:=optional,javax.crypto;resolution:=optional,javax.mail;reso
+ lution:=optional,javax.mail.internet;resolution:=optional,javax.secur
+ ity.auth.x500;resolution:=optional
+Export-Package: org.bouncycastle.mail.smime;version="1.71";uses:="java
+ x.crypto,javax.mail,javax.mail.internet,org.bouncycastle.asn1.cms,org
+ .bouncycastle.cert,org.bouncycastle.cms,org.bouncycastle.mail.smime.u
+ til,org.bouncycastle.operator,org.bouncycastle.util",org.bouncycastle
+ .mail.smime.examples;version="1.71";uses:="javax.mail,javax.mail.inte
+ rnet",org.bouncycastle.mail.smime.handlers;version="1.71";uses:="java
+ x.activation",org.bouncycastle.mail.smime.util;version="1.71";uses:="
+ javax.mail,javax.mail.internet",org.bouncycastle.mail.smime.validator
+ ;version="1.71";uses:="javax.mail.internet,org.bouncycastle.cms,org.b
+ ouncycastle.i18n,org.bouncycastle.x509"
+Bundle-Name: bcmail
+Permissions: all-permissions
+Trusted-Library: true
+Multi-Release: true
+Extension-Name: org.bouncycastle.bcmail
+Application-Name: Bouncy Castle S/MIME API
+Automatic-Module-Name: org.bouncycastle.mail
+Implementation-Version: 1.71.00.0
+Bundle-ManifestVersion: 2
+Specification-Vendor: BouncyCastle.org
+Tool: Bnd-2.2.0.20130907-154046
+Implementation-Vendor: BouncyCastle.org
+Ant-Version: Apache Ant 1.6.5
+Originally-Created-By: 25.312-b07 (Private Build)
+Bundle-Version: 1.71
+Caller-Allowable-Codebase: *
+Codebase: *
+Created-By: 1.5.0_08 (Sun Microsystems Inc.)
+Specification-Version: 1.1
+
+Name: org/bouncycastle/mail/smime/SMIMEEnvelopedGenerator$EnvelopedGen
+ erator.class
+SHA-256-Digest: QkM+iXyUIJPUlpbG6gHA8xgk8rqjelmSAxik8X7bI7A=
+
+Name: org/bouncycastle/mail/smime/SMIMECompressedGenerator$1.class
+SHA-256-Digest: ngcFvsnojcb71GNofJZmVV4bEQGvCmgYKBDmNtYFkIU=
+
+Name: org/bouncycastle/mail/smime/validator/SignedMailValidatorExcepti
+ on.class
+SHA-256-Digest: TReaVCsKxn1Yj/qlh4zbK7d8acEF25g7vhfxcXRPXXE=
+
+Name: org/bouncycastle/mail/smime/examples/ReadLargeCompressedMail.cla
+ ss
+SHA-256-Digest: krkSmhKPmfTre8+Ugr4ohvYBfALMkGiH5ALcX8XEmYk=
+
+Name: org/bouncycastle/mail/smime/SMIMESigned.class
+SHA-256-Digest: 8r3I3Tq4V+4BR14U33nY1EpRPdqvwF4uf8CME/6im84=
+
+Name: org/bouncycastle/mail/smime/handlers/PKCS7ContentHandler.class
+SHA-256-Digest: irpoejk/oVtDj9O2GeHS87M8w3ibbR+cLAi/62RpGAM=
+
+Name: org/bouncycastle/mail/smime/util/FileBackedMimeBodyPart.class
+SHA-256-Digest: Onx7kI65Nv634OG+0i/FvtYN6Q4rvv5gBM5961IHULI=
+
+Name: org/bouncycastle/mail/smime/CMSProcessableBodyPartOutbound.class
+SHA-256-Digest: VlkzAdudz6daR6lyXhgNcrJrP2HuK9Jtabo1ij1CATk=
+
+Name: org/bouncycastle/mail/smime/examples/ValidateSignedMail.class
+SHA-256-Digest: 4JxMoMz7W3Sx1CVB24gyTsvHJXulkwc6R4ljJKkc+BQ=
+
+Name: org/bouncycastle/mail/smime/examples/ReadEncryptedMail.class
+SHA-256-Digest: fglstEG2AqQEKx/Z0o7Wn7RR3YFYeRmvf2tF8HKWEjI=
+
+Name: org/bouncycastle/mail/smime/MailcapUtil.class
+SHA-256-Digest: v28/c+mZR2N3vj4aWX2UtRmMiRFh7WGfJdVJ6+AcWFI=
+
+Name: org/bouncycastle/mail/smime/SMIMESignedGenerator.class
+SHA-256-Digest: fEsZOJ1UfO50HdITVNvWHTrnbHTCMF2FbU1RjMUM1x0=
+
+Name: org/bouncycastle/mail/smime/SMIMEEnvelopedGenerator.class
+SHA-256-Digest: a2uT98tJsitz/r2DsSh6HQLY0RDBsQMmXTROyPR0nT4=
+
+Name: org/bouncycastle/mail/smime/examples/CreateSignedMultipartMail.c
+ lass
+SHA-256-Digest: 8UZ4ZrsmbUXQQs17IXbGNA+W9q3B4Gbl4VIzBWnGn1s=
+
+Name: org/bouncycastle/mail/smime/SMIMECompressedParser.class
+SHA-256-Digest: PRuYTRo0Si13vQS8KEkT/rrcDIEGIY3EC6HsVD2/fq4=
+
+Name: org/bouncycastle/mail/smime/SMIMEException.class
+SHA-256-Digest: woEnwWsJ7WZ+fBzoWgJug+pLN5LLNbgRPA5DcHFHIq8=
+
+Name: org/bouncycastle/mail/smime/examples/CreateLargeCompressedMail.c
+ lass
+SHA-256-Digest: LZb7DIiieKqt2poShN/CL/SybsyfFAEjv5yulqQW+8M=
+
+Name: org/bouncycastle/mail/smime/SMIMEEnvelopedGenerator$WrappingIOEx
+ ception.class
+SHA-256-Digest: WJJ/ioTHsdtjq73f9g63aeaFkU9TxtPT2czBFGYBSGs=
+
+Name: org/bouncycastle/mail/smime/CMSProcessableBodyPartInbound.class
+SHA-256-Digest: 0lf9cfd6UyqaJ9DG2BB3255rVnluOVbRdVRSP0emxsQ=
+
+Name: org/bouncycastle/mail/smime/SMIMECompressedGenerator.class
+SHA-256-Digest: 4HpddVmpYipkmZEuI3iUpGKH/h+NSY8Ab8lWiPkV09Q=
+
+Name: org/bouncycastle/mail/smime/examples/ReadLargeEncryptedMail.clas
+ s
+SHA-256-Digest: 5nLYB/W38iLVAWyET9xk0hTnJfBgdl5BeGpgNjGmqF4=
+
+Name: org/bouncycastle/mail/smime/SMIMEGenerator$1.class
+SHA-256-Digest: SSbltN5m73RgkzzahT0DfwcxyaYGmf44IPA130a63bY=
+
+Name: org/bouncycastle/mail/smime/SMIMESignedGenerator$1.class
+SHA-256-Digest: TWIzfnPg1ISKArIXfOm/h1iOsYKjntlWUkMHSDd7qy0=
+
+Name: org/bouncycastle/mail/smime/examples/CreateLargeSignedMail.class
+SHA-256-Digest: 1Q9oFntznDpOdRNgs1IlnfUq87KlfvV9KrABYrhmZss=
+
+Name: org/bouncycastle/mail/smime/examples/SendSignedAndEncryptedMail.
+ class
+SHA-256-Digest: YPL6P8X1orDNsIhaU6nLXXB7SNilooBmNkuLTIs0clg=
+
+Name: org/bouncycastle/mail/smime/SMIMESigned$1.class
+SHA-256-Digest: NR2WdLymSQIA/4UzxY2VZw8pWAVKH85N2dx75wi0sqc=
+
+Name: org/bouncycastle/mail/smime/SMIMESignedParser$1.class
+SHA-256-Digest: cPZjt6UH3mp79JkqF55Zzv56mowJBGw9fy/H8jPFoe4=
+
+Name: org/bouncycastle/mail/smime/examples/ReadSignedMail.class
+SHA-256-Digest: 6tFC8gteGhJ2C6KSqrwmwGdX8WsCB/Eh234H+znUGEo=
+
+Name: org/bouncycastle/mail/smime/handlers/pkcs7_mime.class
+SHA-256-Digest: hbD/p1dPiZ8BOYSG9zDq1vWtp7MTQjoPVw52gWbibwM=
+
+Name: org/bouncycastle/mail/smime/SMIMEEnvelopedParser.class
+SHA-256-Digest: FadJa5U8USx/3Q9o9lIhr1Un7xvw9GOpxx2imjbVPVs=
+
+Name: org/bouncycastle/mail/smime/SMIMEEnvelopedGenerator$ContentEncry
+ ptor.class
+SHA-256-Digest: D9c/rjbzSm2+6SsmLq2QyGY6Semt/qcpbdcXiTu0IFQ=
+
+Name: org/bouncycastle/mail/smime/SMIMEUtil$WriteOnceFileBackedMimeBod
+ yPart.class
+SHA-256-Digest: u6zSgWbI0Vk8RpYstz4e24P1hkU7ALsQd1OcChXQrsM=
+
+Name: org/bouncycastle/mail/smime/CMSProcessableBodyPart.class
+SHA-256-Digest: FtyhOdaK3L6FL+uB00Ne4LxrNoPzNUmGQNImFses8Nk=
+
+Name: org/bouncycastle/mail/smime/validator/SignedMailValidatorMessage
+ s_de.properties
+SHA-256-Digest: e/gAcz9UY0qzVC7bmNqbPL6HM4tOyKR3RD57xJ5VES4=
+
+Name: org/bouncycastle/mail/smime/SMIMESignedGenerator$ContentSigner.c
+ lass
+SHA-256-Digest: h/zHTgfsv0hLoSkyBhpWr/WL8G7nSGBZhDRAqjDiNiU=
+
+Name: org/bouncycastle/mail/smime/examples/CreateCompressedMail.class
+SHA-256-Digest: WG3cJKbmbJF+KaXvRGliuyg6+qqwcML+uLBhAPKXBcg=
+
+Name: org/bouncycastle/mail/smime/util/SharedFileInputStream.class
+SHA-256-Digest: yk3pXo0aib/aITS+57hOhDoG8VasHarX1hfqpXu48CM=
+
+Name: org/bouncycastle/mail/smime/SMIMEUtil$LineOutputStream.class
+SHA-256-Digest: 9eTPyzwWv7lFXNIcFQ2YE788qc6kpaEOnXPDY33i7dQ=
+
+Name: org/bouncycastle/mail/smime/SMIMEEnveloped.class
+SHA-256-Digest: 9JTYBNt6AAlWYutBCDzwxbzw1yGjLu887r5ESkSv68Y=
+
+Name: org/bouncycastle/mail/smime/handlers/multipart_signed$LineOutput
+ Stream.class
+SHA-256-Digest: t1d1WYZyAyB1O3OLnPSkhdFtT6L3E3977CenKxraNnM=
+
+Name: org/bouncycastle/mail/smime/validator/SignedMailValidator.class
+SHA-256-Digest: XIegpXcK9FT/X6ahnrSdIfuFZD58NFXUm75dGSa+AfI=
+
+Name: org/bouncycastle/mail/smime/SMIMESignedParser$TemporaryFileInput
+ Stream.class
+SHA-256-Digest: 8mkBA69n7HYo0imMiwKobaq/tsgMx3L3uS+BKEK6g+k=
+
+Name: org/bouncycastle/mail/smime/validator/SignedMailValidatorMessage
+ s.properties
+SHA-256-Digest: EqtyWOjLr5ISjp8aEBDLIlfebcyavZuTWMaMtx+mlTY=
+
+Name: org/bouncycastle/mail/smime/validator/SignedMailValidator$Valida
+ tionResult.class
+SHA-256-Digest: 4U0EonJ6fHjwgV4/+vQbgKwVBa7c/iuegQJ0RgH52DA=
+
+Name: META-INF/mailcap
+SHA-256-Digest: kXN4VupOQOJhduMGwxumj4ijmD/YAlz97a9Mp7CVXtk=
+
+Name: org/bouncycastle/mail/smime/examples/CreateLargeEncryptedMail.cl
+ ass
+SHA-256-Digest: N40pkbgCb74mcq/lq/itAduKqJ37jyKkt9CN2lAL3d8=
+
+Name: org/bouncycastle/mail/smime/examples/ReadCompressedMail.class
+SHA-256-Digest: +z/CXYxw96YGU+sq81AfZdHihDwO06NIpbn/PraNY2E=
+
+Name: org/bouncycastle/mail/smime/handlers/x_pkcs7_signature.class
+SHA-256-Digest: m9psBIme8cAmSNLq2e+zfg+mtdmBPhpWPuGijMQwMQI=
+
+Name: org/bouncycastle/mail/smime/SMIMESignedParser.class
+SHA-256-Digest: uyQiT8Kf3qJdn7/03cZ9maoLDKiumKpkS9L8aEibQYw=
+
+Name: org/bouncycastle/mail/smime/handlers/pkcs7_signature.class
+SHA-256-Digest: R4SN6d7RlFmPjq6BaiCDQe2jN3HzYgeQHo4y/ckICiY=
+
+Name: org/bouncycastle/mail/smime/SMIMEGenerator.class
+SHA-256-Digest: T5mt5vzvr0Y2IMKbYdCNltpI+eAzZU+yqcJs2pJ2HCw=
+
+Name: org/bouncycastle/mail/smime/handlers/x_pkcs7_mime.class
+SHA-256-Digest: xg24IAkhgjgJhNwowHhU/SwwFq7AWENqZnY4DvpO55k=
+
+Name: org/bouncycastle/mail/smime/examples/CreateEncryptedMail.class
+SHA-256-Digest: keXXHilw0+TUG0gk7dQcklLl01dczyB3PSafh7EfE24=
+
+Name: org/bouncycastle/mail/smime/handlers/multipart_signed.class
+SHA-256-Digest: iCMN4xHXgso99rVPl7oXox/8zPC5VJRJGotkInC4Uzk=
+
+Name: org/bouncycastle/mail/smime/SMIMEUtil.class
+SHA-256-Digest: +cf7PWZ32wu49X1JEK8/5pjAZpitzA8UOxD2YQEyWYA=
+
+Name: org/bouncycastle/mail/smime/util/CRLFOutputStream.class
+SHA-256-Digest: wZ3h5l1dIRcm+KdIODByP33+oIyici+25H/o60vFdM4=
+
+Name: META-INF/versions/9/module-info.class
+SHA-256-Digest: cMeIRa5l8DWPgrVWavr/6TKVBUGixVKGcu6yOTZMlKk=
+
+Name: org/bouncycastle/mail/smime/SMIMECompressedGenerator$ContentComp
+ ressor.class
+SHA-256-Digest: OchQEH9zRo+UupXABQgkxrZzezGZg76c5FQFy0m97r8=
+
+Name: org/bouncycastle/mail/smime/examples/CreateSignedMail.class
+SHA-256-Digest: pS4N06T6iIVLaKtbyWR2ivry4kvvCKFJUpMPdsX5+Bc=
+
+Name: org/bouncycastle/mail/smime/SMIMEUtil$Base64CRLFOutputStream.cla
+ ss
+SHA-256-Digest: 1WU8rY7QVmMW953pu1bINvMWuL6HH7Gc66BLLmAkA5o=
+
+Name: org/bouncycastle/mail/smime/examples/ReadLargeSignedMail.class
+SHA-256-Digest: B5YHLzWxXRzZfLKSUDn2JdELn+V4+pxWAO03x17Uekc=
+
+Name: org/bouncycastle/mail/smime/SMIMECompressed.class
+SHA-256-Digest: 8REApIEmS8EURx6AwsGYXEL85rUIZOqNWqjZeVyqfwQ=
+
+Name: org/bouncycastle/mail/smime/SMIMEStreamingProcessor.class
+SHA-256-Digest: Smgw5FiKQRJrykmcIuZIwNWYt9z5drGUpH9EzD7/cw8=
+
+Name: org/bouncycastle/mail/smime/SMIMEToolkit.class
+SHA-256-Digest: jm5sskHh/iwKsbynxJGz/HLklxoApHxngXLmPatupjQ=
+
+Name: org/bouncycastle/mail/smime/SMIMEEnvelopedGenerator$1.class
+SHA-256-Digest: bL31HddAORTWI/RxFQKZoOAYZgYlP6Pat4w9Mo4S3Wc=
+
+Name: org/bouncycastle/mail/smime/examples/ExampleUtils.class
+SHA-256-Digest: 2TAWOdBTIQJDl/YTMYLLl8Ey8Xtf20oW6AoAvwux2Ro=
+
