@@ -1,0 +1,221 @@
+[{
+  "caption": "Figure 3: MDP models for various emotions. Circles are states and arrows are transitions caused by actions. Denoted are also transition probabilities and rewards, when relevant. In the Happiness model, selecting action ‘a1’ from state ‘S1’ results in a 20% probability of encountering an error ‘E’, mirroring the anticipated error rate among participants. Conversely, in the Irritation model, choosing ‘a1’ at ‘S1’ leads to error ‘E’ with an 80% likelihood, refecting the high probability of system errors occurring during the task.",
+  "captionBoundary": {
+    "x1": 317.27398681640625,
+    "x2": 559.2916259765625,
+    "y1": 367.28509521484375,
+    "y2": 460.5870056152344
+  },
+  "figType": "Figure",
+  "imageText": ["(c)", "The", "MDP", "model", "for", "Irritation", "(b)", "The", "MDP", "model", "for", "Boredom", "(a)", "The", "MDP", "model", "for", "Happiness"],
+  "name": "3",
+  "page": 5,
+  "regionBoundary": {
+    "x1": 358.56,
+    "x2": 517.4399999999999,
+    "y1": 82.56,
+    "y2": 351.84
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Figure3-1.png"
+}, {
+  "caption": "Figure 5: MDP models in series. Circles are states and arrows are transitions caused by actions. Denoted are also transition probabilities and rewards, when relevant. The error rates in the Irritation model escalate from 60% to 70%, and fnally to 80%, refecting the true the task failure rates.",
+  "captionBoundary": {
+    "x1": 317.9549865722656,
+    "x2": 558.2047729492188,
+    "y1": 315.10009765625,
+    "y2": 364.5669860839844
+  },
+  "figType": "Figure",
+  "imageText": ["(c)", "The", "MDP", "model", "for", "Irritation", "in", "series", "(b)", "The", "MDP", "model", "for", "Boredom", "in", "series", "(a)", "The", "MDP", "model", "for", "Happiness", "in", "series"],
+  "name": "5",
+  "page": 6,
+  "regionBoundary": {
+    "x1": 324.0,
+    "x2": 552.0,
+    "y1": 82.56,
+    "y2": 285.59999999999997
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Figure5-1.png"
+}, {
+  "caption": "Figure 7: A reinforcement learning agent is trained in a Markov Decision Process-based task environment. Learning signals (TD errors from the converged model) are converted into appraisal predictions, which are classifed into modal emotion predictions using a pre-trained SVM. The classifer is fne-tuned to have human-like spread between emotion ratings.",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 294.2338562011719,
+    "y1": 247.47706604003906,
+    "y2": 318.8609924316406
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "7",
+  "page": 9,
+  "regionBoundary": {
+    "x1": 56.64,
+    "x2": 291.36,
+    "y1": 111.83999999999999,
+    "y2": 230.39999999999998
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Figure7-1.png"
+}, {
+  "caption": "Figure 6: A comparison of human and model predictions for emotional ratings in each task at each time stage. Targeted emotion magnitudes are reported with numbers.",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 294.22882080078125,
+    "y1": 429.9441223144531,
+    "y2": 457.49200439453125
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "6",
+  "page": 7,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 295.2,
+    "y1": 219.84,
+    "y2": 416.15999999999997
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Figure6-1.png"
+}, {
+  "caption": "Table 1: Appraisal patterns for selected emotions and appraisals. Goal rel. = goal relevance, Conduc = conduciveness, obs. = obstruct.",
+  "captionBoundary": {
+    "x1": 317.65899658203125,
+    "x2": 559.8096923828125,
+    "y1": 87.64412689208984,
+    "y2": 115.1929931640625
+  },
+  "figType": "Table",
+  "imageText": ["Suddenness", "Goal", "rel.", "Conduc.", "Power", "Happiness", "low", "medium", "high", "open", "Boredom", "very", "low", "low", "open", "medium", "Irritation", "low", "medium", "obs.", "medium"],
+  "name": "1",
+  "page": 3,
+  "regionBoundary": {
+    "x1": 325.92,
+    "x2": 550.0799999999999,
+    "y1": 129.6,
+    "y2": 175.2
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Table1-1.png"
+}, {
+  "caption": "Table 4: Emotion response correlation in Experiment 1",
+  "captionBoundary": {
+    "x1": 62.845096588134766,
+    "x2": 284.7007141113281,
+    "y1": 471.7293701171875,
+    "y2": 477.3602600097656
+  },
+  "figType": "Table",
+  "imageText": ["Happiness", "Joy", "Boredom", "Sadness", "Irritation", "Happiness", "1", "0.825", "-0.145", "-0.358", "-0.684", "Joy", "0.825", "1", "-0.27", "-0.517", "-0.56", "Boredom", "-0.145", "-0.279", "1", "0.11", "0.05", "Sadness", "-0.358", "-0.517", "0.112", "1", "0.43", "Irritation", "-0.685", "-0.560", "0.052", "0.430", "1"],
+  "name": "4",
+  "page": 11,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 308.15999999999997,
+    "y1": 492.96,
+    "y2": 560.16
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Table4-1.png"
+}, {
+  "caption": "Table 7: Emotion response correlation in Experiment 2 Section 3",
+  "captionBoundary": {
+    "x1": 317.65899658203125,
+    "x2": 559.8078002929688,
+    "y1": 215.4900665283203,
+    "y2": 232.08001708984375
+  },
+  "figType": "Table",
+  "imageText": ["Happiness", "Joy", "Boredom", "Sadness", "Irritation", "Happiness", "1", "0.929", "-0.249", "-0.532", "-0.572", "Joy", "0.929", "1", "-0.224", "-0.562", "-0.544", "Boredom", "-0.249", "-0.224", "1", "0.153", "0.499", "Sadness", "-0.532", "-0.562", "0.153", "1", "0.503", "Irritation", "-0.572", "-0.544", "0.499", "0.503", "1"],
+  "name": "7",
+  "page": 11,
+  "regionBoundary": {
+    "x1": 316.8,
+    "x2": 572.16,
+    "y1": 246.72,
+    "y2": 314.4
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Table7-1.png"
+}, {
+  "caption": "Table 5: Emotion response correlation in Experiment 2 Section 1",
+  "captionBoundary": {
+    "x1": 53.50199890136719,
+    "x2": 295.6507568359375,
+    "y1": 606.4490966796875,
+    "y2": 623.0390014648438
+  },
+  "figType": "Table",
+  "imageText": ["Happiness", "Joy", "Boredom", "Sadness", "Irritation", "Happiness", "1", "0.933", "-0.201", "-0.363", "-0.514", "Joy", "0.933", "1", "-0.096", "-0.287", "-0.469", "Boredom", "-0.201", "-0.096", "1", "0.229", "0.311", "Sadness", "-0.362", "-0.287", "0.229", "1", "0.527", "Irritation", "-0.514", "-0.469", "0.312", "0.527", "1"],
+  "name": "5",
+  "page": 11,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 308.15999999999997,
+    "y1": 638.88,
+    "y2": 706.0799999999999
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Table5-1.png"
+}, {
+  "caption": "Table 6: Emotion response correlation in Experiment 2 Section 2",
+  "captionBoundary": {
+    "x1": 317.65899658203125,
+    "x2": 559.8078002929688,
+    "y1": 87.64412689208984,
+    "y2": 104.2340087890625
+  },
+  "figType": "Table",
+  "imageText": ["Happiness", "Joy", "Boredom", "Sadness", "Irritation", "Happiness", "1", "0.958", "-0.391", "-0.389", "-0.5", "Joy", "0.958", "1", "-0.352", "-0.331", "-0.489", "Boredom", "-0.391", "-0.352", "1", "0.138", "0.232", "Sadness", "-0.389", "-0.331", "0.138", "1", "0.664", "Irritation", "-0.5", "-0.489", "0.232", "0.664", "1"],
+  "name": "6",
+  "page": 11,
+  "regionBoundary": {
+    "x1": 316.8,
+    "x2": 572.16,
+    "y1": 120.0,
+    "y2": 187.2
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Table6-1.png"
+}, {
+  "caption": "Table 2: Mapping of nominal appraisal values to scales was done by setting the parameters of a normal (N ) or a uniform (U) distribution to correspond to the text description.",
+  "captionBoundary": {
+    "x1": 53.50199890136719,
+    "x2": 294.0462646484375,
+    "y1": 87.64412689208984,
+    "y2": 115.1929931640625
+  },
+  "figType": "Table",
+  "imageText": ["4", "EVALUATION", "obstruct", "N", ",", "�", "≥", "0,", "�", "=", "0,", "�", "=", "0.05", "very", "low", "N", ",", "�", "≥", "0,", "�", "=", "0,", "�", "=", "0.05", "low", "N", ",", "�", "≥", "0,", "�", "=", "0,", "�", "=", "0.1", "medium", "N", ",", "�", "=", "0,", "�", "=", "0.05", "high", "N", ",", "�", "≤", "1,", "�", "=", "1,", "�", "=", "0.1", "open", "U(0,", "1)"],
+  "name": "2",
+  "page": 4,
+  "regionBoundary": {
+    "x1": 53.76,
+    "x2": 239.04,
+    "y1": 129.6,
+    "y2": 227.04
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Table2-1.png"
+}, {
+  "caption": "Figure 2: Screenshots from the experiments that targeted one of the three emotions. The happiness task was designed to be encouraging and rewarding, the boredom task contained a large number of repetitive tasks and neutral feedback, and the irritation task was ridden with errors and ended up failing the task.",
+  "captionBoundary": {
+    "x1": 317.9549865722656,
+    "x2": 559.8018798828125,
+    "y1": 544.4780883789062,
+    "y2": 604.9030151367188
+  },
+  "figType": "Figure",
+  "imageText": ["(c)", "Irritation", "task", "with", "an", "error", "(b)", "Boredom", "task", "with", "neutral", "feedback", "(a)", "Happiness", "task", "with", "positive", "feedback"],
+  "name": "2",
+  "page": 4,
+  "regionBoundary": {
+    "x1": 343.68,
+    "x2": 532.3199999999999,
+    "y1": 82.56,
+    "y2": 528.96
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_使用强化学习模拟人类情绪_chi24_使用强化学习模拟人类情绪-Figure2-1.png"
+}]

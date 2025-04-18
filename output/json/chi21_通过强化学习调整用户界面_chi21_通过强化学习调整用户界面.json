@@ -1,0 +1,201 @@
+[{
+  "caption": "Figure 4: Menu adaptation with deep model-based RL. Given a current design and user observations, MCTS-based planning is used to select the next adaptation. Reward estimates are obtained either using predictive models or from a neural network.",
+  "captionBoundary": {
+    "x1": 53.7979736328125,
+    "x2": 558.202880859375,
+    "y1": 238.7431182861328,
+    "y2": 255.33099365234375
+  },
+  "figType": "Figure",
+  "imageText": ["Pre-trained", "Neural", "network", "Move", "‘Save’", "to", "position", "4", "Predictions", "min", "Δr,", "max", "Δr", "Print", "Exit", "New", "Move", "To...", "Export", "Save", "As...", "Rename", "Duplicate", "Save", "Open", "Do", "nothing", "Swap", "two", "groups", "Add/remove", "a", "separator", "Swap", "two", "items", "Move", "a", "group", "Feasible", "Adaptations", "A", "Move", "an", "item", "r’(s’,a,s)", "u1d1", "u2d2", "...", "u1nd1n...", "u1n1d1n1", "undn", "u0d0", "d11", "u11", "Predictive", "Models", "Predictive", "Models", "Predictive", "Models", "Pairwise", "Item", "Associations", "d0", ",", "u0", "d0", ",", "u0", "Adapted", "Design", "User", "Planning", "with", "MCTS", "Current", "Design", "Activations", "Frequencyobserve", "Print", "Exit", "New", "Move", "To...", "Export", "Save", "As...", "Rename", "Duplicate", "Save", "Open"],
+  "name": "4",
+  "page": 5,
+  "regionBoundary": {
+    "x1": 62.4,
+    "x2": 550.0799999999999,
+    "y1": 84.96,
+    "y2": 225.12
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure4-1.png"
+}, {
+  "caption": "Figure 9: (a) The MCTS condition was associated with signifcantly lower selection time as compared to the two baselines. Vertical bars indicate 95% confdence intervals. (b) For items positioned lower in the menu, selection time in Freqency increased more drastically than other conditions.",
+  "captionBoundary": {
+    "x1": 53.796875,
+    "x2": 559.8115844726562,
+    "y1": 266.7991027832031,
+    "y2": 294.345947265625
+  },
+  "figType": "Figure",
+  "imageText": ["a", "b", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "6000", "5500", "5000", "4500", "4000", "3500", "3000", "2500", "2000", "1500", "1000", "500", "0", "s)", "(in", "m", "m", "e", "n", "Ti", "ct", "io", "Se", "le", "Static", "Frequency", "MCTS", "Condition", "Item", "Position", "2500", "2400", "2300", "2200", "2100", "2000", "s)", "(in", "m", "m", "e", "n", "TI", "ct", "io", "Se", "le", "Frequency", "Static", "MCTS", "Condition"],
+  "name": "9",
+  "page": 10,
+  "regionBoundary": {
+    "x1": 80.16,
+    "x2": 531.36,
+    "y1": 84.96,
+    "y2": 250.56
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure9-1.png"
+}, {
+  "caption": "Figure 10: Sequential adaptation of a 5-item menu. The system avoids greedily moving ‘Cofee’ (lowest frequency) at the frst step. In light of new observations, this change is justifed by the reduced user interest.",
+  "captionBoundary": {
+    "x1": 317.9549865722656,
+    "x2": 559.8058471679688,
+    "y1": 665.5520629882812,
+    "y2": 704.0538330078125
+  },
+  "figType": "Figure",
+  "imageText": ["t0", "t1", "t2", "Average", "Predicted", "Selection", "Time", "Average", "Predicted", "Selection", "Time", "CHI:", "0.368", "UIST:", "0.211", "Coffee:", "0.053", "Japan:", "0.211", "Italy:", "0.158", "CHI:", "0.275", "UIST:", "0.275", "Coffee:", "0.125", "Japan:", "0.175", "Italy:", "0.150", "Adapt", "x", "1", "Adapt", "x", "1", "4.41s", "2.97s", "2.46s", "2.02s"],
+  "name": "10",
+  "page": 10,
+  "regionBoundary": {
+    "x1": 321.59999999999997,
+    "x2": 555.36,
+    "y1": 562.56,
+    "y2": 649.92
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure10-1.png"
+}, {
+  "caption": "Table 1: Key notations used in this section.",
+  "captionBoundary": {
+    "x1": 87.4219970703125,
+    "x2": 260.1328430175781,
+    "y1": 520.3970947265625,
+    "y2": 526.0280151367188
+  },
+  "figType": "Table",
+  "imageText": ["Activation", "level", "for", "i", "at", "l", "M(ik", ",", "il", ")", "B(il", ")", "Constant", "pointing", "time", "when", "the", "cursor", "trails", "eye", "gaze", "Boolean", "relationship", "between", "items", "ik", "and", "il", ",", "from", "association", "matrix", "M", "Tc", "T", "trail", "Constant", "surprise", "penalty", "when", "an", "item", "is", "not", "found", "as", "expected", "Search", "time", "for", "an", "item", "i", "with", "a", "given", "model", "δ", "Constant", "for", "cautious", "inspection", "cost", "of", "an", "item", "(i)", "il", "T", "model", "Notation", "Description", "Target", "item", "i", "at", "location", "l"],
+  "name": "1",
+  "page": 6,
+  "regionBoundary": {
+    "x1": 59.519999999999996,
+    "x2": 286.08,
+    "y1": 540.96,
+    "y2": 662.4
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Table1-1.png"
+}, {
+  "caption": "Figure 8: Computation time for planning adaptations via model-based simulations vs. value network for varying search depths. Our value network exhibited consistent performance for longer horizons.",
+  "captionBoundary": {
+    "x1": 53.79795837402344,
+    "x2": 295.648681640625,
+    "y1": 281.43511962890625,
+    "y2": 319.93682861328125
+  },
+  "figType": "Figure",
+  "imageText": ["Search", "Depth", "(Horizon)", ")", "io", "ns", "er", "at", "00", "it", "s", "(4", "e", "in", "Ti", "m", "io", "n", "pl", "et", "C", "om", "50", "40", "30", "20", "10", "4", "6", "8", "100", "Simulation", "Value", "Network"],
+  "name": "8",
+  "page": 9,
+  "regionBoundary": {
+    "x1": 64.8,
+    "x2": 278.4,
+    "y1": 84.0,
+    "y2": 266.4
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure8-1.png"
+}, {
+  "caption": "Figure 5: Model-based simulation of search for a target item (’Save As...’). (a) when the target is at an expected location, search proceeds as expected; (b) when the target is at an unexpected location, a penalty is imposed upon not fnding the target at its expected location (indicated by ×), and search reverts to slower strategies.",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 558.2029418945312,
+    "y1": 250.11610412597656,
+    "y2": 277.66094970703125
+  },
+  "figType": "Figure",
+  "imageText": ["Target", "at", "expected", "locationa", "Target", "at", "unexpected", "locationb", "Revert", "to", "serial", "search", "from", "top", "Local", "search", "Recall", "Exit", "New", "Save", "Save", "As...", "Export", "Print", "Open", "Foraging", "Exit", "New", "Save", "Save", "As...", "Export", "Print", "Open", "Serial", "Exit", "New", "Save", "Save", "As...", "Export", "Print", "Open", "Recall", "Exit", "New", "Save", "Print", "Export", "Save", "As...", "Open", "Foraging", "Exit", "New", "Save", "Print", "Export", "Save", "As...", "Open", "Serial", "Exit", "New", "Save", "Print", "Export", "Save", "As..", "Open"],
+  "name": "5",
+  "page": 7,
+  "regionBoundary": {
+    "x1": 58.559999999999995,
+    "x2": 555.36,
+    "y1": 85.44,
+    "y2": 236.16
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure5-1.png"
+}, {
+  "caption": "Figure 6: Our value network architecture takes menu design and user features as input to provide individual reward predictions.",
+  "captionBoundary": {
+    "x1": 317.9549560546875,
+    "x2": 559.8057250976562,
+    "y1": 676.5110473632812,
+    "y2": 704.055908203125
+  },
+  "figType": "Figure",
+  "imageText": ["Difference", "DropoutFully", "Connected", "Fully", "Connected", "Reward", "Serial", "DropoutFully", "Connected", "Fully", "Connected", "Reward", "Serial", "DropoutFully", "Connected", "Fully", "Connected", "Reward", "Serial", "Embedding", "Flatten", "Dropout", "Fully", "Connected", "Adapted", "Menu", "r", "na", "to", "ca", "te", "C", "on", "Estimated", "Frequency", "Frequency", "Difference", "LSTM", "Dropout", "Fully", "ConnectedCurrent", "LSTM", "Dropout", "Fully", "Connected", "a`", "r", "D", "at", "U", "se", "Adapted", "Matrix", "a", "Current", "Matrix", "D", "at", "ig", "n", "D", "es"],
+  "name": "6",
+  "page": 7,
+  "regionBoundary": {
+    "x1": 319.68,
+    "x2": 557.28,
+    "y1": 598.56,
+    "y2": 663.36
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure6-1.png"
+}, {
+  "caption": "Figure 7: A sample result from the simulation study, for a 15- item menu design. In 3 steps, the menu was adapted to better suit the given user’s interests (‘Gloves’ group moved to the top), and improved some grouping (‘Carrot’ with ‘Potato’) as well.",
+  "captionBoundary": {
+    "x1": 317.6052551269531,
+    "x2": 559.8056030273438,
+    "y1": 351.40911865234375,
+    "y2": 400.8677673339844
+  },
+  "figType": "Figure",
+  "imageText": ["Adapt", "x", "3", "13.6s", "7.2s", "Current", "Adapted", "Predicted", "Average", "Selection", "Time", "(s)", "User", "Interest", "(Frequencies)", "Gloves:", "0.6", "Carrot:", "0.16", "Panda:", "0.1", "Table:", "0.06", "Beans:", "0.06", "Bikini:", "0.02", "(Others:", "0)"],
+  "name": "7",
+  "page": 8,
+  "regionBoundary": {
+    "x1": 324.0,
+    "x2": 551.04,
+    "y1": 82.56,
+    "y2": 338.4
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure7-1.png"
+}, {
+  "caption": "Figure 2: Model-based planning of adaptations using Monte-Carlo Tree Search (MCTS). Adaptations are selected using upperconfdence trees (UCT). After expanding a new node (adaptation), reward estimates are obtained through roll-outs, and backpropogated to the root node. The child with the highest value is picked as the next adaptation.",
+  "captionBoundary": {
+    "x1": 53.7979736328125,
+    "x2": 559.8078002929688,
+    "y1": 256.9111022949219,
+    "y2": 284.4559020996094
+  },
+  "figType": "Figure",
+  "imageText": ["1.", "Selection", "2.", "Expansion", "3.", "Roll-out", "4.", "Backpropogation", "Value", "Network", "vθ", "Predictive", "Models", "backpropogate", "simulate", "or", "estimate", "expand", "select", "select", "u1d1", "undnu2d2", "...", "u1d1", "u2d2", "...", "...", "...", "...", "...", "tH", "t3", "t0", "t2", "t2", "t1", "u1nd1n", "u1n1d1n1", "u1nd1n", "u1n1d1n1", "u11d11", "undn", "u0d0", "u1nd1n", "u1n1d1n1", "u11d11", "u0d0", "u11d11", "u1nd1n", "u1d1", "undnu2d2", "u0d0"],
+  "name": "2",
+  "page": 4,
+  "regionBoundary": {
+    "x1": 62.879999999999995,
+    "x2": 545.76,
+    "y1": 84.96,
+    "y2": 242.39999999999998
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure2-1.png"
+}, {
+  "caption": "Figure 3: Neural network architecture for obtaining value estimates. Training data is generated using HCI models.",
+  "captionBoundary": {
+    "x1": 317.9549560546875,
+    "x2": 558.2006225585938,
+    "y1": 427.672119140625,
+    "y2": 444.25994873046875
+  },
+  "figType": "Figure",
+  "imageText": ["a", "D", "at", "ni", "ng", "Tr", "ai", "as", "ed", "el", "-b", "M", "od", "Output", "Branches", "(Model)", "Value", "Predictions", "es", "U", "se", "r", "Fe", "at", "ur", "ur", "es", "Fe", "at", "ig", "n", "D", "es", "Input", "Branches", "(Model)", "Input", "n", "na", "tio", "ca", "te", "C", "on", "......", "...", "..."],
+  "name": "3",
+  "page": 4,
+  "regionBoundary": {
+    "x1": 325.92,
+    "x2": 551.04,
+    "y1": 301.92,
+    "y2": 411.84
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi21_通过强化学习调整用户界面_chi21_通过强化学习调整用户界面-Figure3-1.png"
+}]

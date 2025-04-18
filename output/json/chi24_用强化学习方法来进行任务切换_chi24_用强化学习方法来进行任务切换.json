@@ -1,0 +1,181 @@
+[{
+  "caption": "Figure 1). Our contributions are as follows:",
+  "captionBoundary": {
+    "x1": 317.9549865722656,
+    "x2": 474.8044128417969,
+    "y1": 580.9449462890625,
+    "y2": 586.7999877929688
+  },
+  "figType": "Figure",
+  "imageText": ["•", "We", "introduce", "the", "concept", "of", "RL-based", "attention", "manage-", "ment", "systems", "that", "observe", "the", "users’", "environment(s)", "and", "automatically", "switch", "between", "tasks", "so", "that", "a", "defined", "reward", "(in", "our", "prototypical", "case,", "human", "performance)", "increases.", "•", "The", "concept", "was", "investigated", "on", "hand", "of", "a", "fast-paced", "dual-", "task.", "Therefore,", "we", "implemented", "a", "simple", "game", "where", "the", "player", "has", "to", "balance", "two", "balls", "on", "two", "platforms,", "but", "only", "one", "platform", "can", "be", "controlled", "at", "a", "given", "time", "(see", "Figure", "1).", "The", "game", "requires", "players", "to", "switch", "between", "tasks", "in", "a", "visual-", "motoric", "activity", "with", "high", "temporal", "demand,", "representing", "a"],
+  "name": "1",
+  "page": 1,
+  "regionBoundary": {
+    "x1": 333.59999999999997,
+    "x2": 560.16,
+    "y1": 601.92,
+    "y2": 709.4399999999999
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure1-1.png"
+}, {
+  "caption": "Table 1: Players’ performance and subjective ratings in the different conditions. The absolute score resembles the game time in seconds until the game is over, the normalized score is based on players’ maximum performance over all episodes, and the distance to the center shows the average deviation of the balls to the platform centers in Unity units (i.e., “meters”).",
+  "captionBoundary": {
+    "x1": 53.50199890136719,
+    "x2": 558.2017211914062,
+    "y1": 85.7260971069336,
+    "y2": 113.2750244140625
+  },
+  "figType": "Table",
+  "imageText": ["User", "Preference", "Overall", "rating", "4.39", "(1.48)", "4.43", "(1.56)", "3.48", "(1.23)", "3.05", "(1.54)", "Subjective", "Workload", "Mental", "demand", "3.68", "(1.57)", "5.02", "(1.39)", "4.07", "(1.53)", "4.91", "(1.44)", "Physical", "demand", "2.32", "(1.29)", "3", "(1.75)", "2.41", "(1.50)", "2.84", "(1.80)", "Temporal", "demand", "4.02", "(1.34)", "4.09", "(1.70)", "4.55", "(1.55)", "5.18", "(1.59)", "Effort", "4.11", "(1.50)", "4.96", "(1.31)", "4.34", "(1.52)", "5.11", "(1.45)", "Frustration", "3.86", "(1.67)", "3.59", "(1.62)", "4.66", "(1.31)", "5", "(1.46)", "Subj.", "performance", "4.25", "(1.28)", "3.93", "(1.56)", "3.71", "(1.05)", "3.14", "(1.44)", "Performance", "Data", "Absolute", "score", "(s)", "36.29", "(35.17)", "25.99", "(27.05)", "19.71", "(16.10)", "20.03", "(18.47)", "Normalized", "score", ".34", "(.17)", ".26", "(.15)", ".22", "(.14)", ".23", "(.15)", "Distance", "to", "center", "3.12", "(.30)", "3.19", "(.25)", "3.11", "(.26)", "3.21", "(.25)", "Reaction", "time", "(ms)", "346", "(151)", "323", "(179)", "306", "(94)", "314", "(143)", "Cognitive", "Model", "M", "(SD)", "No", "Supervisor", "M", "(SD)", "Unconstrained", "M", "(SD)", "Notification", "M", "(SD)"],
+  "name": "1",
+  "page": 9,
+  "regionBoundary": {
+    "x1": 125.75999999999999,
+    "x2": 486.24,
+    "y1": 127.67999999999999,
+    "y2": 310.08
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Table1-1.png"
+}, {
+  "caption": "Figure 5: Participants’ absolute (left) and normalized (right) game scores in the four experimental conditions. A higher score indicates better performance. The normalized scores (based on players’ maximum performance over all episodes) allow for a better visual interpretation of the data since the absolute scores strongly varied between the participants.",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 558.2052612304688,
+    "y1": 484.7191162109375,
+    "y2": 512.2680053710938
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "5",
+  "page": 9,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 559.1999999999999,
+    "y1": 320.64,
+    "y2": 471.35999999999996
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure5-1.png"
+}, {
+  "caption": "Figure 8: Pearson Correlation Matrix between skills in games and mode preferences. Non-significant variables are crossed out.",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 294.0461120605469,
+    "y1": 502.6091003417969,
+    "y2": 530.157958984375
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "8",
+  "page": 12,
+  "regionBoundary": {
+    "x1": 53.76,
+    "x2": 293.28,
+    "y1": 303.84,
+    "y2": 489.12
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure8-1.png"
+}, {
+  "caption": "Figure 7: Comparison of low and highly skilled players. Similar to the AMS, highly skilled players switched more frequently. They also “cleared” the source platform better before switching than the less skilled players. Higher values for platform rotation (in degrees) indicate more difficult situations.",
+  "captionBoundary": {
+    "x1": 53.50199890136719,
+    "x2": 559.736083984375,
+    "y1": 258.7500915527344,
+    "y2": 286.2980041503906
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "7",
+  "page": 12,
+  "regionBoundary": {
+    "x1": 65.75999999999999,
+    "x2": 546.24,
+    "y1": 82.56,
+    "y2": 245.28
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure7-1.png"
+}, {
+  "caption": "Figure 4: The change of the belief ball position over time. The white ball shows the currently believed ball position. The red line indicates the velocity with the highest probability of the normal distribution. The black line points to the average direction of the sample velocities. At step 1, the left platform is active (indicated by the green color). At step 2, an upcoming task switch is indicated by the white color of the target platform. At step 3, the task switch is performed resulting in an update of the belief ball position of the right platform: from an imprecise position in step 2 to the true position at step 3. In steps 3 to 6, the increasing mismatch, between the belief ball position and the true ball position on the left, inactive platform, can be seen. This ever-increasing mismatch is caused by the determined sigma values of the normal distribution.",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 558.2047119140625,
+    "y1": 327.2731018066406,
+    "y2": 398.6570129394531
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "4",
+  "page": 7,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 559.1999999999999,
+    "y1": 82.56,
+    "y2": 314.4
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure4-1.png"
+}, {
+  "caption": "Figure 2: The multitasking continuum describes the relationship between concurrent and sequential multitasking. The balancing task used for this project contains aspects of both concurrent and sequential multitasking (adapted from Salvucci et al. [70] left). Task switching results in switch costs given by the interruption and the resumption lags (right).",
+  "captionBoundary": {
+    "x1": 53.79800033569336,
+    "x2": 558.2039184570312,
+    "y1": 164.20912170410156,
+    "y2": 191.75799560546875
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "2",
+  "page": 3,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 559.1999999999999,
+    "y1": 82.56,
+    "y2": 151.2
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure2-1.png"
+}, {
+  "caption": "Figure 6: Comparisons between the best-performing AMS trained using the cognitive model and the no supervisor condition. The results indicate that the AMS prompted participants to switch faster and resolve more difficult situations, while they acted more cautiously when playing without the system. Higher values for platform rotation (degrees), ball distance (Unity units), and ball velocity (Unity units/s.) indicate more difficult situations.",
+  "captionBoundary": {
+    "x1": 53.50199890136719,
+    "x2": 559.7298583984375,
+    "y1": 603.1560668945312,
+    "y2": 641.6640014648438
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "6",
+  "page": 11,
+  "regionBoundary": {
+    "x1": 65.75999999999999,
+    "x2": 546.24,
+    "y1": 82.56,
+    "y2": 590.4
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure6-1.png"
+}, {
+  "caption": "Figure 3: The architecture consists of the RL AMS agent that has unlimited access to the (virtual) environment and decides when to operate on one of the two platforms. To simulate a user playing the game, we implemented balancing agents with cognitive constraints for training the algorithm (left). In the subsequent evaluation phase (right), the AMS agent used the learned policy to switch between platforms when humans were playing the game.",
+  "captionBoundary": {
+    "x1": 53.450439453125,
+    "x2": 558.2015991210938,
+    "y1": 296.31011962890625,
+    "y2": 334.8179931640625
+  },
+  "figType": "Figure",
+  "imageText": [],
+  "name": "3",
+  "page": 4,
+  "regionBoundary": {
+    "x1": 52.8,
+    "x2": 559.1999999999999,
+    "y1": 82.56,
+    "y2": 283.2
+  },
+  "renderDpi": 150,
+  "renderURL": "output/figures/chi24_用强化学习方法来进行任务切换_chi24_用强化学习方法来进行任务切换-Figure3-1.png"
+}]
